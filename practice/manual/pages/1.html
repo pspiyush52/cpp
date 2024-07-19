@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting started</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="main-title">
+        <div class="side-button">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h1>String Docs</h1>
+    </div>
+    <div class="main-content">
+        <h1>1. Getting started</h1>
+        <h2 id="declaring-an-empty-string">
+            1.1 Declaring a string
+            <a href="#declaring-an-empty-string" class="header-link">¶</a>
+        </h2>
+        <p>
+            An empty string can be declared simply as follows.
+        </p>
+        <div class="code-block">string str;</div>
+        <p>
+            So the string has been declared, what now? As of now the string
+            does not contain any information and if you try to print it the
+            result will be a blank output and nothing else. To make the
+            string useful we can assign some value to it. This can be done
+            simply by using the 
+            <a href="ref.html#assignment" target="_blank"><span class="mono">assignment operator '='</span></a>
+            as follows.
+        </p>
+        <div class="code-block">string str;
+str = "this is a string";</div>
+        <p>
+            Here we have assigned a traditional C-string to our string object
+            which can be done since the string library is compatible with
+            C-strings.
+        </p>
+        <p>
+            Rather than assigning a value to the string object we can also
+            read the input from the standard input(keyboard) and store it
+            in the string object using the
+            <a href="ref.html#stream-extraction" target="_blank"><span class="mono">stream extraction operator(>>)</span></a> :
+        </p>
+        <div class="code-block">string str;
+std::cout &lt;&lt; "Enter a string: ";
+std::cin >> str;</div>
+        <h2 id="printing-a-string">
+            1.2 Printing a string
+            <a href="#printing-a-string" class="header-link">¶</a>
+        </h2>
+        <p>
+            Once we have data in our string object we can print it on the
+            standard output to see its contents using the
+            <a href="ref.html#stream-insertion" target="_blank"><span class="mono">stream insertion operator(&lt;&lt;)</span></a>
+            :
+        </p>
+        <div class="code-block">string str;
+str = "this is a string";
+std::cout &lt;&lt; "The contents of the string are: ";
+std::cout &lt;&lt; str;</div>
+        <p>On executing it will display:</p>
+        <div class="code-block output">The contents of the string are: this is a string</div>
+        <p>
+            The stream insertion operators can be chained together as well and
+            the above can also be written as:
+        </p>
+        <div class="code-block">string str;
+str = "this is a string";
+std::cout &lt;&lt; "The contents of the string are: " &lt;&lt; str;</div>
+        <p>
+            It will produce the same output as above on execution:
+        </p>
+        <div class="code-block output">The contents of the string are: this is a string</div>
+        <p id="initializing-a-string">
+            After the string object goes out of scope any memory allocated
+            gets freed and the programmer does not have to worry about memory
+            management as far as the string objects are concerned.
+        </p>
+        <h2>
+            1.3 Initializing a string
+        </h2>
+        <p id="default-character">
+            A string object can be initialized at declaration in several
+            different ways.
+        </p>
+        <h3>
+            1.3.1 Initializing using a default character
+        </h3>
+        <p>
+            A string of a given size can be initialized which consists of a
+            specified character:
+        </p>
+        <div class="code-block">string lines('-', 10);
+std::cout &lt;&lt; lines;</div>
+        <p>
+            This will generate the following output:
+        </p>
+        <div class="code-block output">----------</div>
+        <p>
+            A braced initializer can be used instead of functional
+            initialization as follows:
+        </p>
+        <div class="code-block">string lines{'-', 10};
+std::cout &lt;&lt; lines;</div>
+        <p>
+            This will generate the same output as above.
+        </p>
+        <p>
+            initialization can also be done using the '=' operator at the
+            time of declaring the variable.
+        </p>
+        <div class="code-block">string text = "some text";</div>
+        <p>
+            Let's take a look at an example program:
+        </p>
+        <div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    for (int i = 1; i &lt;= 10; ++i)
+        std::cout &lt;&lt; string{'*', i} &lt;&lt; '\n';
+    return 0;
+}</div>
+        <p>
+            The code above will generate the following output:
+        </p>
+        <div class="code-block output">*
+**
+***
+****
+*****
+******
+*******
+********
+*********
+**********
+</div>
+        <p id="string-literal">
+            The program above is a simple one which contains of a for loop
+            which is looping from 1 to 10. The loop contains a single
+            statement which generates and prints a string of size <span class="mono"><em>i</em></span> filled
+            with the '*' character and then prints a newline character to
+            get to the next line for the next iteration.
+        </p>
+        <h3>
+            1.3.2 Initializing using a C-string literal
+        </h3>
+        <p>
+            A string can be initialized using a C-string literal (a <span class="mono"><em>const char*</em></span>)
+            as follows:
+        </p>
+        <div class="code-block">string text{"this is a string"};
+std::cout &lt;&lt; text;</div>
+        <p>The output will be:</p>
+        <div class="code-block output">this is a string</div>
+        <p id="std-string">
+            Using this method a new string object is created and the
+            characters of the C-string literal are copied one by one
+            into the string.
+        </p>
+        <p></p>
+        <h3>
+            1.3.3 Initializing using an std::string
+        </h3>
+        <p>
+            A string can be initialized using the <span class="mono">C++</span> string type
+            <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><span class="mono"><em>std::string</em></span></a>
+            as well:
+        </p>
+        <div class="code-block">string str{std_string};</div>
+        <p id="copy-construct">
+            Here std_string is an object of type
+            <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><span class="mono"><em>std::string</em></span></a>.
+        </p>
+        <h3>
+            1.3.4 Initializing using another string object
+        </h3>
+        <p>
+            A string object can be initialized using another string object
+            as follows:
+        </p>
+        <div class="code-block">string text{"this is a random text"};
+std::cout &lt;&lt; "text contains: " &lt;&lt; text &lt;&lt; '\n';
+
+string text_copy{text};
+std::cout &lt;&lt; "text_copy contains: " &lt;&lt; text_copy &lt;&lt; '\n';</div>
+        <p>
+            As we can see above we can initialize a string object from another
+            string object. This process is also known as copy-constructing and
+            the constructor which is used in this process is called the 
+            <a href="ref.html#copy-constructor" target="_blank"><em>copy constructor</em></a>.
+            The word copy is used since the data from the source
+            string is copied into the new string which is being created.
+        </p>
+        <div id="move-construct" class="code-block output">text contains: this is a random text
+text_copy contains: this is a random text</div>
+        <h3>
+            1.3.5 Initializing by moving an existing string to the new string
+        </h3>
+        <p>
+            This may sound complicated at first but it really isn't. Whenever
+            a new string is created some memory is allocated for it and then
+            whatever data is to be stored in the memory is copied there.
+            When we copy construct a string object from an existing string
+            object we allocate memory for the new string object and then we
+            copy the contents of the existing string to it.
+        </p>
+        <p>
+            When we move an existing string to a new string being created we
+            do not allocate any new memory for the new string. The ownership
+            of the memory allocated for the the existing string is shifted to
+            the new string and the existing string is now empty. This is
+            illustrated below:
+        </p>
+        <div class="code-block">#include "arr_string.h"
+
+void check_string(string& s){
+    if (s.is_empty())
+        std::cout &lt;&lt; "The string is empty\n";
+    else
+        std::cout &lt;&lt; "The string is not empty\n";
+}
+
+int main(void)
+{
+    string text{"this is a string"};
+
+    std::cout &lt;&lt; "Before moving...\n";
+    check_string(text);
+
+    <comment>// moving the string to a new string using std::move</comment>
+    string new_text{std::move(text)};
+
+    std::cout &lt;&lt; "\nAfter moving...\n";
+    check_string(text);
+
+    std::cout &lt;&lt; "\nnew_text contains: " &lt;&lt; new_text &lt;&lt; '\n';
+
+    return 0;
+}
+</div>
+        <p>
+            Generates the following output:
+        </p>
+        <div class="code-block output">Before moving...
+The string is not empty
+
+After moving...
+The string is empty
+
+new_text contains: this is a string</div>
+        <p id="concatenating-strings">
+            From the above we can see that the original string becomes empty
+            after moving it to the new string and the new string now contains
+            what the original string contained.
+        </p>
+        <h2>1.4 Concatenating strings</h2>
+        <p id="concatenating-two-strings">
+            Two string objects can be concatenated using the
+            <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a>.
+            The <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a>
+            can be used to concatenate a string object and a C-string as well.
+            Concatenating does not modify the string objects being concatenated.
+            Both the operands to the <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a>
+            are left intact and a new string object containing the concatenated string
+            is returned. If we want the contents to be modified then we have to use the
+            <a href="ref.html#compound-concatenation" target="_blank"><span class="mono">'+=' operator</span></a>
+            which stores the result of the concatenation to the string object
+            which occurs on the left hand side of the
+            <a href="ref.html#compound-concatenation" target="_blank"><span class="mono">'+=' operator</span></a>.
+        </p>
+        <h3>1.4.1 Concatenating two string objects</h3>
+        <p>
+            Two string objects can be concatenated using the
+            <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a> as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string first_name{"Bruce "}, last_name{"Banner"};
+    std::cout &lt;&lt; "Name: " &lt;&lt; (first_name + last_name);
+    return 0;
+}</div>
+        <p>Generates the following output:</p>
+        <div id="cstring-concat" class="code-block output">Name: Bruce Banner</div>
+        <h3>1.4.2 Concatenating a string object and a C-string</h3>
+        <p>
+            A string object can be concatenated with a C-string using the
+            <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a>
+            to give a string object containing the concatenation of the two:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string username;
+    std::cout &lt;&lt; "Enter your username: ";
+    std::cin >> username;
+    std::cout &lt;&lt; "Your login ID is: " &lt;&lt; (username + "@gmail.com");
+    return 0;
+}</div>
+        <p>Generates the following output:</p>
+        <div class="code-block output">Enter your username: johnny79bravo
+Your login ID is: johnny79bravo@gmail.com</div>
+        <p>
+            The order of the operands doesn't matter when concatenating i.e.,
+            it can either be <span class="mono"><em>string + const char* </em></span>
+            or <span class="mono"><em> const char* + string </em></span>
+            as shown below:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string str1{"Zig"};
+    const char* str2 = "Zag";
+    std::cout &lt;&lt; str1 + str2 &lt;&lt; '\n';
+    std::cout &lt;&lt; str2 + str1 &lt;&lt; '\n';
+    return 0;
+}</div>
+        <p>Generates the following output:</p>
+        <div id="chaining-concat" class="code-block output">ZigZag
+ZagZig</div>
+        <h3>1.4.3 Chaining the + operator</h3>
+        <p>
+            The <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a>
+            can be chained together to concatenate multiple strings together
+            in any combination:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string day{"28"}, month{"8"}, year{"2023"};
+    string date{day + "/" + month + "/" + year};
+    std::cout &lt; "Date: " &lt; date;
+    return 0;
+}
+</div>
+        <p>Will generate the following output:</p>
+        <div id="compound-assignment" class="code-block output">Date: 28/8/2023</div>
+        <h3>1.4.4 Compound assignment operator</h3>
+        <p>
+            The
+            <a href="ref.html#compound-concatenation" target="_blank"><span class="mono">'+=' operator</span></a>
+            provides a shorthand for concatenating and storing the result in a
+            string object.
+            Instead of first using the
+            <a href="ref.html#concatenation-operator" target="_blank"><span class="mono">'+' operator</span></a>
+            to concatenate the strings and then store the result in the string object
+            using the copy assignment 
+            <a href="ref.html#assignment" target="_blank"><span class="mono">'=' operator</span></a> we can use the
+            shorthand <a href="ref.html#compound-concatenation" target="_blank"><span class="mono">'+=' operator</span></a>
+            to perform both the operations using a single operator as shown below:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string first_name{"Jason "};
+    string last_name{" Bourne"};
+
+    std::cout &lt;&lt; "Name: " &lt;&lt; (first_name + last_name) &lt;&lt; '\n';
+    std::cout &lt;&lt; "first_name after concatenation: " &lt;&lt; first_name &lt;&lt; '\n';
+    
+    std::cout &lt;&lt; "Name: " &lt;&lt; (first_name += last_name) &lt;&lt; '\n';
+    std::cout &lt;&lt; "first_name after using '+=' operator: " &lt;&lt; first_name &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Generates the following output:</p>
+        <div id="comparing-strings" class="code-block output">Name: Jason Bourne
+first_name after concatenation: Jason
+Name: Jason Bourne
+first_name after using '+=' operator: Jason Bourne</div>
+        <h2>1.5 Comparing strings</h2>
+        <p id="comp-strings">
+            Strings can be compared for equality using the
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>.
+            The
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>
+            tests for strict equality and it can be used to compare objects of string
+            class with C-strings as well.
+            Other comparison operators which can be used for comparing two strings
+            are the
+            <a href="ref.html#comparison-operators" target="_blank"><span class="mono">operators: &lt;, &gt;, &lt;=, =&gt;</span></a>
+            which perform lexicographic comparisons between two string objects or a string
+            object and a C-string.
+        </p>
+        <h3>1.5.1 Comparing two string objects for equality</h3>
+        <p>
+            Two string objects can be compared for equality using the
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>.
+            The
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>
+            performs a case-sensitive comparison of two strings and returns a boolean
+            value true if the strings are exactly identical and boolean value false
+            if the strings are not identical. The
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'!=' operator</span></a>
+            is the exact opposite of the 
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>,
+            and is used to check for inequality.
+            Two string objects can be compared using the
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>
+            as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string pass{"bellissima"}, in;
+    
+    std::cout &lt;&lt; "Enter password: ";
+    std::cin >> in;
+    
+    if (in == pass)
+        std::cout &lt;&lt; "Welcome user\n";
+    else
+        std::cout &lt;&lt; "Incorrect password\n";
+    
+    return 0;
+}</div>
+        <p>Generates the following output:</p>
+        <div id="comp-cstring" class="code-block output">Enter password: Bellissima
+Incorrect password</div>
+        <h3>1.5.2 Equality comparison between string objects and C-strings</h3>
+        <p>
+            The <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>
+            can be used to compare string objects with C-strings as well.
+            A string object can be compared with a C-string using the
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>
+            as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string in;
+    
+    std::cout &lt;&lt; "Enter password: ";
+    std::cin >> in;
+    
+    if (in == "bellissima")
+        std::cout &lt;&lt; "Welcome user\n";
+    else
+        std::cout &lt;&lt; "Incorrect password\n";
+    
+    return 0;
+}</div>
+        <p>Generates the following output:</p>
+        <div class="code-block output">Enter password: Bellissima
+Incorrect password</div>
+        <p id="comp-case">
+            Here we are using a C-string literal to compare with.
+        </p>
+        <h3>1.5.3 Case insensitive comparison</h3>
+        <p>
+            While strict comparisons provide a higher degree of accuracy, this may
+            not always be desirable. For instance while entering names using the
+            keyboard, different people use different combinations of upper and
+            lowercase letters. Some people might take the time to capitalize the
+            first letter of every word in their name while some others couldn't
+            care less. In such cases, using case-insensitive comparisons makes more
+            sense. The
+            <span class="mono"><a href="ref.html#similar" target="_blank"><span class="mono">similar()</span></a></span>
+            method of the string class provides us with the functionality
+            of making case-insensitive comparisons.
+        </p>
+        <p>Let us take a look at an example:</p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string answer{"bjarne stroustrup"}, response;
+
+    std::cout &lt;&lt; "Who created the language C++ ? ";
+    std::cin >> response;
+    
+    if (response.similar(answer))
+        std::cout &lt;&lt; "You are correct\n";
+    else
+        std::cout &lt;&lt; "Incorrect answer\n";
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Who created the language C++ ? Bjarne Stroustrup
+You are correct</div>
+        <p>
+            As we can see, the <em>case</em> doesn't matter when using the
+            <span class="mono"><a href="ref.html#similar" target="_blank">similar()</a></span>
+            method. Also, as was the case with the
+            <a href="ref.html#equality-operator" target="_blank"><span class="mono">'==' operator</span></a>
+            the <span class="mono"><a href="ref.html#similar" target="_blank">similar()</a></span>
+            method works for both string objects and C-strings. However since it is a class
+            method therefore it can only be invoked using a string object and so a string
+            object must be present on the left hand side of the
+            <span class="mono">'<b>.</b>'</span> operator.
+        </p>
+        <p>
+            So the above program can also be written as:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string response;
+
+    std::cout &lt;&lt; "Who created the language C++ ? ";
+    std::cin >> response;
+    
+    if (response.similar("bjarne stroustrup"))
+        std::cout &lt;&lt; "You are correct\n";
+    else
+        std::cout &lt;&lt; "Incorrect answer\n";
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div id="comp-others" class="code-block output">Who created the language C++ ? Bjarne Stroustrup
+You are correct</div>
+        <h3>1.5.4 Other comparison operators</h3>
+        <p>
+            The
+            <a href="ref.html#comparison-operators" target="_blank"><span class="mono">operators: &lt;, &gt;, &lt;=, =&gt;</span></a>
+            can be used to compare two strings <em>lexicographically</em> or in 
+            other words the order in which words appear in a dictionary.
+            These operators can be used to compare two string objects as well as
+            for comparison between a string object and a C-string.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string a{"ask"}, b{"asks"};
+    std::cout &lt;&lt; std::boolalpha;
+    
+    std::cout &lt;&lt; (a &lt; b);
+
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div id="basic-manipulation"  class="code-block output">true</div>
+        <h2>1.6 Basic string manipulation</h2>
+        <p id="case-manip">
+            There are several methods defined in the string library to perform
+            basic string manipulations such as changing the letter casing (lowercase 
+            or uppercase) of the string, changing the order of characters in
+            the string, modifying the string character by character, replacing
+            characters and so on. We will now take a look at some of the basic
+            string manipulation methods and some examples.
+        </p>
+        <h3>1.6.1 Changing the letter casing</h3>
+        <p>
+            All the characters of a string can be converted to lowercase using the
+            <a href="ref.html#to-lower" target="_blank"><span class="mono">to_lower()</span></a>
+            method. The converse of this method exists which is the
+            <a href="ref.html#to-upper" target="_blank"><span class="mono">to_upper()</span></a>
+            method. They can be used as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text{"This is SOmE Text"};
+
+    std::cout &lt;&lt; text.to_lower() &lt;&lt; '\n';
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+
+    text.to_upper();
+
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">this is some text
+this is some text
+THIS IS SOME TEXT</div>
+        <p>
+            We are able to use the method on the string object and use the whole 
+            expression <span class="mono">text.to_lower()</span> in the
+            <span class="mono">std::cout</span> statement because the methods
+            <a href="ref.html#to-lower" target="_blank"><span class="mono">to_lower()</span></a>
+            and 
+            <a href="ref.html#to-upper" target="_blank"><span class="mono">to_upper()</span></a>
+            return a reference to the string object.
+        </p>
+        <p>
+            As is obvious in the above example the string is being modified by these
+            methods. If however there is a need to keep the string unchanged then
+            the 
+            <a href="ref.html#get-lower" target="_blank"><span class="mono">get_lower()</span></a>
+            and 
+            <a href="ref.html#get-upper" target="_blank"><span class="mono">get_upper()</span></a>
+            can be used. These methods do not modify the existing string instead
+            they return a new string object containing the desired letter casing.
+            The same example as above will produce different output if these methods
+            are used:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text{"This is SOmE Text"};
+
+    std::cout &lt;&lt; text.get_lower() &lt;&lt; '\n';
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+
+    std::cout &lt;&lt; text.get_upper();
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">this is some text
+This is SOmE Text
+THIS IS SOME TEXT
+This is SOmE Text</div>
+        <p>
+            The original string <span class="mono">text</span> is not modified as
+            seen above.
+        </p>
+        <p>
+            In some cases there may be a need that the first letter of the text
+            be capitalized. The 
+            <a href="ref.html#capitalize" target="_blank"><span class="mono">capitalize()</span></a>
+            method can be used to accomplish this task as follows:
+        </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string name;
+
+    std::cout &lt;&lt; "Enter your name: ";
+    std::cin >> name;
+    std::cout &lt;&lt; "You are: " &lt;&lt; name.capitalize() &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Enter your name: samudra
+You are: Samudra</div>
+        <p id="reverse-manip">
+            The
+            <a href="ref.html#capitalize" target="_blank"><span class="mono">capitalize()</span></a>
+            method ignores any leading whitespace in the string.
+        </p>
+        <h3>1.6.2 Reversing</h3>
+        <p>
+            The 
+            <a href="ref.html#reverse" target="_blank"><span class="mono">reverse()</span></a>
+            method is quite basic and just reverses the string in place which means the string
+            is modified in the process. The
+            <a href="ref.html#reversed" target="_blank"><span class="mono">reversed()</span></a>
+            method on the other hand does not modify the string object but returns
+            a new string object containing the reverse of the original string.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text{"this text needs to be reversed"};
+
+    std::cout &lt;&lt; text.reverse() &lt;&lt; '\n';
+    std::cout &lt;&lt; text &lt;&lt; "\n\n";
+
+    std::cout &lt;&lt; text.reversed() &lt;&lt; '\n';
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">desrever eb ot sdeen txet siht
+desrever eb ot sdeen txet siht
+
+this text needs to be reversed
+desrever eb ot sdeen txet siht</div>
+        <p>
+            As we can see above the 
+            <a href="ref.html#reverse" target="_blank"><span class="mono">reverse()</span></a>
+            method modifies the string but the 
+            <a href="ref.html#reversed" target="_blank"><span class="mono">reversed()</span></a>
+            method doesn't.
+        </p>
+        <p>
+            Let us take a look at a basic program to check for palindromes using the
+            <a href="ref.html#reversed" target="_blank"><span class="mono">reversed()</span></a>
+            method
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text;
+    
+    std::cout &lt;&lt; "Enter some text to check: "
+    std::cin >> text;
+    
+    if (text.similar(text.reversed()))
+        std::cout &lt;&lt; "It is a palindrome\n";
+    else
+        std::cout &lt;&lt; "It is not a palindrome\n";
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Enter some text to check: racecar
+It is a palindrome</div>
+        <p>
+            We are using the 
+            <a href="ref.html#reversed" target="_blank"><span class="mono">reversed()</span></a>
+            method here since the 
+            <a href="ref.html#reverse" target="_blank"><span class="mono">reverse()</span></a>
+            method will first reverse the string and then the <span id="collapse-manip">comparison</span> would have
+            been made to the string itself which will always result in true.
+        </p>
+        <h3>1.6.3 Collapsing whitespace</h3>
+        <p>
+            Sometimes a string may contain unwanted whitespaces in blocks. This can
+            happen in the case of raw data entered by the user or while reading the
+            contents from a text file. It may contain
+            extra spaces or newline characters where not needed, carriage
+            returns, horizontal tabs and so on. Cleaning up the string is desirable
+            and even necessary in such cases. The string class comes with two methods
+            <a href="ref.html#collapse" target="_blank"><span class="mono">collapse()</span></a>
+            and
+            <a href="ref.html#collapsed" target="_blank"><span class="mono">collapsed()</span></a>
+            which collapse the whitespaces in the string an replace them with single space
+            characters(' '), thus making the text cleaner. The difference between the two
+            methods is that 
+            <a href="ref.html#collapse" target="_blank"><span class="mono">collapse()</span></a>
+            modifies the string and returns a reference
+            and 
+            <a href="ref.html#collapsed" target="_blank"><span class="mono">collapsed()</span></a>
+            creates and returns a new string with collapsed whitespace.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string name;
+
+    std::cout &lt;&lt; "Enter name: ";
+    std::cin >> name;
+
+    std::cout &lt;&lt; "You entered: " &lt;&lt; name &lt;&lt; '\n';
+    std::cout &lt;&lt; "Cleaned input: " &lt;&lt; text.collapse().title() &lt;&lt; '\n';
+
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Enter name: thor          odinson
+You entered: thor          odinson
+Cleaned input: Thor Odinson</div>
+        <p>
+            Here we have chained two method calls together. First we invoke the
+            method 
+            <a href="ref.html#collapse" target="_blank"><span class="mono">collapse()</span></a>
+            to collapse the whitespace in the string and then we invoke the
+            <a href="ref.html#title" target="_blank"><span class="mono">title()</span></a>
+            method on the result produced by the
+            <a href="ref.html#collapse" target="_blank"><span class="mono">collapse()</span></a>
+            method. We are able to chain these method calls together because both of
+            these methods return a reference to the string object. First the 
+            <a href="ref.html#collapse" target="_blank"><span class="mono">collapse()</span></a>
+            method is invoked and the reference is returned. Then the reference is used to
+            invoke the<span id="replace-manip"> </span>
+            <a href="ref.html#title" target="_blank"><span class="mono">title()</span></a>
+            method.
+        </p>
+        <h3>1.6.4 Replacing characters</h3>
+        <p>
+            Consider the following scenario:<br>
+            Usually when using command line interfaces to create/manipulate files and
+            directories we try to give a single word name to a file or a directory.
+            But sometimes a one word name might not be sufficient and a descriptive name
+            is a good thing in most cases. Then instead of separating the words in the
+            name using spaces we use underscore characters ('_'). Converting the
+            filenames with spaces to file names with underscores instead requires
+            replacing the space characters with underscores.
+        </p>
+        <p>
+            For such applications the 
+            <a href="ref.html#replace" target="_blank"><span class="mono">replace()</span></a>
+            method of the string class can be used which replaces every instance of
+            a character in a string with any given character.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string filenames[] = {
+        "relations and functions.pdf",
+        "Network Programming.pdf",
+        "journal entries.txt",
+        "complexity analysis of algorithms.pptx",
+        "virtual functions and runtime polymorphism in C++.pdf"
+    };
+    
+    for (string& s : filenames)
+        s.to_lower().replace(' ', '_');
+    
+    std::cout &lt;&lt; "The modified filenames:\n";
+    for (string& s : filenames)
+        std::cout <span id="filenames"></span>&lt;&lt; s &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">The modified filenames:
+<span class="tabs"></span>relations_and_functions.pdf
+<span class="tabs"></span>network_programming.pdf
+<span class="tabs"></span>journal_entries.txt
+<span class="tabs"></span>complexity_analysis_of_algorithms.pptx
+<span id="strip-manip" class="tabs"></span>virtual_functions_and_runtime_polymorphism_in_c++.pdf</div>
+        <h3>1.6.5 Trimming the string</h3>
+        <p>
+            Sometimes while reading input characters some trailing or leading
+            whitespaces may appear in the string. To get rid of the unncecessary
+            whitespaces from the ends of the string, the string class has the methods
+            <a href="ref.html#lstrip" target="_blank"><span class="mono">lstrip()</span></a>
+            to strip off whitespace from the left end of the string,
+            <a href="ref.html#rstrip" target="_blank"><span class="mono">rstrip()</span></a>
+            to strip off whitespace from the right end of the string and 
+            <a href="ref.html#strip" target="_blank"><span class="mono">strip()</span></a>
+            to strip off whitespace from both the ends of the string.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string title, text;
+    std::cout &lt;&lt; "Enter a title for the article: ";
+    std::cin >> title;
+
+    title.strip();
+
+    std::cout &lt;&lt; "Enter the text: ";
+    std::cin >> text;
+
+    std::cout &lt;&lt; "\nTitle: " &lt;&lt; title &lt;&lt; '\n';
+    std::cout &lt;&lt; "\nText: " &lt;&lt; text;
+
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Enter a title for the article:   File formats
+Enter the text:   A file format is a standard way that
+information is encoded for storage in a computer file.
+It specifies how bits are used to encode information
+in a digital storage medium. File formats may be
+either proprietary or free.
+
+Title: File formats
+
+Text: A file format is a standard way that
+information is encoded for storage in a computer file.
+It specifies how bits are used to encode information
+in a digital storage medium. File formats may be
+either proprietary or free.</div>
+        <p>
+            The preceding and following whitespace characters are stripped
+            from the strings.
+        </p>
+    </div>
+    <div id="nav-bar">
+        <a href="../manual.html">Introduction</a>
+        <ul>
+            <li>
+                <a href="1.html">
+                    1. Getting Started
+                </a>
+                <ul>
+                    <li>
+                        <a href="1.html#declaring-an-empty-string">
+                            1.1 Declaring a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#printing-a-string">
+                            1.2 Printing a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#initializing-a-string">1.3 Initializing a string</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#default-character">
+                                    1.3.1 Initializing using a default character
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#string-literal">
+                                    1.3.2 Initializing using a C-string literal
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#std-string">
+                                    1.3.3 Initializing using an std::string
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#copy-construct">
+                                    1.3.4 Initializing using another string object
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#move-construct">
+                                    1.3.5 Initializing by moving an existing string to the new string
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#concatenating-strings">1.4 Concatenating strings</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#concatenating-two-strings">
+                                    1.4.1 Concatenating two string objects</a>
+                            </li>
+                            <li>
+                                <a href="1.html#cstring-concat">
+                                    1.4.2 Concatenating a string object and a C-string</a>
+                            </li>
+                            <li>
+                                <a href="1.html#chaining-concat">
+                                    1.4.3 Chaining the + operator
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#compound-assignment">
+                                    1.4.4 Compound assignment operator
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#comparing-strings">1.5 Comparing strings</a>
+                        <ul>
+                            <li><a href="1.html#comp-strings">1.5.1 Comparing two string objects for equality</a></li>
+                            <li><a href="1.html#comp-cstring">1.5.2 Equality comparison between string objects and C-strings</a></li>
+                            <li><a href="1.html#comp-case">1.5.3 Case insensitive comparison</a></li>
+                            <li><a href="1.html#comp-others">1.5.4 Other comparison operators</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#basic-manipulation">1.6 Basic string manipulation</a>
+                        <ul>
+                            <li><a href="1.html#case-manip">1.6.1 Changing the letter casing</a></li>
+                            <li><a href="1.html#reverse-manip">1.6.2 Reversing</a></li>
+                            <li><a href="1.html#collapse-manip">1.6.3 Collapsing whitespace</a></li>
+                            <li><a href="1.html#replace-manip">1.6.4 Replacing characters</a></li>
+                            <li><a href="1.html#strip-manip">1.6.5 Trimming the string</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="2.html">
+                    2. The string class
+                </a>
+                <ul>
+                    <li>
+                        <a href="2.html#member-types">
+                            2.1 Member types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#member-functions">
+                            2.2 Member functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#operators">
+                            2.3 Operators
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#friend-functions">
+                            2.4 Friend functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#others">
+                            2.5 Others
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="3.html">3. Deep dive</a>
+                <ul>
+                    <li><a href="3.html#extracting-substrings">3.1 Extracting substrings</a>
+                        <ul>
+                            <li><a href="3.html#slicing">3.1.1 Slicing</a></li>
+                            <li><a href="3.html#paranths-operator">3.1.2 Using the ( ) operator</a></li>
+                            <li><a href="3.html#fw-word">3.1.3 First word/Last word</a></li>
+                            <li><a href="3.html#from-pos">3.1.4 Extracting from a position</a></li>
+                            <li><a href="3.html#nlast">3.1.5 Getting n last characters</a></li>
+                            <li><a href="3.html#split">3.1.6 Split</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#iter-and-mod">3.2 Iteration and modification</a>
+                        <ul>
+                            <li><a href="3.html#iterators">3.2.1 Iterators</a></li>
+                            <li><a href="3.html#const-iterators">3.2.2 const iterators</a></li>
+                            <li><a href="3.html#reverse-iterators">3.2.3 Reverse iterators</a></li>
+                            <li><a href="3.html#const-reverse-iterators">3.2.4 const reverse iterators</a></li>
+                            <li><a href="3.html#modify-method">3.2.5 The modify method</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#numeric-operations">3.3 Numeric operations</a>
+                        <ul>
+                            <li><a href="3.html#stoi">3.3.1 String to integer</a></li>
+                            <li><a href="3.html#to-string">3.3.2 Integral values to strings</a></li>
+                            <li><a href="3.html#bstring">3.3.3 b-string from a number</a></li>
+                            <li><a href="3.html#btoi">3.3.4 Number from a b-string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#searching">3.4 Searching</a>
+                        <ul>
+                            <li><a href="3.html#count">3.4.1 Counting characters</a></li>
+                            <li><a href="3.html#contains">3.4.2 Checking for the existence of a query string</a></li>
+                            <li><a href="3.html#count-str">3.4.3 Counting the number of occurrences of query string</a></li>
+                            <li><a href="3.html#search">3.4.4 Position of first occurrence of query string</a></li>
+                            <li><a href="3.html#search-all">3.4.5 List of all occurrences of query string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#file-io">3.5 File I/O</a>
+                        <ul>
+                            <li><a href="3.html#istream">3.5.1 Reading from an input stream</a></li>
+                            <li><a href="3.html#getline">3.5.2 Reading contents one line at a time</a></li>
+                            <li><a href="3.html#ostream">3.5.3 Writing to an output stream</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <a href="ref.html" target="_blank"><b>The complete reference</b></a>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="../static/script.js"></script>
+</body>
+</html>

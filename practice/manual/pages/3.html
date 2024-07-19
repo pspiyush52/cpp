@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep dive</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <style>
+        dl {
+            margin-block-start: 40px;
+        }
+        dl.main dt {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+        dl.main dd {
+            margin-block-end: 20px;
+        }
+        img.iterator-methods {
+            display: block;
+            width: 70%;
+            margin: 0 auto;
+        }
+        @media(min-width: 600px) {
+            img.iterator-methods {
+                width: 45%;
+            }
+            dl.main dd {
+                margin-block-end: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-title">
+        <div class="side-button">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h1>String Docs</h1>
+    </div>
+    <div class="main-content">
+        <h1 id="extracting-substrings">3. Deep dive</h1>
+        <h2>3.1 Extracting substrings</h2>
+        <p>
+            Substrings need to be extracted from strings for various purposes
+            such as isolating some information such as getting only the day or
+            the month from the complete date, or for the purpose of removing
+            <span id="slicing">unnecessary</span> parts of a string such as whitespaces of some special
+            characters, or just taking a fixed amount of characters from the
+            string as per some restrictions imposed and so on. The string
+            class contains various methods to help with the same. Let us start
+            by taking a look at the rather intuitive
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>.
+            method.
+        </p>
+        <h3>3.1.1 Slicing</h3>
+        <p>
+            Slicing refers to the process of taking out a substring from a string
+            using indices to indicate the beginning and ending positions of the
+            substring which is to be extracted from the string.
+            The string is not modified in the process and the method returns a new
+            string object containing the slice. The basic syntax
+            of slicing is <span class="mono">string.slice(start, end)</span>
+            implemented as follows:
+        </p>
+        <div class="code-block">string text{"0123456789"};
+std::cout &lt;&lt; text.slice(1, 4) &lt;&lt; '\n';</div>
+        <p>Generates the following output:</p>
+        <div class="code-block output">123</div>
+        <p>
+            Here, 1 specifies the starting position of the substring and 4 indicates
+            the index of the position right after the last element of the substring.
+            The <span class="mono">end</span> index is not included in the slice.
+            The 
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method has two overloads which gives us the option of choosing whether
+            or not to use the <span class="mono">start</span> index. If we just
+            specify one value then the start is automatically assumed to be 0 which
+            means the
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            operator gives us <span class="mono"><em>end</em></span> number of characters From
+            the beginning of the string.
+        </p>
+        <div class="code-block">#include "arr_string.h"
+
+int main()
+{
+    <comment>// If it is known that the first two
+    // characters of the code specify the country
+    // the we can take a slice containing the first
+    // two characters from the string and we can find
+    // out the country specified</comment>
+    string code{"IN55FORBA48712"};
+    std::cout &lt;&lt; "The country code is: " &lt;&lt; code.slice(2);
+    
+    return 0;
+}</div>
+        <p>Gives the following output:</p>
+        <div id="paranths-operator" class="code-block output">The country code is: IN</div>
+        <h3>3.1.2 Using the <span class="mono">()</span> operator</h3>
+        <p>
+            The 
+            <a href="ref.html#paranths-operator" target="_blank"><span class="mono">()operator</span></a>
+            can be used instead of using the slice method just for the sake of
+            convenience. The 
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method and the 
+            <a href="ref.html#paranths-operator" target="_blank"><span class="mono">()operator</span></a>
+            can be used interchangeably. They work in the exact same way. The above examples
+            using the 
+            <a href="ref.html#paranths-operator" target="_blank"><span class="mono">()operator</span></a>:
+        </p>
+        <div class="code-block">string text{"0123456789"};
+std::cout &lt;&lt; text(1, 4) &lt;&lt; '\n';</div>
+        <p>Generates the following output:</p>
+        <div class="code-block output">123</div>
+        <p>
+            The <a href="ref.html#paranths-operator" target="_blank"><span class="mono">()operator</span></a>
+            generally seems more intuitive and easy to use but the
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method has a descriptive name which can be useful for new users.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main()
+{
+    <comment>// If it is known that the first two
+    // characters of the code specify the country
+    // the we can take a slice containing the first
+    // two characters from the string and we can find
+    // out the country specified</comment>
+    string code{"IN55FORBA48712"};
+    std::cout &lt;&lt; "The country code is: " &lt;&lt; code(2);
+    
+    return 0;
+}</div>
+        <p>Gives the following output:</p>
+        <div class="code-block output">The country code is: IN</div>
+        <p id="fw-word">
+            When using with only the <span class="mono"><em>end</em></span> index
+            the <a href="ref.html#paranths-operator" target="_blank"><span class="mono">()operator</span></a>
+            notation may seem a bit confusing as it appears that a function
+            is being called.
+        </p>
+        <h3>3.1.3 First word/Last word</h3>
+        <p>
+            Sometimes there is a need to extract only the first or the last
+            word from the string such as in case of extracting first and last
+            names from the full name of a person. For such purposes the string
+            class contains two methods: 
+            <a href="ref.html#first-word" target="_blank"><span class="mono">first_word()</span></a>
+            which extracts the first word from a string and returns a new
+            string object containing that word
+            and 
+            <a href="ref.html#last-word" target="_blank"><span class="mono">last_word()</span></a>
+            which extracts the last word from a string and returns a new
+            string object containing that word. Both these methods ignore
+            initial whitespaces in the string.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string name{"    Gangaputra Bheeshma "};
+    
+    string first_name = name.first_word();
+    string last_name = name.last_word();
+    
+    std::cout &lt;&lt; "First name: " &lt;&lt; first_name &lt;&lt; '\n';
+    std::cout &lt;&lt; "Last name: " &lt;&lt; last_name &lt;&lt; '\n';
+
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">First name: Gangaputra
+Last name: Bheeshma</div>
+        <p id="from-pos">
+            As depicted above, the leading and trailing whitespaces
+            are ignored by both these methods.
+        </p>
+        <h3>3.1.4 Extracting from a position</h3>
+        <p>
+            There may be a need to extract all the characters from a
+            string starting from a specified position. If we do this using
+            the 
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method then we will have to use the following syntax:
+        </p>
+        <div class="code-block">string text{"email: gesundheit@gmail.com"};
+string email = text.slice(6, text.size());</div>
+        <p>
+            It can get quite cumbersome in complicated expressions. Keeping that
+            in mind, the string class has a method
+            <a href="ref.html#from-pos" target="_blank"><span class="mono">from_pos()</span></a>
+            which returns a string containing all the characters starting from
+            the specified index all the way up to the end. So the above can
+            be written using 
+            <a href="ref.html#from-pos" target="_blank"><span class="mono">from_pos()</span></a>
+            as follows:
+        </p>
+        <div class="code-block">string text{"email: gesundheit@gmail.com"};
+string email = text.from_pos(6);</div>
+        <p id="nlast">
+            The syntax is now cleaner and the name of the method 
+            <a href="ref.html#from-pos" target="_blank"><span class="mono">from_pos()</span></a>
+            gives a self description as to what it does. This method creates and
+            returns a new string containing characters starting from the specified
+            position all the way up to the end. This method does not modify
+            the string.
+        </p>
+        <h3>3.1.5 Getting n last characters</h3>
+        <p>
+            You must have encountered several situations where a either a
+            username or the password is made up from your own information
+            for example, the password to open you electronic payslip File
+            may be constructed by taking the first four letters of your name
+            then appending your employee id followed by the last 5 digits of
+            your phone number. This situation demands slicing of strings from
+            the from and from the back as well. While we can use the
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method, the syntax might get a bit messy. The string class contains
+            a method, 
+            <a href="ref.html#nlast" target="_blank"><span class="mono">nlast()</span></a>
+            for extracting a specified number of characters from
+            the end of a string.
+        </p>
+        <p>Let us consider the example mentioned earlier:</p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string name{"Amrendra Baahubali"};
+    string employee_id{"5033FXAY19"};
+    string phone{"7464878456"};
+    
+    string pass = (name.slice(4).get_upper() + employee_id + phone.nlast(5));
+    std::cout &lt;&lt; "The password is: " &lt;&lt; pass;
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">The password is: AMRE5033FXAY1978456</div>
+        <p>
+            If we use the 
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method instead we will have to write the following:
+        </p>
+        <div class="code-block">string pass = (name.slice(4).get_upper() + employee_id + phone.slice(phone.size() - 5, phone.size()));</div>
+        <p id="split" >
+            Clearly the previous approach using the 
+            <a href="ref.html#nlast" target="_blank"><span class="mono">nlast()</span></a>
+            is the winner here. The syntax is very concise and the name is rather
+            descriptive which makes it more intuitive to use, plus the calculations
+            which need to be performed for using the 
+            <a href="ref.html#slice" target="_blank"><span class="mono">slice()</span></a>
+            method can be confusing.
+        </p>
+        <h3>3.1.6 Split</h3>
+        <p>
+            Sometimes extracting the characters from the string may not enough
+            and the problem may require breaking up the string into its
+            constituents. Consider the Email ID example again. Every person has
+            a different username and domain name and each of them are of different
+            lengths. Up to this point, all our methods for extracting substrings
+            from strings depend upon the length which is unknown in this case
+            so any of the above methods cannot be applied directly.
+            The 
+            <a href="ref.html#split" target="_blank"><span class="mono">split()</span></a> method
+            however can come in handy here. The 
+            <a href="ref.html#split" target="_blank"><span class="mono">split()</span></a> method
+            splits the string at the character specified as an argument to the method
+            and it returns a list of strings which consists of the individual
+            parts of the string obtained after splitting. The original string however
+            is not modifed. The data is copied into the substrings.
+        </p>
+        <p>
+            For the above mentioned problem we can use the 
+            <a href="ref.html#nlast" target="_blank"><span class="mono">nlast()</span></a>
+            method as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string email{"claustrophobe@elevator.trpd"};
+
+    auto comp = email.split('@');
+    
+    std::cout &lt;&lt; "List of substrings: " &lt;&lt; comp &lt;&lt; '\n';
+    std::cout &lt;&lt; "Username: " &lt;&lt; comp[0] &lt;&lt; '\n';
+    std::cout &lt;&lt; "Domain: " &lt;&lt; comp[1] &lt;&lt; '\n';
+
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">List of substrings: ["claustrophobe", "elevator.trpd"]
+Username: claustrophobe
+Domain: elevator.trpd</div>
+        <p id="iter-and-mod">
+            Using <a href="ref.html#split" target="_blank"><span class="mono">split()</span></a>
+            we didn't have to worry about the length of the strings or substrings.
+            It can also prove useful in many other situations where constituents are
+            more important than the whole.
+        </p>
+        <h2 id="iterators">3.2 Iteration and modification</h2>
+        <h3>3.2.1 Iterators</h3>
+        <p>
+            Let us first define what an iterator is. An <strong>Iterator</strong>
+            is a pointer like object which points to an element inside a container.
+            It provides access to the element it is pointing towards and it can be
+            made to point to the next element in the container using the increment
+            <span class="mono">(++)</span> operator. Using the iterator all the
+            elements of a container can be accessed and modified (if it's not a 
+            <em>const</em> iterator). The element which the iterator is pointing
+            towards is accessed using the <span class="mono">'*'</span> operator
+            and two iterators can be compared using the <span class="mono">'=='</span>
+            and <span class="mono">'!='</span> operators.
+        </p>
+        <p>
+            Do they sound exactly like pointers? Yes they do and pointers are powerful
+            iterators for array types but for complicated data structures more
+            sophisticated iterators are required. However that is not our concern
+            at the moment.
+        </p>
+        <p>
+            Objects of the string class can be thought of as containers which contain
+            individual characters. The string class has methods which return iterators
+            which can be used to iterate through a string.
+            The different types of iterators defined for the string class are as follows:
+            <table class="solid">
+                <thead>
+                    <tr>
+                        <th>Iterator type</th>
+                        <th>Method which returns this iterator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2">
+                            <a href="ref.html#string-iterator">string::iterator</a>
+                        </td>
+                        <td>
+                            string::iterator begin()
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            string::iterator end()
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <a href="ref.html#string-const-iterator">string::const_iterator</a>
+                        </td>
+                        <td>
+                            string::const_iterator begin() [for <em>const</em> objects]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            string::const_iterator end() [for <em>const</em> objects]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <a href="ref.html#string-const-iterator">string::const_iterator</a>
+                        </td>
+                        <td>string::const_iterator cbegin()</td>
+                    </tr>
+                    <tr><td>string::const_iterator cend()</td></tr>
+                    <tr>
+                        <td rowspan="2">
+                            <a href="ref.html#string-reverse-iterator">string::reverse_iterator</a>
+                        </td>
+                        <td>std::reverse_iterator rbegin()</td>
+                    </tr>
+                    <tr><td>std::reverse_iterator rend()</td></tr>
+                    <tr>
+                        <td rowspan="2">
+                            <a href="ref.html#string-const-reverse-iterator">string::const_reverse_iterator</a>
+                        </td>
+                        <td>string::const_reverse_iterator rbegin() [for <em>const</em> objects]</td>
+                    </tr>
+                    <tr><td>string::const_reverse_iterator end() [for <em>const</em> objects]</td></tr>
+                    <tr>
+                        <td rowspan="2">
+                            <a href="ref.html#string-const-reverse-iterator">string::const_reverse_iterator</a>
+                        </td>
+                        <td>string::const_reverse_iterator crbegin()</td>
+                    </tr>
+                    <tr><td>string::const_reverse_iterator crend()</td></tr>
+                </tbody>
+            </table>
+        </p>
+        <dl class="main">
+            <dt><a href="ref.html#string-iterator">string::iterator</a></dt>
+            <dd>
+                It is the basic read/write iterator which can be used to traverse
+                the string as well as write data into it.
+            </dd>
+            <dt><a href="ref.html#string-const-iterator">string::const_iterator</a></dt>
+            <dd>
+                It is a <em>read only</em> iterator which allows traversal through the
+                string but no modifications are allowed.
+            </dd>
+            <dt><a href="ref.html#string-reverse-iterator">string::reverse_iterator</a></dt>
+            <dd>
+                It is a reverse iterator which means that as we keep incrementing it,
+                it moves backwards through the string. This is a read/write iterator
+                which can be used to read the contents of the string in reverse order
+                and also write something to it. More on it in section
+                <a href="#reverse-iterators">3.2.3</a>
+            </dd>
+            <dt><a href="ref.html#string-const-reverse-iterator">string::const_reverse_iterator</a></dt>
+            <dd>
+                It is a <em>read only</em> iterator which allows traversal through the
+                string in the reverse order but no modification is allowed.
+            </dd>
+        </dl>
+        <p>
+            You might have noticed that the methods which return iterators come in pairs.
+            For the <a href="ref.html#string-iterator"><span class="mono">string::iterator</span></a> we have
+            <a href="ref.html#begin" target="_blank"><span class="mono">begin()</span></a>
+            and 
+            <a href="ref.html#end" target="_blank"><span class="mono">end()</span></a>.
+            The
+            <a href="ref.html#begin" target="_blank"><span class="mono">begin()</span></a>
+            method returns
+            a <a href="ref.html#string-iterator" target="_blank"><span class="mono">string::iterator</span></a>
+            to the beginning of the string and the
+            <a href="ref.html#end" target="_blank"><span class="mono">end()</span></a> method returns
+            a <a href="ref.html#string-iterator" target="_blank"><span class="mono">string::iterator</span></a>
+            to <em>one character past</em> the last character
+            of the string.
+        </p>
+        <img class="iterator-methods" src="../static/iterator.png" alt="Working of begin and end methods">
+        <p>
+            The 
+            <a href="ref.html#cbegin" target="_blank"><span class="mono">cbegin()</span></a> and 
+            <a href="ref.html#cend" target="_blank"><span class="mono">cend()</span></a> methods
+            return
+            <a href="ref.html#string-const-iterator" target="_blank"><span class="mono">string::const_iterator</span></a>
+            to the beginning and end in the same way as described above. The only difference is that the 
+            <a href="ref.html#string-const-iterator" target="_blank"><span class="mono">string::const_iterator</span></a>
+            is a <em>read only</em> iterator which means we can access the elements of the string
+            using them but we cannot modify any element.
+        </p>
+        <p>
+            Now that we have covered some of the basics of iterators, let us take a
+            look at how to use them to iterate through the string:
+        </p>
+        <div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string str{"This is a string"};
+
+    <comment>// Getting the iterators using the
+    // begin() and end() methods</comment>
+
+    string::iterator iter = str.begin();
+    string::iterator end = str.end();
+
+    <comment>// Iterating through the string</comment>
+    for (; iter != end; ++iter)
+        std::cout &lt;&lt; *iter &lt;&lt; ' ';
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div id="const-iterators" class="code-block output">T h i s   i s   a   s t r i n g</div>
+        <h3>3.2.2 const iterators</h3>
+        <p>
+            A <em>const</em> iterator is simply an iterator which is <em>read only</em>.
+            It can be used to traverse through the elements of a container object (which
+            is the 'string' object in our context) but not modify them. They come in
+            handy when the objective is to only read the contents of the string and
+            not modify it. The 
+            <a id="reverse-iterators" href="ref.html#cbegin" target="_blank"><span class="mono">cbegin()</span></a>
+            and
+            <a href="ref.html#cend" target="_blank"><span class="mono">cend()</span></a>
+            methods return the <em>const</em> iterators of the string class, the
+            <a href="ref.html#string-const-iterator" target="_blank"><span class="mono">string::const_iterator</span></a>.
+            Also keep in mind that the 
+            <a href="ref.html#const-begin" target="_blank"><span class="mono">begin()</span></a>
+            and
+            <a href="ref.html#const-end" target="_blank"><span class="mono">end()</span></a>
+            methods will also return a 
+            <a href="ref.html#string-const-iterator" target="_blank"><span class="mono">string::const_iterator</span></a>
+            when used with a <em>const</em> string object.
+        </p>
+        <h3>3.2.3 Reverse iterators</h3>
+        <p>
+            A reverse iterator is used to traverse through the elements of a container
+            in the reverse order i.e., from the last element to the first. The 
+            <a href="ref.html#rbegin" target="_blank"><span class="mono">rbegin()</span></a>
+            and 
+            <a href="ref.html#rend" target="_blank"><span class="mono">rend()</span></a> methods
+            return the reverse iterators for the string class, the 
+            <a href="ref.html#string-reverse-iterator" target="_blank"><span class="mono">string::reverse_iterator</span></a>.
+            The
+            <a href="ref.html#rbegin" target="_blank"><span class="mono">rbegin()</span></a> method
+            returns a
+            <a href="ref.html#string-reverse-iterator" target="_blank"><span class="mono">string::reverse_iterator</span></a>
+            to the last character of the string and the 
+            <a href="ref.html#rend" target="_blank"><span class="mono">rend()</span></a> method
+            returns a
+            <a href="ref.html#string-reverse-iterator" target="_blank"><span class="mono">string::reverse_iterator</span></a>
+            to one character before the first character of the string.
+        </p>
+        <img class="iterator-methods" src="../static/reverse-iterator.png" alt="Working of rbegin and rend methods">
+        <p>
+            The 
+            <a href="ref.html#crbegin" target="_blank"><span class="mono">crbegin()</span></a> and
+            <a href="ref.html#crend" target="_blank"><span class="mono">crend()</span></a> methods
+            work the same as above with the only difference that instead of the 
+            <a href="ref.html#string-reverse-iterator" target="_blank"><span class="mono">string::reverse_iterator</span></a>
+            they return 
+            <a href="ref.html#string-const-reverse-iterator" target="_blank"><span class="mono">string::const_reverse_iterator</span></a>
+            which is a <em>read only</em> iterator and can only be used to read from the string not
+            write to it.
+        </p>
+        <p>
+            Let us now look at a reverse iterator in action:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string str{"This is a string"};
+
+    <comment>// Getting the reverse iterators using
+    // the rbegin() and rend() methods</comment>
+
+    string::reverse_iterator riter = str.rbegin();
+    string::reverse_iterator rend = str.rend();
+    
+    for (; riter != rend; ++riter)
+        std::cout &lt;&lt; *riter &lt;&lt; ' ';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">g n i r t s   a   s i   s i h T</div>
+        <p id="const-reverse-iterators">
+            Traversing the string through the reverse iterator is like traversing
+            the reversed string.
+        </p>
+        <h3>3.2.4 const reverse iterators</h3>
+        <p>
+            A <em>const</em> reverse iterator
+            is simply a reverse iterator which is <em>read only</em>.
+            It can be used to traverse through the elements of a container object in the
+            reverse order (which is the 'string' object in our context) but not modify them.
+            They come in handy when the objective is to only read the contents of the
+            string in reverse order and not modify it. The
+            <a href="ref.html#crbegin" target="_blank"><span class="mono">crbegin()</span></a>
+            and     
+            <a href="ref.html#crend" target="_blank"><span class="mono">crend()</span></a>
+            methods return the <em>const</em> reverse iterators of the string class, the
+            <a href="ref.html#string-const-reverse-iterator" target="_blank"><span class="mono">string::const_reverse_iterator</span></a>.
+            Also keep in mind that the 
+            <a href="ref.html#rbegin" target="_blank"><span class="mono">rbegin()</span></a>
+            and 
+            <a href="ref.html#rend" target="_blank"><span class="mono">rend()</span></a>
+            methods will also return a 
+            <a href="ref.html#string-const-reverse-iterator" target="_blank"><span class="mono">string::const_reverse_iterator</span></a>
+            when used with a <em>const</em> string object.
+        </p>
+        <p>
+            Let us take a look at an example program to illustrate the use of iterators
+            to get a reversed string from an existing string.
+        </p>
+        <div class="code-block">#include "arr_string.h"
+
+string get_reverse(const string& str){
+    string rev{str};
+    
+    <span class="comment">// Getting the const reverse iterator of str</span>
+    auto str_iter = str.crbegin();
+
+    <span class="comment">// Getting the iterator of rev</span>
+    auto rev_iter = rev.begin();
+	
+    <span class="comment">// Assigning the character pointed to by the
+    // reverse iterator to the character pointed to by the iterator</span>
+    for (; str_iter != str.crend(); ++str_iter, ++rev_iter)
+        *rev_iter = *str_iter;
+    
+    return rev;
+}
+
+int main(void)
+{
+    string str{"This is a string"};
+    string reversed{get_reverse(str)};
+    
+    std::cout &lt;&lt; reversed;
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">gnirts a si sihT</div>
+        <p>
+            In the program above a copy of the string is first created then
+            a reverse iterator to the string <span class="mono">str</span> is
+            initialized (<span class="mono">str_iter</span>) and an iterator
+            to the copy string <span class="mono">rev</span> is initialized
+            (<span class="mono">rev_iter</span>).
+            Moving through the string using a reverse iterator is just
+            like moving through the reversed string. We use this fact to move
+            through the <em id="modify-method">pseudo</em> reversed string using the reverse iterator and
+            assign each character of the <em>pseudo</em> reverse string to the
+            characters of <span class="mono">rev</span> while moving forwards
+            through <span class="mono">rev</span>.
+        </p>
+        <h3>3.2.5 The modify method</h3>
+        <p>
+            The 
+            <a href="ref.html#modify" target="_blank"><span class="mono">modify()</span></a>
+            method of the string class allows us to modify a string character by
+            character using a <em>function like object</em> which is passed as an
+            argument to this method. A <em>function</em> like entity in <span class="mono">C++</span>
+            can be a plain-old function, or a functor (function object), or a lambda expression.
+            If it is a function then a pointer to the function has to be passed to the
+            <a href="ref.html#modify" target="_blank"><span class="mono">modify()</span></a>
+            method. Let us see some examples:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+char shift_right(char ch){
+    return ch + 3;
+}
+
+char shift_left(char ch){
+    return ch - 3;
+}
+
+int main(void)
+{
+    string str{"abcde"};
+
+    std::cout &lt;&lt; "Initial value: " &lt;&lt; str &lt;&lt; '\n';
+
+    str.modify(shift_right);
+    std::cout &lt;&lt; "\nShifting right: " &lt;&lt; str &lt;&lt; '\n';
+
+    str.modify(shift_left);
+    std::cout &lt;&lt; "\nShifting left: " &lt;&lt; str &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Initial value: abcde 
+
+Shifting right: defgh
+
+Shifting left: abcde </div>
+        <p>
+            We use the <span class="mono">shift_right</span> function to shift
+            each character of the string to the right by three places and then
+            the <span class="mono">shift_left</span> function to shift each
+            character of the string to the left by three places to get the original
+            string back.
+        </p>
+        <p>
+            We can also use predicates to specify which characters of the string are
+            to be modified. This can be done by passing a function like entity
+            to the the parameter <span class="mono"><em>pred</em></span> of 
+            <a href="ref.html#modify" target="_blank"><span class="mono">modify()</span></a>
+            method. The pre-requisite is that <span class="mono"><em>pred</em></span>
+            must be able to accept a single <span class="mono"><em>char</em></span> as
+            an argument and must return a boolean value. Let us take a look at an example
+            where we replace all the lowercase characters of a string with underscores:
+        </p>
+<div class="code-block">#include "arr_string.h"
+#include &lt;ctype.h&gt;
+
+bool under(char&){ return '_' ; }
+
+int main(void)
+{
+    string str{"This Is A Title Cased String"};
+
+    std::cout &lt;&lt; "Before modification: " &lt;&lt; str &lt;&lt; '\n';
+
+    str.modify(under, islower);
+
+    std::cout &lt;&lt; "\nAfter modification: " &lt;&lt; str &lt;&lt; '\n';
+
+    &lt;&lt;
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Before modification: This Is A Title Cased String
+
+After modification: T___ I_ A T____ C____ S_____ </div>
+        <p>
+            The predicate we used is the C-standard library function 
+            <a href="https://en.cppreference.com/w/c/string/byte/islower" target="_blank"><span class="mono">islower()</span></a>
+            an it returns true for lowercase characters so only the lowercase characters
+            are modified in the string using the modifier function which is a
+            function which just returns an underscore (<span class="mono">'_'</span>) every
+            time it is called. Using <span class="mono"><em>lambda expressions</em></span> can
+            make the task even easier. Take a look at the below example:
+        </p>
+<div class="code-block">#include "arr_string.h"
+#include &lt;ctype.h&gt;
+
+int main(void)
+{
+    string str{"This Is A Title Cased String"};
+
+    std::cout &lt;&lt; "Before modification: " &lt;&lt; str &lt;&lt; '\n';
+
+    str.modify(
+        [](char&){
+            return '_';
+        },
+        islower
+    )
+
+    std::cout &lt;&lt; "\nAfter modification: " &lt;&lt; str &lt;&lt; '\n';
+
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Before modification: This Is A Title Cased String
+
+After modification: T___ I_ A T____ C____ S_____ </div>
+        <p>
+            Here the lambda expression does the same job as the function in the previous example
+            but is more <span id="numeric-operations">convenient</span> as it can be defined on the spot.
+        </p>
+        <h2>3.3 Numeric operations</h2>
+        <p>
+            Situations may arise where strings and numbers are needed simultaneously. In some situations
+            such as while reading the content of text files the numbers which are read as strings
+            may need to be converted to integers and sometimes composite strings may need
+            to be formed with values plugged inside it. There is a need therefore, for conversions
+            between numbers and strings.
+        </p>
+        <p id="stoi">
+            The string library has several functions in it to assist with
+            these type of conversions and more. Let us take a look at them one by one.
+        </p>
+        <h3>3.3.1 String to integer</h3>
+        <p>
+            Numbers are often stored as strings in records since they can handle values which
+            have numeric digits and characters intermixed. In such cases a need may arise
+            to convert the string representation to an integer in order to do some arithmetic
+            operations on it. Take another example, if we are writing a program where we need
+            to get user input through the keyboard then reading the input as a string makes
+            more sense if we want to perform validation checks and if we want to inform the
+            user what exactly went wrong if the checks fail. Say for example in a inventory
+            management software the products which are high priority must have a product number
+            which begins with 79. In such a case if the user enters a product number starting
+            with 78 then it would be easier to check for the mismatch if we were taking the
+            input as a string than if we accept it as an integer. By default the stream extraction
+            using <span class="mono">std::cin</span> in <span class="mono">C++</span> will
+            numeric values from the keyboard until it encounters a invalid character after which
+            it just stops reading and returns whatever has been read until that point without
+            raising any errors. If we want the ability to inform the user about the error then
+            we need to check every character of the input which can be done if the input is
+            taken as a string.
+        </p>
+        <p>
+            Now after we get the input as a string containing a number from a file or from the
+            user or from any other source, we need to convert it to an integer or a floating point
+            value.
+            For these purposes the string class has the methods 
+            <a href="ref.html#stoi" target="_blank"><span class="mono">stoi()</span></a>
+            ,
+            <a href="ref.html#stoll" target="_blank"><span class="mono">stoll()</span></a>
+            ,
+            <a href="ref.html#stod" target="_blank"><span class="mono">stod()</span></a>
+            and 
+            <a href="ref.html#stold" target="_blank"><span class="mono">stold()</span></a>
+            . The 
+            <a href="ref.html#stoi" target="_blank"><span class="mono">stoi()</span></a> and
+            <a href="ref.html#stoll" target="_blank"><span class="mono">stoll()</span></a> methods
+            are for 
+            for conversion to integeral values (specifically to <span class="mono"><em>int</em></span> and
+            <span class="mono"><em>long long</em></span> values respectively) and the 
+            <a href="ref.html#stod" target="_blank"><span class="mono">stod()</span></a> 
+            and 
+            <a href="ref.html#stold" target="_blank"><span class="mono">stold()</span></a>
+            methods are for conversion to floating point values (specifically to
+            <span class="mono"><em>double</em></span> and <span class="mono"><em>long double</em></span> 
+            types).
+        </p>
+        <p>
+            Let us take a look at an example demonstrating user input validation:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string input;
+    int num;
+
+    std::cout &lt;&lt; "Welcome to square finder...\n\n";
+    std::cout &lt;&lt; "Enter a positive integer: ";
+
+    std::cin >> input;
+
+    try{
+        num = input.stoi();
+        std::cout &lt;&lt; "The square of " &lt;&lt; num &lt;&lt; " is = " &lt;&lt; (num * num) &lt;&lt; '\n';
+    }
+    catch(ValueError& e) {
+        std::cout &lt;&lt; "Error: " &lt;&lt; e.what();
+    }
+    
+    return 0;
+}</div>
+        <p>Will generate the following output for valid integral values:</p>
+        <div class="code-block output">Welcome to square finder...
+
+Enter a positive integer:        12  
+The square of 12 is = 144</div>
+        <p>
+            Leading spaces in the input number is deliberately added to demonstrate that the
+            <a href="ref.html#stoi" target="_blank"><span class="mono">stoi()</span></a>
+            method just skips the leading and trailing whitespaces in the input string.
+        </p>
+        <p>The following output will be generated for invalid inputs to the above program:</p>
+        <div class="code-block output">Welcome to square finder...
+
+Enter a positive integer: 241x
+Error: Invalid input to stoi</div>
+        <p id="to-string">
+            This demonstrates the power of the methods of the string class. If we were to
+            read the input using <span class="mono">std::cin >> num</span> then the invalid
+            values would have been ignored without our knowledge.
+        </p>
+        <h3>3.3.2 Integral values to strings</h3>
+        <p>
+            Sometimes we would like to get the string representation
+            of numbers because individual characters of a string can be manipulated with
+            ease. For example, we may have a function which has to return a response string
+            by plugging some values in it which are numbers, in such a case the string
+            representation of numbers is required. Sometimes it is required that the numbers
+            be of a certain given fixed width and if not then some padding characters like '0'
+            may need to be added. In such cases if we use numeric types then there is no way
+            of keeping the leading zeros or padding with any other character. 
+        </p>
+        <p>
+            Conversion of a numeric value to a string allows us to perform string-specific
+            operations on the created string such as concatenation or formatting.
+            Furthermore, an int-to-string mutation is beneficial when we need to
+            save an numeric value as text in a file or when displaying a numeric value to the
+            console for visual purposes. For such cases
+            and more where numbers must be treated as strings the string library has a
+            <a href="ref.html#to-string-int" target="_blank"><span class="mono">to_string()</span></a>
+            function built in it. This function takes a number as an input and converts it
+            to a corresponding string object. Let us take a look at an example:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    int day{30}, month{8}, year{2023};
+
+    string date = to_string(day) + "/" + to_string(month) + "/" + to_string(year).from_pos(2);
+
+    std::cout &lt;&lt; "Date: " &lt;&lt; date &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Date: 30/8/23</div>
+        <p>
+            The following example can be a part of an employee ID system which
+            requires that the employee ID's be of a fixed width:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    int arr[] = {5487, 21548745, 31245, 694878, 659856, 32655, 48452};
+    std::vector&lt;string&gt; ids;
+
+    for (int i : arr)
+        ids.push_back(to_string(i, 10));
+    
+    std::cout &lt;&lt; "List of ids:\n";
+    for (string& s : ids)
+        std::cout &lt;&lt; '\t' &lt;&lt; s &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">List of ids:
+    0000005487
+    0021548745
+    0000031245
+    0000694878
+    0000659856
+    0000032655
+    0000048452</div>
+        <p>
+            Here we have used an overload of the 
+            <a href="ref.html#to-string-int" target="_blank"><span class="mono">to_string()</span></a>
+            function which also accepts a <span class="mono"><em>width</em></span> parameter
+            and pads extra zeros to the left if the <span id="bstring">number</span> to be converted to a string contains
+            less number of digits than the specified <span class="mono"><em>width</em></span>.
+        </p>
+        <h3>3.3.3 b-string from a number</h3>
+        <p>
+            By <span class="mono"><em>b-string</em></span> we mean a string containing
+            the binary representation of an integral value. Such a string can be created
+            using the 
+            <a href="ref.html#bstring-friend" target="_blank"><span class="mono">bstring()</span></a>
+            function. This function can be used with a single integral value or an integral
+            value along with a <span class="mono"><em>width</em></span> value which will
+            determine the number of digits the b-string must contain. Let us look at an example:
+        </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    <comment>// Specifying 16 as width</comment>
+    std::cout &lt;&lt; bstring(100, 16) &lt;&lt; '\n';
+
+    <span class="comment">// Not specifying any width will make the 
+    // string of only the required width</span>
+    std::cout &lt;&lt; bstring(100) &lt;&lt; '\n';
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">0000000001100100
+1100100</div>
+        <p>
+            Note the extra bits in the b-string where the width has been specified.
+        </p>
+        <p>
+            The string class also contains a 
+            <a href="ref.html#bstring" target="_blank"><span class="mono">bstring()</span></a>
+            method which returns a b-string from a string which contains a numeric
+            value in it. A <span class="mono"><em>width</em></span> value can be specified
+            for this method also. Let us take a look at an example:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string str{"247"};
+
+    std::cout &lt;&lt; str.bstring() &lt;&lt; '\n';
+    std::cout &lt;&lt; str.bstring(64) &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">11110111
+0000000000000000000000000000000000000000000000000000000011110111</div>
+        <p id="btoi">
+            And the same as above not specifying the <span class="mono"><em>width</em></span>
+            value gives a string with a width of just the required number of characters.
+        </p>
+        <h3>3.3.4 Number from a b-string</h3>
+        <p>
+            The 
+            <a href="ref.html#btoi" target="_blank"><span class="mono">btoi()</span></a>
+            and 
+            <a href="ref.html#btoll" target="_blank"><span class="mono">btoll()</span></a>
+            method of the string class do the reverse of the 
+            <a href="ref.html#bstring-friend" target="_blank"><span class="mono">bstring()</span></a>
+            function i.e., they take a b-string and convert it into an <span class="mono"><em>int</em></span> in case of 
+            <a href="ref.html#btoi" target="_blank"><span class="mono">btoi()</span></a>
+            and into a <span class="mono"><em>long long int</em></span> in case of
+            <a href="ref.html#btoll" target="_blank"><span class="mono">btoll()</span></a>.
+            Let us take a look at an example:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string in{};
+    std::cout &lt;&lt; "Enter a number in binary(base2) form: ";
+    std::cin >> in;
+    std::cout &lt;&lt; "The base10 number: " &lt;&lt; in.btoi();
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Enter a number in binary(base2) form: 1001110101110
+The base10 number: 5038</div>
+        <h2>3.4 Searching</h2>
+        <p>
+            Searching is one of the most basic tasks computers are used for and
+            searching in a string is one of the most basic tasks one can think of
+            performing using a string type. There are <span id="count">several</span> methods in the string
+            class which provide different searching capabilities to the user.
+        </p>
+        <h3>3.4.1 Counting characters</h3>
+        <p>
+            The first and the most basic method is the 
+            <a href="ref.html#count-char" target="_blank"><span class="mono">count()</span></a>
+            method which counts a given number of characters in the string.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    int num{4557841};
+    string num_str{bstring(num)};
+    
+    std::cout &lt;&lt; "Hammingweight: " &lt;&lt; num_str.count('1') &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Hammingweight: 8</div>
+        <p id="contains">
+            Hammingweight of a binary string is just the number of bits which are set to '1'
+            which we can get using the 
+            <a href="ref.html#count-char" target="_blank"><span class="mono">count()</span></a>
+            method.
+        </p>
+        <h3>3.4.2 Checking for the existence of a query string</h3>
+        <p>
+            There can be various instances where the existence of a query string inside a string
+            needs to be checked.
+            We can check if a query string <span class="mono"><em>q</em></span> appears in the
+            string or not using the 
+            <a href="ref.html#contains" target="_blank"><span class="mono">contains()</span></a>
+            method as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text;
+
+    std::cout &lt;&lt; "Who are you? ";
+    std::cin >> text;
+
+    if (text.contains("guy"))
+        std::cout &lt;&lt; "I know you\n";
+    else
+	std::cout &lt;&lt; "I dont't know you\n";
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Who are you? I'm just a guy
+I know you</div>
+        <p>
+            The 
+            <a href="ref.html#contains" target="_blank"><span class="mono">contains()</span></a>
+            method can take a <span class="mono"><em>const char*</em></span>
+            or a <span class="mono"><em>string</em></span> as an argument. In the
+            example above we have used a <span class="mono"><em>const char*</em></span>.
+            The 
+            <a href="ref.html#contains" target="_blank"><span class="mono">contains()</span></a>
+            method performs <em>case-sensitive</em> string matching which means that
+            the strings "Guy" and "guy" are different. Not only the characters but even
+            the cases should match.
+        </p>
+        <p>
+            If we need to perform a <em>case-insensitive</em> search for the query string
+            <span class="mono"><em>q</em></span> then we can use the 
+            <a href="ref.html#containsi" target="_blank"><span class="mono">containsi()</span></a>
+            method which performs <em>case-insensitive</em> matching. The below example
+            demonstrates the use of the
+            <a href="ref.html#containsi" target="_blank"><span class="mono">containsi()</span></a>
+            method:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text;
+
+    std::cout &lt;&lt; "Who are you? ";
+    std::cin >> text;
+
+    if (text.containsi("guy"))
+        std::cout &lt;&lt; "I know you\n";
+    else
+	std::cout &lt;&lt; "I dont't know you\n";
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Who are you? I AM JUST A GUY
+I know you</div>
+        <p id="count-str">
+            As we can see above, case does not matter when using 
+            <a href="ref.html#containsi" target="_blank"><span class="mono">containsi()</span></a>.
+        </p>
+        <h3>3.4.2 Counting the number of occurrences of query string</h3>
+        <p>
+            The number of times a query string <span class="mono"><em>q</em></span>
+            occurs in a string can be counted using the 
+            <a href="ref.html#count-str" target="_blank"><span class="mono">count()</span></a>
+            method. This is different from the 
+            <a href="ref.html#count-char" target="_blank"><span class="mono">count()</span></a>
+            method we discussed earlier. The 
+            <a href="ref.html#count-str" target="_blank"><span class="mono">count()</span></a>
+            method discussed here takes a <span class="mono"><em>string</em></span>
+            or a <span class="mono"><em>const char*</em></span> as an argument and returns the
+            number of times the query string <span class="mono"><em>q</em></span>
+            occurs in the string.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string numbers{
+        R"(
+            011-24574548,
+            011-64801203,
+            022-22548741,
+            022-33154739,
+            022-22548793,
+            022-55142169,
+            011-45198213,
+            011-51113486,
+            022-66485213
+        )"
+    };
+    std::cout &lt;&lt; "Number of Delhi telephone numbers: " &lt;&lt; numbers.count("011") &lt;&lt; '\n';
+    std::cout &lt;&lt; "Number of Mumbai telephone numbers: " &lt;&lt; numbers.count("022") &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">Number of Delhi telephone numbers: 4 
+Number of Mumbai telephone numbers: 5</div>
+        <p>
+            The 
+            <a href="ref.html#count-str" target="_blank"><span class="mono">count()</span></a>
+            method performs <em>case-sensitive</em> string matching which means that not only
+            the characters but even the cases should match.
+            If <em id="search">case-insensitive</em> matching is required then the 
+            <a href="ref.html#count-stri" target="_blank"><span class="mono">counti()</span></a>
+            method can be used instead.
+        </p>
+        <h3>3.4.4 Position of first occurrence of query string</h3>
+        <p>
+            The index of the first match may be required in some cases such as if some text
+            contains a marker after which the read must start. In such cases the
+            <a href="ref.html#search" target="_blank"><span class="mono">search()</span></a>
+            method can be used which returns the index of the first match of the query
+            string <span class="mono"><em>q</em></span> in the string. The query string
+            <span class="mono"><em>q</em></span> can either be of <span class="mono"><em>string</em></span>
+            type or <span class="mono"><em>const char*</em></span> type.
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string log{
+        R"(
+            Date: 24/07/2023
+            Time: 0949hrs
+            Author: Admin
+            --/--
+            This is a log which contains some important information.
+        )"
+    };
+
+    string date{"Date: "}, delim{"--/--"};
+    auto date_pos = log.search(date);
+    auto con_pos = log.search(delim);
+    
+    std::cout &lt;&lt; log.from_pos(date_pos + date.size(), 10) &lt;&lt; '\n';
+    std::cout &lt;&lt; "Log contents: " &lt;&lt; log.from_pos(con_pos + delim.size()).strip() &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+        <p>Will generate the following output:</p>
+        <div class="code-block output">24/07/2023
+Log contents: This is a log which contains some important information.</div>
+        <p>
+            Here we first find the starting indices of "Date: " and "--/--" and then take
+            substrings using the  
+            <a href="ref.html#from-pos" target="_blank"><span class="mono">from_pos()</span></a>
+            method.
+        </p>
+        <p id="search-all">
+            The 
+            <a href="ref.html#search" target="_blank"><span class="mono">search()</span></a>
+            method performs <em>case-sensitive</em> searching. If we need to perform a
+            case-insensitive search then the 
+            <a href="ref.html#searchi" target="_blank"><span class="mono">searchi()</span></a>
+            method should be used instead.
+        </p>
+        <h3>3.4.5 List of all occurrences of query string</h3>
+        <p>
+            A list of all the positions where the query string <span class="mono"><em>q</em></span>
+            occurs in the string can be obtained using the 
+            <a href="ref.html#search_all" target="_blank"><span class="mono">search_all()</span></a>
+            method of the string class. The query string <span class="mono"><em>q</em></span>
+            can be a <span id="file-io" class="mono"><em>string</em></span> object or a 
+            <span class="mono"><em>const char*</em></span>.
+        </p>
+
+        <h2>3.5 File I/O</h2>
+        <p>
+            File input/output is a crucial part of most programs since the programs
+            once closed do not retain any information about the current run which may
+            be required. The string class contains definitions of the 
+            <a href="ref.html#stream-insertion" target="_blank"><span class="mono">stream insertion(&lt;&lt;)</span></a>
+            and
+            <a href="ref.html#stream-extraction" target="_blank"><span class="mono">stream extraction(&gt;&gt;)</span></a>
+            operators which allow the user to insert the contents of a string into a
+            <a id="istream" href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><span class="mono"><em>std::ofstream</em></span></a> (file
+            output stream), and extract the contents of a 
+            <a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank"><span class="mono"><em>std::ifstream</em></span></a> (file
+            input stream) and put it into a string object.
+        </p>
+        <h3>3.5.1 Reading from an input stream</h3>
+        <p>
+            The stream extraction operator enables us to extract/read the contents
+            of an input stream be it the standard input (keyboard) or a
+            file input stream
+            (<a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank"><span class="mono"><em>std::ifstream</em></span></a>)
+            to a string object. In the first case i.e.,
+            when inserting the contents of the standard input (keyboard)
+            to a string object, the contents can be pushed directly into
+            the string object using the <span class="mono">'>>'</span> operator as follows:
+        </p>
+<div class="code-block">string input;
+std::cout &lt;&lt; "Enter text: ";
+std::cin >> input;</div>
+        <p>
+            Similarly, if a file is linked to an
+            <a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank"><span class="mono"><em>std::ifstream</em></span></a>
+            then the contents of the file can be read using the same 
+            <a href="ref.html#stream-extraction" target="_blank"><span class="mono">stream extraction(&gt;&gt;)</span></a>
+            operator using the same syntax as above. Let's take a look:
+        </p>
+<div class="code-block">string file_text;
+
+<span class="comment">// Linking a file to an input stream</span>
+std::ifstream file("myfile.txt");
+
+<span class="comment">// Reading the contents of the stream into the string</span>
+file >> file_text;
+file.close()</div>
+        <p>
+            Using the 
+            <a href="ref.html#stream-extraction" target="_blank"><span class="mono">stream extraction(&gt;&gt;)</span></a>
+            operator <span id="getline">like</span> this reads the contents of the entire file in one go.
+        </p>
+        <h3>3.5.2 Reading contents one line at a time</h3>
+        <p>
+            As we have mentioned above the 
+            <a href="ref.html#stream-extraction" target="_blank"><span class="mono">stream extraction(&gt;&gt;)</span></a>
+            operator reads the contents of the entire file in one go. If however, we want line by line
+            processing, we can use the 
+            <a href="ref.html#getline" target="_blank"><span class="mono">getline()</span></a> function.
+            It takes a reference to an
+            <a href="https://en.cppreference.com/w/cpp/io/basic_istream" target="_blank"><span class="mono"><em>std::istream</em></span></a>
+            object and a <span class="mono"><em>string</em></span> object as parameters. It reads the contents
+            of the 
+            <a href="https://en.cppreference.com/w/cpp/io/basic_istream" target="_blank"><span class="mono"><em>std::istream</em></span></a>
+            object till it encounters a newline character and stores the line in the string object.
+            It can be used as follows:
+        </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    std::ifstream file("file.txt");
+    string line;
+
+    while (getline(file, line)){
+        ...
+        <span class="comment">// Do something</span>
+        ...
+    }
+
+    file.close();
+    return 0;
+}</div>
+        <p>
+            The 
+            <a href="ref.html#getline" target="_blank"><span class="mono">getline()</span></a> function
+            returns true if it has succesfully read a single line and false otherwise.
+        </p>
+        <h3>3.5.3 Writing to an output stream</h3>
+        <p>
+            The stream insertion operator enables us to insert the contents
+            of the string object to an output stream, be it the standard
+            output (display)
+            or a file output stream of type
+            <a href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><span class="mono"><em>std::ofstream</em></span></a>.
+            In the first case i.e.,
+            when printing a string object on the display the object can
+            directly be pushed into the standard output stream using the 
+            <a href="ref.html#stream-insertion" target="_blank"><span class="mono">stream insertion(&lt;&lt;)</span></a>
+            operator as follows:
+        </p>
+        <div class="code-block">string str{"XXYYXXYXYX"};
+std::cout &lt;&lt; str;</div>
+        <p>
+            Similarly, if a file is linked to an 
+            <a href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><span class="mono"><em>std::ofstream</em></span></a>
+            then the contents of the string can be written into the file using the same 
+            <a href="ref.html#stream-insertion" target="_blank"><span class="mono">stream insertion(&lt;&lt;)</span></a>
+            operator as follows:
+        </p>
+        <div class="code-block">string text{"write this text to a file"};
+
+<span class="comment">// Linking the file to an output stream</span>
+std::ofstream file("myfile.txt");
+
+<span class="comment">// Writing the contents of the string to the stream</span>
+file &lt;&lt; text;
+file.close();</div>
+        <p>
+            Using the <span class="mono">&lt;&lt; and &gt;&gt; operators</span> makes the File I/O operations
+            in <span class="mono">C++</span> more intuitive. Just follow the direction of the arrows
+            and you'll get the direction of the data flow.
+        </p>
+    </div>
+    <div id="nav-bar">
+        <a href="../manual.html">Introduction</a>
+        <ul>
+            <li>
+                <a href="1.html">
+                    1. Getting Started
+                </a>
+                <ul>
+                    <li>
+                        <a href="1.html#declaring-an-empty-string">
+                            1.1 Declaring a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#printing-a-string">
+                            1.2 Printing a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#initializing-a-string">1.3 Initializing a string</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#default-character">
+                                    1.3.1 Initializing using a default character
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#string-literal">
+                                    1.3.2 Initializing using a C-string literal
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#std-string">
+                                    1.3.3 Initializing using an std::string
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#copy-construct">
+                                    1.3.4 Initializing using another string object
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#move-construct">
+                                    1.3.5 Initializing by moving an existing string to the new string
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#concatenating-strings">1.4 Concatenating strings</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#concatenating-two-strings">
+                                    1.4.1 Concatenating two string objects</a>
+                            </li>
+                            <li>
+                                <a href="1.html#cstring-concat">
+                                    1.4.2 Concatenating a string object and a C-string</a>
+                            </li>
+                            <li>
+                                <a href="1.html#chaining-concat">
+                                    1.4.3 Chaining the + operator
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#compound-assignment">
+                                    1.4.4 Compound assignment operator
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#comparing-strings">1.5 Comparing strings</a>
+                        <ul>
+                            <li><a href="1.html#comp-strings">1.5.1 Comparing two string objects for equality</a></li>
+                            <li><a href="1.html#comp-cstring">1.5.2 Equality comparison between string objects and C-strings</a></li>
+                            <li><a href="1.html#comp-case">1.5.3 Case insensitive comparison</a></li>
+                            <li><a href="1.html#comp-others">1.5.4 Other comparison operators</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#basic-manipulation">1.6 Basic string manipulation</a>
+                        <ul>
+                            <li><a href="1.html#case-manip">1.6.1 Changing the letter casing</a></li>
+                            <li><a href="1.html#reverse-manip">1.6.2 Reversing</a></li>
+                            <li><a href="1.html#collapse-manip">1.6.3 Collapsing whitespace</a></li>
+                            <li><a href="1.html#replace-manip">1.6.4 Replacing characters</a></li>
+                            <li><a href="1.html#strip-manip">1.6.5 Trimming the string</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="2.html">
+                    2. The string class
+                </a>
+                <ul>
+                    <li>
+                        <a href="2.html#member-types">
+                            2.1 Member types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#member-functions">
+                            2.2 Member functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#operators">
+                            2.3 Operators
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#friend-functions">
+                            2.4 Friend functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#others">
+                            2.5 Others
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="3.html">3. Deep dive</a>
+                <ul>
+                    <li><a href="3.html#extracting-substrings">3.1 Extracting substrings</a>
+                        <ul>
+                            <li><a href="3.html#slicing">3.1.1 Slicing</a></li>
+                            <li><a href="3.html#paranths-operator">3.1.2 Using the ( ) operator</a></li>
+                            <li><a href="3.html#fw-word">3.1.3 First word/Last word</a></li>
+                            <li><a href="3.html#from-pos">3.1.4 Extracting from a position</a></li>
+                            <li><a href="3.html#nlast">3.1.5 Getting n last characters</a></li>
+                            <li><a href="3.html#split">3.1.6 Split</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#iter-and-mod">3.2 Iteration and modification</a>
+                        <ul>
+                            <li><a href="3.html#iterators">3.2.1 Iterators</a></li>
+                            <li><a href="3.html#const-iterators">3.2.2 const iterators</a></li>
+                            <li><a href="3.html#reverse-iterators">3.2.3 Reverse iterators</a></li>
+                            <li><a href="3.html#const-reverse-iterators">3.2.4 const reverse iterators</a></li>
+                            <li><a href="3.html#modify-method">3.2.5 The modify method</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#numeric-operations">3.3 Numeric operations</a>
+                        <ul>
+                            <li><a href="3.html#stoi">3.3.1 String to integer</a></li>
+                            <li><a href="3.html#to-string">3.3.2 Integral values to strings</a></li>
+                            <li><a href="3.html#bstring">3.3.3 b-string from a number</a></li>
+                            <li><a href="3.html#btoi">3.3.4 Number from a b-string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#searching">3.4 Searching</a>
+                        <ul>
+                            <li><a href="3.html#count">3.4.1 Counting characters</a></li>
+                            <li><a href="3.html#contains">3.4.2 Checking for the existence of a query string</a></li>
+                            <li><a href="3.html#count-str">3.4.3 Counting the number of occurrences of query string</a></li>
+                            <li><a href="3.html#search">3.4.4 Position of first occurrence of query string</a></li>
+                            <li><a href="3.html#search-all">3.4.5 List of all occurrences of query string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#file-io">3.5 File I/O</a>
+                        <ul>
+                            <li><a href="3.html#istream">3.5.1 Reading from an input stream</a></li>
+                            <li><a href="3.html#getline">3.5.2 Reading contents one line at a time</a></li>
+                            <li><a href="3.html#ostream">3.5.3 Writing to an output stream</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <a href="ref.html" target="_blank"><b>The complete reference</b></a>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="../static/script.js"></script>
+</body>
+</html>

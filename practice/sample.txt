@@ -1,0 +1,8 @@
+Just as order relations are grounded in ordered sets, sets closed under
+pairwise supremum and infimum, equivalence relations are grounded in
+partitioned sets, which are sets closed under bijections that preserve
+partition structure. Since all such bijections map an equivalence class
+onto itself, such bijections are also known as permutations. Hence
+permutation groups (also known as transformation groups) and the related
+notion of orbit shed light on the mathematical structure of equivalence
+relations.

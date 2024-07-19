@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The string class</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="main-title">
+        <div class="side-button">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h1>String Docs</h1>
+    </div>
+    <div class="main-content">
+        <h1>2. The string class</h1>
+        <p>
+            The structure of the string class is described as follows.
+        </p>
+        <h2 id="member-types">
+            2.1 Member types
+            <a target="_blank" href="#member-types" class="header-link">¶</a>
+        </h2>
+        <p>
+            These are some type definitions which are used in the context
+            of the string class.
+        </p>
+        <table class="def">
+            <thead>
+                <tr>
+                    <th>Member type</th>
+                    <th>Definition</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>string::value_type</td>
+                    <td>char</td>
+                </tr>
+                <tr>
+                    <td id="string-iterator"><a href="ref.html#string-iterator" target="_blank">string::iterator</a></td>
+                    <td>char*</td>
+                </tr>
+                <tr>
+                    <td id="string-const-iterator"><a href="ref.html#string-const-iterator" target="_blank">string::const_iterator</a></td>
+                    <td>const char*</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#string-reverse-iterator" target="_blank">string::reverse_iterator</a></td>
+                    <td>__reverse_iterator&lt;iterator, value_type&gt;</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#string-const-reverse-iterator" target="_blank">string::const_reverse_iterator</a></td>
+                    <td>__const_reverse_iterator&lt;const_iterator, value_type&gt;</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#list-type" target="_blank">index_list</a></td>
+                    <td>List&lt;size_t&gt;</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#list-type" target="_blank">string_list</a></td>
+                    <td>List&lt;string&gt;</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 id="member-functions">
+            2.2 Member functions
+            <a target="_blank" href="#member-functions" class="header-link">¶</a>
+        </h2>
+        <table class="def border-table">
+            <thead>
+                <tr>
+                    <th>Member function</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        Constructor
+                        <ul>
+                            <li><a target="_blank" href="ref.html#default-constructor">string()</a></li>
+                            <li><a target="_blank" href="ref.html#fill-constructor">string(char, size_t)</a></li>
+                            <li><a target="_blank" href="ref.html#cstring-constructor">string(const char*)</a></li>
+                            <li><a target="_blank" href="ref.html#stdstring-constructor">string(const std::string&)</a></li>
+                            <li><a target="_blank" href="ref.html#copy-constructor">string(const string&)</a></li>
+                            <li><a target="_blank" href="ref.html#move-constructor">string(string&&)</a></li>
+                        </ul>
+                    </td>
+                    <td>
+                        Creates the string object
+                    </td>
+                </tr>
+                <tr>
+                    <td>Destructor</td>
+                    <td>Destroys the string object</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#string-size">size_t size()</a></td>
+                    <td>Returns the current size of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#c-str">const char* c_str()</a></td>
+                    <td>Returns a const char* which can be used as a C-string wherever required</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#is-empty">bool is_empty()</a></td>
+                    <td>Check whether the string is empty</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#is-alpha">bool is_alpha()</a></td>
+                    <td>Check whether the string contains only alphabetical characters</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#is-numeric">bool is_numeric()</a></td>
+                    <td>Check whether the string contains only numeric characters</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#is-alnum">bool is_alnum()</a></td>
+                    <td>Check whether the string contains only alphanumeric characters</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#first-word">string first_word()</a></td>
+                    <td>Get the first word of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#last-word">string last_word()</a></td>
+                    <td>Get the last word of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#get-lower">string get_lower()</a></td>
+                    <td>Generate a string with all lowercase characters</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#get-upper">string get_upper()</a></td>
+                    <td>Generate a string with all uppercase characters</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#to-lower">string& to_lower()</a></td>
+                    <td>Convert all characters to lowercase</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#to-upper">string& to_upper()</a></td>
+                    <td>Convert all characters to uppercase</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#capitalize">string& capitalize()</a></td>
+                    <td>Capitalize the first character of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#title">string& title()</a></td>
+                    <td>Make the string title-cased</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#titled">string titled()</a></td>
+                    <td>Return a title-cased string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#collapse">string& collapse()</a></td>
+                    <td>Collapse blocks of whitespace in the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#collapsed">string collapsed()</a></td>
+                    <td>Return a string with blocks of whitespace collapsed</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#bstring">string bstring(int width)</a></td>
+                    <td>
+                        Generate a string containing the binary representation
+                        of the number in the string
+                    </td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#reverse">string& reverse()</a></td>
+                    <td>Reverse the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#reversed">string reversed()</a></td>
+                    <td>Generate a string which is the reverse of the current string</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#similar">bool similar(const string& str)</a><br><br>
+                        <a target="_blank" href="ref.html#similar">bool similar(const char* str)</a>
+                    </td>
+                    <td>Perform case insensitive comparison with str</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#count-char">size_t count(char ch)</a></td>
+                    <td>Count the number of occurrences of ch in the string</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#count-str">size_t count(const string& pattern)</a><br><br>
+                        <a target="_blank" href="ref.html#count-str">size_t count(const char* pattern)</a>
+                    </td>
+                    <td>Count the number of times the pattern string occurs in the string</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#count-stri">size_t counti(const string& pattern)</a><br><br>
+                        <a target="_blank" href="ref.html#count-stri">size_t counti(const char* pattern)</a>
+                    </td>
+                    <td>Same as count but case insensitive</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#contains">bool contains(const string& p)</a><br><br>
+                        <a target="_blank" href="ref.html#contains">bool contains(const char* p)</a>
+                    </td>
+                    <td>Check if the pattern p occurs in the string</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#containsi">bool containsi(const string& p)</a><br><br>
+                        <a target="_blank" href="ref.html#containsi">bool containsi(const char* p)</a>
+                    </td>
+                    <td>Same as contains but case-insensitive</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#search">long long search(const string& q)</a><br><br>
+                        <a target="_blank" href="ref.html#search">long long search(const char* q)</a>
+                    </td>
+                    <td>
+                        Search for and return the index of the first occurrence
+                        of q in the string
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#searchi">long long searchi(const string& q)</a><br><br>
+                        <a target="_blank" href="ref.html#searchi">long long searchi(const char* q)</a>
+                    </td>
+                    <td>Same as search but case-insensitive</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#search_all">index_list search_all(const string& q)</a><br><br>
+                        <a target="_blank" href="ref.html#search_all">index_list search_all(const char* q)</a>
+                    </td>
+                    <td>
+                        Search for and return a list of all occurrences of q in
+                        the string
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="" href="ref.html#search_alli">index_list search_alli(const string& q)</a><br><br>
+                        <a target="_blank" href="ref.html#search_alli">index_list search_alli(const char* q)</a>
+                    </td>
+                    <td>
+                        Same as search_all but case-insensitive
+                    </td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#replace">string& replace(char to_replace, char replacement_char)</a></td>
+                    <td>Replace all occurrences of to_replace with replacement_char</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#fill">string& fill(char fill_char)</a></td>
+                    <td>Fill and overwrite the string with the character fill_char</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#slice">string slice(size_t end)</a><br><br>
+                        <a target="_blank" href="ref.html#slice">string slice(size_t start, size_t end)</a>
+                    </td>
+                    <td>Return slices of the string</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#from-pos">string from_pos(size_t pos)</a><br><br>
+                        <a target="_blank" href="ref.html#from-pos">string from_pos(size_t pos, size_t count)</a>
+                    </td>
+                    <td>Return a string starting from position pos</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#nlast">string nlast(size_t count)</a></td>
+                    <td>Return a string containing n last characters from the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#lstrip">string& lstrip()</a></td>
+                    <td>Strip off whitespace from the left end of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#rstrip">string& rstrip()</a></td>
+                    <td>Strip off whitespace from the right end of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#strip">string& strip()</a></td>
+                    <td>Strip off whitespace from both ends of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#split">string_list split(char ch = ' ')</a></td>
+                    <td>Split the string at character ch</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#stoi">int stoi()</a></td>
+                    <td>Generate an integer from a numeric string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#stoll">int stoll()</a></td>
+                    <td>Generate a long long integer from a numeric string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#stod" target="_blank">double stod()</a></td>
+                    <td>Generate a double from a numeric string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#stold" target="_blank">long double stold()</a></td>
+                    <td>Generate a long double from a numeric string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#btoi">int btoi()</a></td>
+                    <td>Generate an integer from a binary representation stored in the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#btoll">long long btoll()</a></td>
+                    <td>Generate a long long integer from a binary representation stored in the string</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#modify">
+                                template&lt;typename Modifier, typename Predicate&gt;<br>
+                                string& modify(Modifier mod_fun, Predicate pred)
+                        </a>
+                    </td>
+                    <td>Modify the string using mod_fun function entity</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#set-precision">static void set_precision(int prec)</a></td>
+                    <td>Set the precision flag</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#get-precision">static int get_precision()</a></td>
+                    <td>Get the current precision value</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#begin">iterator begin()</a></td>
+                    <td>Return an iterator pointing to the first character of the string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#end">iterator end()</a></td>
+                    <td>Return an iterator pointing to one character after the last character</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#const-begin">const_iterator begin()</a></td>
+                    <td>Return a const_iterator pointing to the first character of a <em>const</em> string</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#const-end">const_iterator end()</a></td>
+                    <td>Return a const_iterator pointing to one character after the last character of a <em>const</em> string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#cbegin" target="_blank">const_iterator cbegin()</a></td>
+                    <td>Return a const_iterator pointing to the first character of the string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#cend" target="_blank">const_iterator cend()</a></td>
+                    <td>Return a const_iterator pointing to one character after the last character</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#rbegin" target="_blank">reverse_iterator rbegin()</a></td>
+                    <td>Return a reverse_iterator pointing to the last character of the string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#rend" target="_blank">reverse_iterator rend()</a></td>
+                    <td>Return a reverse_iterator pointing to one character before the first character of the string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#const-rbegin" target="_blank">const_reverse_iterator rbegin()</a></td>
+                    <td>Return a const_reverse_iterator pointing to the last character of a <em>const</em> string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#const-rend" target="_blank">const_reverse_iterator rend()</a></td>
+                    <td>Return a reverse_iterator pointing to one character before the first character of a <em>const</em> string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#crbegin" target="_blank">const_reverse_iterator crbegin()</a></td>
+                    <td>Return a const_reverse_iterator pointing to the last character of the string</td>
+                </tr>
+                <tr>
+                    <td><a href="ref.html#crend" target="_blank">const_reverse_iterator crend()</a></td>
+                    <td>Return a const_reverse_iterator pointing to one character before the first character of the string</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 id="operators">
+            2.3 Operators
+            <a target="_blank" href="#operators" class="header-link">¶</a>
+        </h2>
+        <table class="def border-table">
+            <thead>
+                <tr>
+                    <th>Operator</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#paranths-operator">operator()(size_t end)</a><br>
+                        <a target="_blank" href="ref.html#paranths-operator">operator()(size_t start, size_t end)</a>
+                    </td>
+                    <td>Same as the slice member function</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#comparison-operators">Comparison operators: &lt;, &gt;, &lt;=, =&gt;</a>
+                    </td>
+                    <td>
+                        Perform lexicographic comparison between two strings.
+                        Can be used to compare with C-strings as well.
+                    </td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#equality-operator">Equality operator: ==</a></td>
+                    <td>
+                        Tests if two strings are equal (case-sensitive).
+                        Can be used to compare with C-strings as well
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#concatenation-operator">Concatenation operator: +</a>
+                    </td>
+                    <td>
+                        Concatenates two strings and returns a new string.
+                        Can be used to concatenate with C-strings as well.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#compound-concatenation">Compound concatenation operator: +=</a>
+                    </td>
+                    <td>
+                        Shorthand for concatenating another string into the
+                        current string. Can be used with C-style strings as
+                        well.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#assignment">Assignment operator: =</a>
+                    </td>
+                    <td>
+                        Assign a string to another string. A C-string can
+                        also be assigned to a string object.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#string-view">Type cast operator to std::string_view</a>
+                    </td>
+                    <td>Cast the string to a std::string_view type</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#stream-insertion">Stream insertion operator: &lt;&lt;</a>
+                    </td>
+                    <td>
+                        Extract the contents of the input stream and insert it
+                        into the string object
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#stream-extraction">Stream extraction operator: &gt;&gt;</a>
+                    </td>
+                    <td>
+                        Insert the string into the output stream character by
+                        character
+                    </td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#item-access">Item access operator: []</a></td>
+                    <td>Access individual characters of the string by index value</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 id="friend-functions">
+            2.4 Friend functions
+            <a target="_blank" href="#friend-functions" class="header-link">¶</a>
+        </h2>
+        <table class="def border-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#bstring-friend">string bstring(int num)</a><br><br>
+                        <a target="_blank" href="ref.html#bstring-friend">string bstring(long long num)</a><br><br>
+                        <a target="_blank" href="ref.html#bstring-friend">string bstring(int num, int width)</a><br><br>
+                        <a target="_blank" href="ref.html#bstring-friend">string bstring(long long num, int width)</a>
+                    </td>
+                    <td>Generate a string containing the binary representation of num</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#to-string-int">
+                            template&lt;typename T&gt;<br>
+                            requires std::is_integral_v&lt;T&gt;<br>
+                            friend string to_string(U num)
+                        </a>
+                    </td>
+                    <td>Generate a string representation of num</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a target="_blank" href="ref.html#to-string-float">
+                            template&lt;typename T&gt;<br>
+                            requires std::is_floating_point_v&lt;T&gt;<br>
+                            string to_string(T num)<br>
+                        </a>
+                        <a target="_blank" href=""><br>
+                            template&lt;typename T&gt;<br>
+                            requires std::is_floating_point_v&lt;T&gt;<br>
+                            string to_string(T num, unsigned int precision)
+                        </a>
+                    </td>
+                    <td>
+                        Generate a string representation of the floating point
+                        number num
+                    </td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="ref.html#getline">bool getline(std::istream& input, string& str)</a></td>
+                    <td>
+                        Reads a one line of characters from the input stream
+                        into the string object
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 id="others">
+            2.5 Others
+            <a target="_blank" href="#others" class="header-link">¶</a>
+        </h2>
+        <table class="def border-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a target="_blank" href="ref.html#split-global">string::string_list split(const char* str, char ch)</a></td>
+                    <td>
+                        Split the C-string at the character ch and return a list of
+                        strings of the individual pieces.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="nav-bar">
+        <a href="../manual.html">Introduction</a>
+        <ul>
+            <li>
+                <a href="1.html">
+                    1. Getting Started
+                </a>
+                <ul>
+                    <li>
+                        <a href="1.html#declaring-an-empty-string">
+                            1.1 Declaring a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#printing-a-string">
+                            1.2 Printing a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#initializing-a-string">1.3 Initializing a string</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#default-character">
+                                    1.3.1 Initializing using a default character
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#string-literal">
+                                    1.3.2 Initializing using a C-string literal
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#std-string">
+                                    1.3.3 Initializing using an std::string
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#copy-construct">
+                                    1.3.4 Initializing using another string object
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#move-construct">
+                                    1.3.5 Initializing by moving an existing string to the new string
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#concatenating-strings">1.4 Concatenating strings</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#concatenating-two-strings">
+                                    1.4.1 Concatenating two string objects</a>
+                            </li>
+                            <li>
+                                <a href="1.html#cstring-concat">
+                                    1.4.2 Concatenating a string object and a C-string</a>
+                            </li>
+                            <li>
+                                <a href="1.html#chaining-concat">
+                                    1.4.3 Chaining the + operator
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#compound-assignment">
+                                    1.4.4 Compound assignment operator
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#comparing-strings">1.5 Comparing strings</a>
+                        <ul>
+                            <li><a href="1.html#comp-strings">1.5.1 Comparing two string objects for equality</a></li>
+                            <li><a href="1.html#comp-cstring">1.5.2 Equality comparison between string objects and C-strings</a></li>
+                            <li><a href="1.html#comp-case">1.5.3 Case insensitive comparison</a></li>
+                            <li><a href="1.html#comp-others">1.5.4 Other comparison operators</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#basic-manipulation">1.6 Basic string manipulation</a>
+                        <ul>
+                            <li><a href="1.html#case-manip">1.6.1 Changing the letter casing</a></li>
+                            <li><a href="1.html#reverse-manip">1.6.2 Reversing</a></li>
+                            <li><a href="1.html#collapse-manip">1.6.3 Collapsing whitespace</a></li>
+                            <li><a href="1.html#replace-manip">1.6.4 Replacing characters</a></li>
+                            <li><a href="1.html#strip-manip">1.6.5 Trimming the string</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="2.html">
+                    2. The string class
+                </a>
+                <ul>
+                    <li>
+                        <a href="2.html#member-types">
+                            2.1 Member types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#member-functions">
+                            2.2 Member functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#operators">
+                            2.3 Operators
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#friend-functions">
+                            2.4 Friend functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#others">
+                            2.5 Others
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="3.html">3. Deep dive</a>
+                <ul>
+                    <li><a href="3.html#extracting-substrings">3.1 Extracting substrings</a>
+                        <ul>
+                            <li><a href="3.html#slicing">3.1.1 Slicing</a></li>
+                            <li><a href="3.html#paranths-operator">3.1.2 Using the ( ) operator</a></li>
+                            <li><a href="3.html#fw-word">3.1.3 First word/Last word</a></li>
+                            <li><a href="3.html#from-pos">3.1.4 Extracting from a position</a></li>
+                            <li><a href="3.html#nlast">3.1.5 Getting n last characters</a></li>
+                            <li><a href="3.html#split">3.1.6 Split</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#iter-and-mod">3.2 Iteration and modification</a>
+                        <ul>
+                            <li><a href="3.html#iterators">3.2.1 Iterators</a></li>
+                            <li><a href="3.html#const-iterators">3.2.2 const iterators</a></li>
+                            <li><a href="3.html#reverse-iterators">3.2.3 Reverse iterators</a></li>
+                            <li><a href="3.html#const-reverse-iterators">3.2.4 const reverse iterators</a></li>
+                            <li><a href="3.html#modify-method">3.2.5 The modify method</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#numeric-operations">3.3 Numeric operations</a>
+                        <ul>
+                            <li><a href="3.html#stoi">3.3.1 String to integer</a></li>
+                            <li><a href="3.html#to-string">3.3.2 Integral values to strings</a></li>
+                            <li><a href="3.html#bstring">3.3.3 b-string from a number</a></li>
+                            <li><a href="3.html#btoi">3.3.4 Number from a b-string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#searching">3.4 Searching</a>
+                        <ul>
+                            <li><a href="3.html#count">3.4.1 Counting characters</a></li>
+                            <li><a href="3.html#contains">3.4.2 Checking for the existence of a query string</a></li>
+                            <li><a href="3.html#count-str">3.4.3 Counting the number of occurrences of query string</a></li>
+                            <li><a href="3.html#search">3.4.4 Position of first occurrence of query string</a></li>
+                            <li><a href="3.html#search-all">3.4.5 List of all occurrences of query string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#file-io">3.5 File I/O</a>
+                        <ul>
+                            <li><a href="3.html#istream">3.5.1 Reading from an input stream</a></li>
+                            <li><a href="3.html#getline">3.5.2 Reading contents one line at a time</a></li>
+                            <li><a href="3.html#ostream">3.5.3 Writing to an output stream</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <a href="ref.html" target="_blank"><b>The complete reference</b></a>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="../static/script.js"></script>
+</body>
+</html>

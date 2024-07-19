@@ -1,0 +1,2965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <style>
+        @font-face {
+            font-family: 'Latin Modern Math', serif;
+            src: url("../static/lmmath.otf") format("otf");
+        }
+        h3 {
+            font-weight: 700;
+        }
+        p, ul.params {
+            margin-block-start: 10px;
+            margin-block-end: 10px;
+        }
+        ul.params {
+            list-style-type: none;
+        }
+        dl.main>dt::before{
+            content: '-';
+            display: inline-block;
+            margin-right: 0.3em;
+        }
+        dt {
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.95rem;
+        }
+        dt.exception {
+            text-decoration: none;
+            font-style: italic;
+        }
+        dd {
+            margin-inline-end: 40px;
+            margin-block-end: 50px;
+        }
+        ul.overloads {
+            padding-inline: 20px;
+        }
+        ul>li:not(#nav-bar ul>li){
+            margin: 20px 0;
+        }
+        img#indexing {
+            display: block;
+            width: 40%;
+            height: 40px;
+            margin: 0 auto;
+        }
+        dl.small > dt {
+            margin-block-end: 10px;
+        }
+        @media(max-width: 600px) {
+            p, ul.params {
+                margin-block-start: 5px;
+                margin-block-end: 5px;
+            }
+            dd {
+                margin-inline-start: 0;
+                margin-inline-end: 0;
+                margin-block-end: 30px;
+            }
+            dt {
+                font-size: 0.8rem;
+            }
+            img#indexing {
+                height: 27px;
+                width: 75%;
+            }
+            dl.small dt {
+                font: inherit;
+                font-weight: 400;
+            }
+            dl.small dd {
+                margin-block-end: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-title">
+        <div class="side-button">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h1>String Docs</h1>
+    </div>
+    <div class="main-content">
+        <h1 id="default-constructor">
+            Reference
+        </h1>
+
+        <h3 >Constructors:</h3>
+        <dl class="main">
+            <dt>string()</dt>
+            <dd>
+                <p>
+                    This is the default constructor which enables a string
+                    object to be created without supplying any initial values.
+                    The syntax is straighforward:
+                </p>
+                <div class="code-block">string str;</div>
+                <p id="fill-constructor">
+                    This creates an empty string which contains nothing and no
+                    memory is allocated to the string.
+                </p>
+            </dd>
+            <dt>string(char ch, size_t size)</dt>
+            <dd>
+                <p>
+                    Creates a string of the given size and fills it with
+                    character ch.
+                </p>
+                <div class="code-block">string lines{'-', 10};
+std::cout &lt;&lt; lines;</div>
+                <p>The above will generate the following output:</p>
+                <div class="code-block output" id="cstring-constructor">----------</div>
+                <p></p>
+            </dd>
+            <dt>string(const char* str)</dt>
+            <dd>
+                <p >
+                    Creates a string from a const char* (C-string). The size
+                    of the C-string is found out and a string is created with
+                    the same size and the contents of the C-string are copied
+                    into the <span id="stdstring-constructor">string</span> character by character.
+                </p>
+            </dd>
+            <dt>string(const std::string& str)</dt>
+            <dd>
+                <p>
+                    Creates a string from an existing
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><em>std::string</em></a>
+                    object. The c_str() method of the 
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><em>std::string</em></a>
+                    class is used to get the underlying C-string from the 
+                    <a id="copy-constructor" href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><em>std::string</em></a>
+                    and then the C-string is used to create a string object.
+                </p>
+            </dd>
+            <dt>string(const string& src)</dt>
+            <dd>
+                <p>
+                    Copy constructs a string object from an existing string
+                    object. It creates a new string object of the same size as
+                    the string src and then copies the contents of src to the
+                    new <span id="move-constructor">string</span> character by character.
+                </p>
+            </dd>
+            <dt>string(string&& src)</dt>
+            <dd>
+                <p>
+                    Move constructs a string object from an existing String
+                    object. No new memory is allocated in this process as it
+                    is simply a transfer of ownership of the memory allocated
+                    for the existing string from the existing string object
+                    src to the new string object being created.
+                </p>
+            </dd>
+        </dl>
+        <h3 id="string-size">Member functions</h3>
+        &nbsp;
+        <dl class="main">
+            <dt>size_t size() const</dt>
+            <dd>
+                <p>
+                    Returns the current size of the string excluding the null
+                    character. It is equal to the total number of characters
+                    excluding the <span id="c-str">null</span> terminating character that the string
+                    contains.
+                </p>
+            </dd>
+            <dt>const char* c_str() const</dt>
+            <dd>
+                <p>
+                    Returns a const char pointer to the underlying string in the
+                    string object. The string will be null terminated so it can
+                    be used wherever a C-string is required for example while
+                    opening a file the name of the file has to be given as a
+                    C-string. There we can use the c_str() method to pass a
+                    C-string instead of the entire string object to get the job
+                    done.
+                </p>
+                <p>
+                    The same is demonstrated below:
+                </p>
+                <div class="code-block">#include &lt;fstream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string file_name;
+    std::cout &lt;&lt; "Enter the file name: ";
+    std::cin >> file_name;
+
+    <comment>
+    // Using the c_str() method to pass the
+    </comment>
+    std::ifstream file(file_name.c_str());
+
+    if (file)
+        std::cout &lt;&lt; "The file exists\n";
+    else
+        std::cout &lt;&lt; "The file does not exist\n";
+    file.close();
+    return 0;
+}</div>
+            <p id="is-empty">Using the string object to get input from the user is more convenient than using a C-string.</p>
+            </dd>
+            <p></p>
+            <dt>bool is_empty() const</dt>
+            <dd>
+                <p id="is-alpha">
+                    Used to check whether the string is empty or not. Returns
+                    a boolean value indicating the same.
+                </p>
+            </dd>
+            <dt>bool is_alpha() const</dt>
+            <dd>
+                <p >
+                    Checks whether the string is made up of only alphabetic
+                    characters i.e., the characters 'a-z' and 'A-Z'. Will
+                    always return <span id="is-numeric">false</span> if the string is empty.
+                </p>
+            </dd>
+            <dt>bool is_numeric() const</dt>
+            <dd>
+                <p>
+                    Checks whether the string is made up of only numeric
+                    characters i.e., the characters '0-9'. Will always return
+                    <span id="is-alnum">false</span> if the string is empty.
+                </p>
+            </dd>
+            <dt>bool is_alnum() const</dt>
+            <dd>
+                <p >
+                    Checks whether the string is made up of only alphanumeric
+                    characters i.e., the characters 'a-z', 'A-Z' and '0-9'.
+                    Will always return <span id="first-word">false</span> if the string is empty.
+                </p>
+            </dd>
+            <dt>string first_word() const</dt>
+            <dd>
+                <p>
+                    Returns a new string containing only the first word from the
+                    current string. Will return an empty string if the string is
+                    empty or if the string contains only whitespace characters.
+                    Any whitespaces at the beginning of the string will be
+                    ignored and the first word after all the whitespace is
+                    returned.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string full_name;
+    std::cout &lt;&lt; "Enter your full name: ";
+    std::cin >> full_name;
+    std::cout &lt;&lt; "First name: " &lt;&lt; full_name.first_word() &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">Enter your full name: Steve Rogers
+First name: Steve</div>
+                <p id="last-word">The string is not modified as a new string object is created and returned.</p>
+            </dd>
+            <dt>string last_word() const</dt>
+            <dd>
+                <p>
+                    Returns a new string containing only the last word from the
+                    current string. Will return an empty string if the string is
+                    empty or if the string contains only whitespace characters.
+                    Any whitespaces at the end of the string will be ignored
+                    and the first word beyond all the whitespace is returned.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string full_name;
+    std::cout &lt;&lt; "Enter your full name: ";
+    std::cin >> full_name;
+    std::cout &lt;&lt; "Last name: " &lt;&lt; full_name.last_word() &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">Enter your full name: Steve Rogers
+Last name: Rogers</div>
+                <p id="get-lower">The string is not modified as a new string object is created and returned.</p>
+            </dd>
+            <dt>string get_lower() const</dt>
+            <dd>
+                <p>
+                    This method generates and returns a new string from the
+                    existing string containing the same characters but all
+                    alphabetical characters are converted to lowercase. The
+                    original string is unchanged and non-alphabetical
+                    characters are left alone.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string all_caps{"WHY ARE YOU SHOUTING?!"};
+    std::cout &lt;&lt; all_caps.get_lower() &lt;&lt; '\n';
+
+    <comment>// The original string will remain unchanged</comment>
+    std::cout &lt;&lt; all_caps &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div  class="code-block output">why are you shouting?!
+WHY ARE YOU SHOUTING?!</div>
+            <p id="get-upper">
+                The string is not modified as a new string object is created and returned.
+            </p>
+            </dd>
+            <dt>string get_upper() const</dt>
+            <dd>
+                <p>
+                    This method generates and returns a new string from the
+                    existing string containing the same characters but all
+                    alphabetical characters are converted to uppercase. The
+                    original string is unchanged and non-alphabetical
+                    characters are left alone.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string lowercase{"gentle and meek"};
+    std::cout &lt;&lt; lowercase.get_upper() &lt;&lt; '\n';
+
+    <comment>// The original string will remain unchanged</comment>
+    std::cout &lt;&lt; lowercase &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">GENTLE AND MEEK
+gentle and meek</div>
+                <p id="to-lower">The string is not modified as a new string object is created and returned.</p>
+            </dd>
+            <dt>string& to_lower()</dt>
+            <dd>
+                <p>
+                    This method modifies the characters of the existing string
+                    in place and returns a reference to the modified string
+                    object. All the alphabetical characters are converted to
+                    lowercase and other characters remain unchanged.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string all_caps{"WHY ARE YOU SHOUTING?!"};
+    std::cout &lt;&lt; all_caps.to_lower() &lt;&lt; '\n';
+
+    <comment>// The original string will get modified</comment>
+    std::cout &lt;&lt; all_caps &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">why are you shouting?!
+why are you shouting?!</div>
+                <p id="to-upper">The existing string is modified and no new object is created.</p>
+            </dd>
+            <dt>string& to_upper()</dt>
+            <dd>
+                <p>
+                    This method modifies the characters of the existing string
+                    in place and returns a reference to the modified string
+                    object. All the alphabetical characters are converted to
+                    uppercase and other characters remain unchanged.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string lowercase{"gentle and meek"};
+    std::cout &lt;&lt; lowercase.to_upper() &lt;&lt; '\n';
+
+    <comment>// The original string will get modified</comment>
+    std::cout &lt;&lt; lowercase &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">GENTLE AND MEEK
+GENTLE AND MEEK</div>
+                <p  id="capitalize">The existing string is modified and no new object is created.</p>
+            </dd>
+            <dt>string& capitalize()</dt>
+            <dd>
+                <p>
+                    Capitalize the first character of the string if it is an
+                    alphabetic character, do nothing if otherwise. If the
+                    string contains any leading whitespace characters then
+                    they are simply skipped and the first character after all
+                    the whitespace is considered for capitalization. If it is
+                    an alphabet it will be capitalized, if not then the string
+                    will not be modified in any <span id="title">way.</span>
+                </p>
+            </dd>
+            <dt>string& title()</dt>
+            <dd>
+                <p>
+                    Makes the string title-cased which means that the first letter
+                    of every word will be an <em>uppercase</em> letter.
+                    This method modifies the string in place and returns a reference
+                    to the string object.
+                </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string laser{"light amplification by stimulated emission of radiation"};
+
+    std::cout &lt;&lt; laser.title() &lt;&lt; '\n';
+    std::cout &lt;&lt; laser &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Light Amplification By Stimulated Emission Of Radiation
+Light Amplification By Stimulated Emission Of Radiation</div>
+                <p id="titled">
+                    We can see from the output of the above program that the string
+                    has been modified.
+                </p>
+            </dd>
+            <dt>string titled() const</dt>
+            <dd>
+                <p>
+                    Creates and returns a title cased version of the string object.
+                    The first letter of every word will be an <em>uppercase</em>
+                    letter. This method does not modify the string.
+                </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string laser{"light amplification by stimulated emission of radiation"};
+
+    std::cout &lt;&lt; laser.titled() &lt;&lt; '\n';
+    std::cout &lt;&lt; laser &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Light Amplification By Stimulated Emission Of Radiation
+light amplification by stimulated emission of radiation</div>
+                <p id="collapse">
+                    We can see from the output of the above program that the string
+                    has not been modified.
+                </p>
+            </dd>
+            <dt>string& collapse()</dt>
+            <dd>
+                <p>
+                    This method collapses all the contiguous whitespaces in the string
+                    to single space (' ') characters. Wherever contiguous blocks of
+                    whitespaces occur in the string, they are collapsed and reduced
+                    to a single space
+                    character (' '). This method modifies the string and returns a reference
+                    to the string object.
+                </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text{
+        R"(     This   is   some   
+        text  with   random    
+        spacing  and     i    
+        don't      know      
+        why        )"
+    };
+
+    std::cout &lt;&lt; "--" &lt;&lt; text.collapse() &lt;&lt; "--\n";
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">--This is some text with random spacing and i don't know why--
+This is some text with random spacing and i don't know why</div>
+                <p id="collapsed">
+                    As we can see from the output above the string has been modified.
+                </p>
+            </dd>
+            <dt>string collapsed() const</dt>
+            <dd>
+                <p>
+                    This method creates and returns a string in which all the contiguous
+                    whitespace is collapsed into single space characters (' '). Wherever
+                    contiguous bocks of whitespace occur in the string, they are collapsed
+                    and reduced to a single space character (' '). This method does not
+                    modify the string.
+                </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string text{
+        R"(     This   is   some   
+        text  with   random    
+        spacing  and     i    
+        don't      know      
+        why        )"
+    };
+
+    std::cout &lt;&lt; "--" &lt;&lt; text.collapse() &lt;&lt; "--\n";
+    std::cout &lt;&lt; text &lt;&lt; '\n';
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">--This is some text with random spacing and i don't know why--
+     This   is   some
+                text  with   random
+                spacing  and     i
+                don't      know
+                why</div>
+                <p id="bstring">
+                    As we can see from the output above the string has not been
+                    modified.
+                </p>
+            </dd>
+            <dt>string bstring() const</dt>
+            <dt>string bstring(int width) const</dt>
+            <dd>
+                <p>
+                    Generates and returns a string containing the binary
+                    representation of the number in the string. If whitespaces
+                    exist in the string before or after the number then it
+                    will be ignored and the desired result will be produced.
+                    If however, the string contains any non-numeric characters
+                    after removing the preceding and trailing whitespace then
+                    this method will throw a <a href="#value-error" class="exception">ValueError</a>
+                    exception. A <a href="#value-error" class="exception">ValueError</a>
+                    exception is also thrown when the value of the <span class="mono"><em>width</em></span>
+                    parameter is less than 1. The range of values for which
+                    the correct binary representation can be found is
+                    -2<sup>64</sup> to 2<sup>64</sup> - 1.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>width:</b> Specifies the number of characters
+                            which will be used in the binary representation.
+                            The maximum value it can take is 64 but if a value
+                            is specified which is greater than 64 it is
+                            silently readjusted to 64 and no exception is
+                            thrown. If a value less than 1 is passed to width
+                            then a <a href="#value-error" class="exception">ValueError</a>
+                            exception is thrown. If the <span class="mono"><em>width</em></span>
+                            is not specified then the width of the string is only
+                            the required number of bits which must be used to 
+                            represent the number in the string.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string numeric{"   56  "};
+    <comment>
+    // The number of characters in the binary representation will be 6
+    // which is the minimum bits required to represent 56 in binary</comment>
+    std::cout &lt;&lt; str.bstring() &lt;&lt; '\n';
+    <comment>
+    // The number of characters in the binary representation will now be 8</comment>
+    std::cout &lt;&lt; str.bstring(8) &lt;&lt; '\n';
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">111000
+00111000</div>
+                <p id="reverse">If the width is more than the required number of bits then extra zero
+                    bits are added to the left.
+                </p>
+            </dd>
+            <dt>string& reverse()</dt>
+            <dd>
+                <p>
+                    Reverses and returns a reference to the string. This
+                    method performs a character by character swap of the
+                    characters in the string to reverse it. The <span id="reversed">string</span> gets
+                    modified in the process.
+                </p>
+            </dd>
+            <dt>string reversed() const</dt>
+            <dd>
+                <p id="similar">
+                    Generates a new string which contains the reverse of the
+                    existing string. The existing string is not modified in
+                    the process.
+                </p>
+            </dd>
+            <dt>bool similar(const string& str) const</dt>
+            <dt>bool similar(const char* str) const</dt>
+            <dd>
+                <p>
+                    This method performs case-insensitive comparison
+                    with the string str. The method has two overloads to
+                    make it possible to compare with objects of the string
+                    class as well as with C-strings (const char*).
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>str:</b> The string to compare with. It can
+                            either be of string type or of const char* type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string answer{"Ramanujan"}, response;
+
+    std::cout &lt;&lt; "Who was the man who knew infinity? ";
+    std::cin >> response;
+
+    if (response.similar(answer))
+        std::cout &lt;&lt; "You are correct\n";
+    else
+        std::cout &lt;&lt; "Incorrect answer\n";
+    
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">Who was the man who knew infinity? RAMANUJAN
+You are correct</div>
+                <p>The above can also be implemented as:</p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string response;
+
+    std::cout &lt;&lt; "Who was the man who knew infinity? ";
+    std::cin >> response;
+
+    if (response.similar("Ramanujan"))
+        std::cout &lt;&lt; "You are correct\n";
+    else
+        std::cout &lt;&lt; "Incorrect answer\n";
+    
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">Who was the man who knew infinity? RAMANUJAN
+You are correct</div>
+                <p  id="count-char">It's better to use case-insensitive comparisons when dealing with question answers</p>
+            </dd>
+            <dt>size_t count(char ch) const</dt>
+            <dd>
+                <p>
+                    Counts and returns the number of occurrences of the
+                    character ch in the string.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>ch:</b> The character whose number 
+                            occurrences are to be counted.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string text{R"(
+        Q1. Who created the language C++?
+        Q2. What was C++ originally called?
+        Q3. What is a lambda expression?
+        Q4. Give a brief description of a functor.
+        Q5. What is multiple inheritance?
+        Q6. What is a virtual function?
+    )"};
+
+    std::cout &lt;&lt; "The number of questions in the text is: " &lt;&lt; text.count('Q');
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div id="count-str" class="code-block output">The number of questions in the text is: 6</div>
+                <p></p>
+            </dd>
+            <dt>size_t count(const string& pattern) const</dt>
+            <dt>size_t count(const char* pattern) const</dt>
+            <dd>
+                <p>
+                    Counts and returns the number of occurrences of pattern
+                    in the string. If the string is empty or the pattern
+                    string is empty then a <a href="#value-error" class="exception">ValueError</a>
+                    exception will be thrown with an error message identifying
+                    which among the two was empty.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>pattern:</b> The pattern string whose
+                            occurrences are to be counted. It can either be
+                            of string type or a const char* type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string text{R"(
+        Q1. Who created the language C++?
+        Q2. What was C++ originally called?
+        Q3. What is a lambda expression?
+        Q4. Give a brief description of a functor.
+        Q5. What is multiple inheritance?
+        Q6. What is a virtual function?
+    )"};
+
+    std::cout &lt;&lt; "The number of \"Wh\" questions is: " &lt;&lt; text.count("Wh");
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div id="count-stri" class="code-block output">The number of "Wh" questions is: 5</div>
+                <p></p>
+            </dd>
+            <dt>size_t counti(const string& pattern) const</dt>
+            <dt>size_t counti(const const char* pattern) const</dt>
+            <dd>
+                <p>
+                    Counts and returns the number of occurrences
+                    (case-insensitive) of pattern in the string. If the
+                    string is empty or the pattern string is empty then a
+                    <a href="#value-error" class="exception">ValueError</a> exception
+                    will be thrown with an error message identifying which
+                    among the two was empty.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>pattern:</b> The pattern string whose
+                            occurrences are to be counted case-insensitively.
+                            It can either be of string type or a <span id="contains">const</span> char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+            </dd>
+            <dt>bool contains(const string& pattern) const</dt>
+            <dt>bool contains(const char* pattern) const</dt>
+            <dd>
+                <p>
+                    Checks if the string contains the pattern or not. This
+                    method is case-sensitive. If the string or the pattern
+                    string are empty then it simply returns false and no
+                    exceptions are thrown.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>pattern:</b> The pattern string whose
+                            occurrences are to be counted case-insensitively.
+                            It can either be of string type or a const char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string name, pwd;
+    
+    std::cout &lt;&lt; "Enter your first name: ";
+    std::cin >> name;
+
+    <comment>// To clear whitespaces if any</comment>
+    name.strip();
+
+    std::cout &lt;&lt; "Enter desired password: ";
+    std::cin >> pwd;
+
+    if (pwd.contains(name))
+        std::cout &lt;&lt; "Password must not contain your name\n";
+    else
+        std::cout &lt;&lt; "Password set\n";
+    
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Enter your first name: Barney
+Enter desired password: Barney007
+Password must not contain your name</div>
+                <p id="containsi">If case-insensitive comparison is to be made then
+                    use the <a href="#constainsi"><span class="mono">containsi()</span></a> method.
+                </p>
+            </dd>
+            <dt>bool containsi(const string& pattern) const</dt>
+            <dt>bool containsi(const char* pattern) const</dt>
+            <dd>
+                <p>
+                    Checks if the string contains the pattern or not. This
+                    method is case-insensitive. If the string or the pattern
+                    string are empty then it simply returns false and no
+                    exceptions are thrown.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>pattern:</b> The pattern string whose
+                            occurrences are to be counted case-insensitively.
+                            It can either be of string type or a const char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string name, pwd;
+    
+    std::cout &lt;&lt; "Enter your first name: ";
+    std::cin >> name;
+
+    <comment>// To clear whitespaces if any</comment>
+    name.strip();
+
+    std::cout &lt;&lt; "Enter desired password: ";
+    std::cin >> pwd;
+
+    if (pwd.contains(name))
+        std::cout &lt;&lt; "Password must not contain your name\n";
+    else
+        std::cout &lt;&lt; "Password set\n";
+    
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Enter your first name: Barney
+Enter desired password: barney007
+Password must not contain your name</div>
+                <p id="search">
+                    As we can see in the output containsi returns true even
+                    if the cases do not match
+                </p>
+            </dd>
+            <dt>long long search(const string& query) const</dt>
+            <dt>long long search(const char* query) const</dt>
+            <dd>
+                <p>
+                    Searches for the query string within the string object
+                    and returns the starting index of the match if a match
+                    is found. If no match is found then it returns -1.
+                    If the string is empty or the query string is empty then
+                    a <a href="#value-error" class="exception">ValueError</a> exception is
+                    thrown indicating which is the case.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>query:</b> The query string.
+                            It can either be of string type or a const char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string input{"My name is Zeus"}, q{"name is "};
+    string name = input.from_pos(input.search(q) + q.size());
+
+    std::cout &lt;&lt; "Welcome " &lt;&lt; name;
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div id="searchi" class="code-block output">Welcome Zeus</div>
+                <p></p>
+            </dd>
+            <dt>long long searchi(const string& query) const</dt>
+            <dt>long long searchi(const char* query) const</dt>
+            <dd>
+                <p>
+                    Searches for the query string within the string object
+                    and returns the starting index of the match if a match
+                    is found. The search is performed case-sensitively.
+                    If no match is found then it returns -1.
+                    If the string is empty or the query string is empty then
+                    a <a href="#value-error" class="exception">ValueError</a> exception is
+                    thrown indicating which is the case.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>query:</b> The query string.
+                            It can either be of string type or a const char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string text{
+
+R"(
+Introduction: This article introduces the concept
+of Databases.
+Content: Databases and database systems have become
+an essential part of our everyday life. We encounter
+several activities that involve some interaction with
+a database almost daily. The examples include deposit
+and/or withdrawal from a bank, hotel, airline or
+railway reservation, accessing a computerised library,
+order a magazine subscription from a publisher,
+purchase items from supermarkets. In all the above
+cases a database is accessed.
+)"
+
+    };
+    
+    long long i = text.searchi("content:");
+    for (; i &lt; text.size(); ++i)
+        std::cout &lt;&lt; text[i];
+    
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div  class="code-block output">Content: Databases and database systems have become  
+an essential part of our everyday life. We encounter 
+several activities that involve some interaction with
+a database almost daily. The examples include deposit
+and/or withdrawal from a bank, hotel, airline or     
+railway reservation, accessing a computerised library,
+order a magazine subscription from a publisher,       
+purchase items from supermarkets. In all the above    
+cases a database is accessed.</div>
+                <p id="search_all">A slice of the string with elements from <span class="mono"><em>i</em></span>
+                can be got using <a href="#from-pos"><span class="mono">from_pos()</span></a> </p>
+            </dd>
+            <dt>index_list search_all(const string& query) const</dt>
+            <dt>index_list search_all(const char* query) const</dt>
+            <dd>
+                <p>
+                    Searches for all occurrences of the query string within
+                    the string object and returns a list of indices where each
+                    match is found in the string. The search is performed
+                    case-sensitively.
+                    Returns an empty list of
+                    size 0 if not even a single match is found.
+                    The indices are values of
+                    type size_t (unsigned long or unsigned long long depending
+                    on the machine). The list is of type <a href="">index_list</a>
+                    which can be directly printed on the screen and its elements
+                    can be accessed via the '[]' operator just like regular
+                    arrays.
+                    If the string is empty or the query string is empty then
+                    a <a href="#value-error" class="exception">ValueError</a> exception is
+                    thrown indicating which is the case.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>query:</b> The query string.
+                            It can either be of string type or a const char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string twister = "swan swam in the sea, swim swan swim, swan swam back again, well swam swan";
+
+    std::cout &lt;&lt; "The word \"swan\" occurs at the following indices:\n  ";
+    std::cout &lt;&lt; twister.search_all("swan");
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div id="search_alli" class="code-block output">The word "swan" occurs at the following indices:
+    [0, 27, 38, 70]</div>
+                <p>This method can be used </p>
+            </dd>
+            <dt>index_list search_alli(const string& query) const</dt>
+            <dt>index_list search_alli(const char* query) const</dt>
+            <dd>
+                <p>
+                    Searches for all occurrences of the query string within
+                    the string object and returns a list of indices where each
+                    match is found in the string. The search is performed
+                    case-insensitively.
+                    Returns an empty list of
+                    size 0 if not even a single match is found.
+                    The indices are values of
+                    type size_t (unsigned long or unsigned long long depending
+                    on the machine). The list is of type <a href="">index_list</a>
+                    which can be directly printed on the screen and its elements
+                    can be accessed via the '[]' operator just like regular
+                    arrays.
+                    If the string is empty or the query string is empty then
+                    a <a href="#value-error" class="exception">ValueError</a> exception is
+                    thrown indicating which is the case.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li id="replace">
+                            <b>query:</b> The query string.
+                            It can either be of string type or a const char*
+                            type.
+                        </li>
+                    </ul>
+                </p>
+            </dd>
+            <dt>string& replace(char to_replace, char replacement_char)</dt>
+            <dd>
+                <p>
+                    Replaces each occurrence of the character to_replace in
+                    the string with the character replacement_char and
+                    returns a reference to the string. This method is
+                    case-sensitive.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>to_replace:</b> The character(case-sensitive)
+                            to be replaced in the string.
+                        </li>
+                        <li>
+                            <b>replacement_char:</b> The character with which
+                            to_replace will be replaced.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string file_name;
+    std::cout &lt;&lt; "Enter the name of text file: ";
+    std::cin >> file_name;
+    file_name.replace(' ', '_');
+    std::cout &lt;&lt; "File " &lt;&lt; file_name &lt;&lt; ".txt created\n";
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Enter the name of text file: journal entries
+File journal_entries.txt created</div>
+                <p id="fill"></p>
+            </dd>
+            <dt>string& fill(char ch)</dt>
+            <dd>
+                <p>
+                    Fills an existing string with the character ch overwriting
+                    anything contained in the string. The size of the string
+                    remains intact.
+                </p>
+                <p>
+                    Parameters
+                    <ul class="params">
+                        <li>
+                            <b>ch:</b> The character to fill the string with.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string str{"this is a string"};
+    std::cout &lt;&lt; "str contains: " &lt;&lt; str &lt;&lt; '\n';
+    str.fill('-');
+    std::cout &lt;&lt; "str contains: " &lt;&lt; str &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">str contains: this is a string
+str contains: ----------------</div>
+                <p id="slice"></p>
+            </dd>
+            <dt>string slice(size_t end) const</dt>
+            <dt>string slice(size_t start, size_t end) const</dt>
+            <dd>
+                <p>
+                    These methods are used to get substrings from a string
+                    object. The substrings are identified using the indices.
+                    A new string object is created and returned as a result
+                    of slicing.
+                </p>
+                <p>
+                    When only the end index is specified then the substring
+                    containing all the characters from the beginning of the
+                    string upto but not including the end index is returned.
+                    That is, a new string object containing these characters
+                    is returned.
+                    If the given value of end is 0 then an empty string object
+                    is returned. If the value of end is greater than or equal
+                    to the size of the string then a copy of the string object
+                    is created and returned.
+                </p>
+                <p>
+                    When both the start and the end indices are specified then
+                    the substring containing all the characters starting from
+                    the index start all the way up to but not including the
+                    index end is returned. That is, a new string object
+                    containing these characters is returned. If the start
+                    index is greater than or equal to the end index or if the
+                    start index is greater than or equal to the size of the
+                    string then an <a href="#index-error" class="exception">IndexError</a>
+                    exception is thrown.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>start:</b> Specifies the starting position of
+                            the substring in the existing string. The slice
+                            starts from the start index.
+                        </li>
+                        <li>
+                            <b>end:</b> Specifies the end position of the
+                            substring in the existing string. The end index
+                            is not included in the slice.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string email{"iamthatguy@gmail.com"};
+    auto pos = email.search("@");
+    std::cout &lt;&lt; "Username: " &lt;&lt; email.slice(pos);
+    std::cout &lt;&lt; "\nDomain name: " &lt;&lt; email.slice(pos + 1, email.size());
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div id="from-pos" class="code-block output">Username: iamthatguy
+Domain name: gmail.com</div>
+            </dd>
+            <dt>string from_pos(size_t pos) const</dt>
+            <dt>string from_pos(size_t pos, size_t count) const</dt>
+            <dd>
+                <p>
+                    Creates and returns a new string object containing all the
+                    characters from the existing string from the <span class="mono"><em>pos</em></span>
+                    index. If the <span class="mono"><em>count</em></span> is also specified
+                    then returns a new string containing <span class="mono"><em>count</em></span>
+                    number of characters from the <span class="mono"><em>pos</em></span> index.
+                    This method can be used in place of the  <a href="#slice"><span class="mono">slice()</span></a>
+                    method if
+                    the slicing is to be done in such a way that all or a fixed number of
+                    characters from a certain given index value are required
+                    to be present in the returned substring.
+                    If the value of <span class="mono"><em>pos</em></span> is greater than or equal to the size of
+                    the string then an <a href="#index-error" class="exception">IndexError</a>
+                    exception is thrown. If the value of <span class="mono"><em>count</em></span> is zero
+                    then a <a href="#value-error" class="exception">ValueError</a> exception is thrown.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>pos:</b> The position from where to start
+                            taking the slice.
+                        </li>
+                        <li>
+                            <b>count:</b> The number of characters from <span class="mono"><em>pos</em></span>
+                            to include in the slice.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string email{"iamthatguy@gmail.com"};
+    auto pos = email.search("@");
+    std::cout &lt;&lt; "Username: " &lt;&lt; email.slice(pos);
+    <comment>// Using the more concise from_pos instead of slice</comment>
+    std::cout &lt;&lt; "\nDomain name: " &lt;&lt; email.from_pos(pos + 1);
+    return 0;
+}</div>
+                <p>Will generate the follwing output:</p>
+                <div class="code-block output">Username: iamthatguy
+Domain name: gmail.com</div>
+                <p id="nlast">
+                    As we can see the output is same as the above with a bit
+                    more concise notation.
+                </p>
+            </dd>
+            <dt>string nlast(size_t count) const</dt>
+            <dd>
+                <p>
+                    Creates and returns a new string object containing count
+                    number of characters from the end of the string. If the
+                    value of count exceeds the size of the string then the
+                    entire string is copied into a new string object and
+                    returned. If the value of count is given as zero then an
+                    empty string is returned.
+                    This method can be used instead of the slice
+                    method if the slicing is to be done in such a way which
+                    requires some number of characters from the end of the
+                    string.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li id="lstrip">
+                            <b>count:</b> The number of characters which are
+                            to be included in the slice.
+                        </li>
+                    </ul>
+                </p>
+            </dd>
+            <dt>string& lstrip()</dt>
+            <dd>
+                <p>
+                    Strips off any whitespace characters (' ', '\t', '\f', '\n', '\r', '\v')
+                    from the beginning or the left end of the string and
+                    returns a reference to the modifed string object. This
+                    method modifies the string in place. If there are no
+                    whitespace characters at the left end of the string then
+                    the string is left intact and a reference to itself is
+                    returned. Also, if the string consists of only whitespace
+                    characters then the entire string is reduced to a string
+                    of size 0 or an empty string.
+                </p>
+                <p id="rstrip">
+                    It is important to note here that only the whitespace
+                    characters which are encountered prior to encountering any
+                    non-whitespace character are stripped off.
+                </p>
+            </dd>
+            <dt>string& rstrip()</dt>
+            <dd>
+                <p>
+                    Strips off any whitespace characters (' ', '\t', '\f', '\n', '\r', '\v')
+                    from the end or the right end of the string and
+                    returns a reference to the modifed string object. This
+                    method modifies the string in place. If there are no
+                    whitespace characters at the right end of the string then
+                    the string is left intact and a reference to itself is
+                    returned. Also, if the string consists of only whitespace
+                    characters then the entire string is reduced to a string
+                    of size 0 or an empty string.
+                </p>
+                <p id="strip">
+                    It is important to note here that only the whitespace
+                    characters which are encountered prior to encountering any
+                    non-whitespace character are stripped off.
+                </p>
+            </dd>
+            <dt>string& strip()</dt>
+            <dd>
+                <p>
+                    Strips off any whitespace characters (' ', '\t', '\f', '\n', '\r', '\v')
+                    from both the ends of the string and returns a reference
+                    to the modifed string object. This method can be thought
+                    of as a combination of <a href="#lstrip">lstrip()</a> and
+                    <a href="#rstrip">rstrip()</a> methods however it is
+                    implemented separately and does not simply call the
+                    <a href="#lstrip">lstrip()</a> and <a href="#rstrip">rstrip()</a>
+                    methods to do its job. This method modifies the string in
+                    place. If there are no whitespace characters at both ends
+                    of the string then the string is left intact and a
+                    reference to itself is returned.
+                    Also, if the string consists of only whitespace
+                    characters then the entire string is reduced to a string
+                    of size 0 or an empty string.
+                </p>
+                <p id="split">
+                    It is important to note here that only the whitespace
+                    characters which are encountered prior to encountering any
+                    non-whitespace character are stripped off.
+                </p>
+            </dd>
+            <dt>string_list split(char ch) const</dt>
+            <dd>
+                <p>
+                    Splits the string at each occurrence of the character <em>ch</em>
+                    and returns a list of all the individual components
+                    obtained after splitting the string. The original string
+                    however remains unchanged.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>ch:</b> The character at which the string is
+                            to split.
+                        </li>
+                    </ul>
+                </p>
+                <p>
+                    The above email splitting example can be simplified using
+                    the split method:
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string email{"iamthatguy@gmail.com"};
+    string::string_list comp = email.split('@');
+    std::cout &lt;&lt; "Username: " &lt;&lt; comp[0];
+    std::cout &lt;&lt; "\nDomain name: " &lt;&lt; comp[1];
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Username: iamthatguy
+Domain name: gmail.com</div>
+                <p>A bit more involved example is shown below:</p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string ip{"192.0.2.130"}, mask{"255.255.255.192"};
+
+    <comment>// Splitting the ip address and mask into constituent 8-bit numbers</comment>
+    auto ip_list = ip.split('.');
+    auto m_list = mask.split('.');
+
+    int i = 0;
+
+    std::cout &lt;&lt; "Network prefix: ";
+    for (; i &lt; ip_list.size() - 1; ++i)
+        std::cout &lt;&lt; (ip_list[i].stoi() & m_list[i].stoi()) &lt;&lt; '.';
+    std::cout &lt;&lt; (ip_list[i].stoi() & m_list[i].stoi());
+
+    std::cout &lt;&lt; "\nHost id: ";
+    for (i = 0; i &lt; ip_list.size() - 1; ++i)
+        std::cout &lt;&lt; (ip_list[i].stoi() & (~m_list[i].stoi())) &lt;&lt; '.';
+    std::cout &lt;&lt; (ip_list[i].stoi() & (~m_list[i].stoi()));
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Network prefix: 192.0.2.128
+Host id: 0.0.0.2</div>
+                <p id="stoi">Above can be used in addressing problems with ease.</p>
+            </dd>
+            <dt>int stoi() const</dt>
+            <dd>
+                <p>
+                    This method is used to convert a numeric string to a
+                    corresponding integer value. The string remains unchanged.
+                    Whitespaces at the beginning
+                    of the string are skipped. A sign ('+' or '-') if specified
+                    should occur immediately before the first numeric character,
+                    i.e., "-45" is valid but "-   10" isn't.
+                </p>
+                <p>
+                    Calculation of the number
+                    begins upon encountering the first numeric character
+                    ('0-9') after skipping the whitespace if any and the
+                    sign character ('+', '-'). During
+                    calculation if a non-numeric character is encountered
+                    the process stops and the value is returned. If the string
+                    does not contain any numeric characters then 0 is
+                    returned. This method works for values in the range
+                    -2<sup>32</sup> to 2<sup>32</sup> - 1.
+                </p>
+                <p>
+                    For any number less
+                    than -2<sup>32</sup>, -2<sup>32</sup> is returned and for
+                    any number greater than 2<sup>32</sup> - 1, 2<sup>32</sup> - 1
+                    is returned.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string x{"   45ad12457 "}, y{"-1200"};
+    std::cout &lt;&lt; x.stoi() &lt;&lt; '\n';
+    std::cout &lt;&lt; y.stoi() &lt;&lt; '\n';
+    std::cout &lt;&lt; x.stoi() + y.stoi() &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">45
+-1200
+-1155</div>
+                <p id="stoll">
+                    Observe that for x above the generated integer is only 45
+                    and the rest of the string is ignored.
+                </p>
+            </dd>
+            <dt>long long stoll() const</dt>
+            <dd>
+                <p>
+                    This method is used to convert a numeric string to a
+                    corresponding long long integer value. The string remains
+                    unchanged. Whitespaces at the beginning
+                    of the string are skipped. A sign ('+' or '-') if specified
+                    should occur immediately before the first numeric character,
+                    i.e., "-45" is valid but "-   10" isn't.
+                </p>
+                <p>
+                    Calculation of the number
+                    begins upon encountering the first numeric character
+                    ('0-9') after skipping the whitespace if any and the
+                    sign character ('+', '-'). During
+                    calculation if a non-numeric character is encountered
+                    the process stops and the value is returned. If the string
+                    does not contain any numeric characters then 0 is
+                    returned. This method works for values in the range
+                    -2<sup>64</sup> to 2<sup>64</sup> - 1.
+                </p>
+                <p id="stod">
+                    For any number less
+                    than -2<sup>64</sup>, -2<sup>64</sup> is returned and for
+                    any number greater than 2<sup>64</sup> - 1, 2<sup>64</sup> - 1
+                    is returned.
+                </p>
+            </dd>
+            <dt>double stod() const</dt>
+            <dd>
+                <p>
+                    This method is used to convert a numeric string containing a decimal
+                    point into a double value. The string remains unchanged. Whitespaces
+                    at the beginning of the string are skipped. A sign ('+' or '-') if
+                    specified should occur immediately before the first numeric character,
+                    i.e., "-1.742" is valid but "-   3.328" isn't.
+                </p>
+                <p>
+                    Calculation of the number
+                    begins upon encountering the first numeric character ('0'-'9') after skipping
+                    the whitespace if any and the sign character ('+', '-'). During the
+                    calculation if a non-numeric character other than '.' is encountered
+                    the process stops and the value is returned. If the <span id="stold">string</span> does not contain
+                    any numeric characters in it then 0 is returned.
+                </p>
+            </dd>
+            <dt>long double stold() const</dt>
+            <dd>
+                <p>
+                    This method is used to convert a numeric string containing a decimal
+                    point into a long double value. The string remains unchanged. Whitespaces
+                    at the beginning of the string are skipped. A sign ('+' or '-') if
+                    specified should occur immediately before the first numeric character,
+                    i.e., "-1.742" is valid but "-   3.328" isn't.
+                </p>
+                <p>
+                    Calculation of the number
+                    begins upon encountering the first numeric character ('0'-'9') after skipping
+                    the whitespace if any and the sign character ('+', '-'). During the
+                    calculation if a non-numeric character other than '.' is encountered
+                    the process stops and the value is returned. If the <span id="btoi">string</span> does not contain
+                    any numeric characters in it then 0 is returned.
+                </p>
+            </dd>
+            <dt>int btoi() const</dt>
+            <dd>
+                <p>
+                    This method is used to generate an integer from its binary
+                    representation stored in the string object. The string
+                    remains unchanged during this process. Whitespaces at the
+                    beginning or at the end of the string are skipped and the
+                    read starts from the first character encountered after
+                    skipping all the whitespace. The string should not contain
+                    any characters other than '0' or '1'. If it does then the
+                    method will always return 0. If the binary representation
+                    is of a number less than the minimum value an <em>int</em>
+                    variable can have i.e., -2<sup>32</sup> then the method
+                    returns -2<sup>32</sup> and if the binary representation
+                    is of a number greater than 2<sup>32</sup> - 1 then the
+                    method returns 2<sup>32</sup>.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string in{};
+    std::cout &lt;&lt; "Enter a number in binary(base2) form: ";
+    std::cin >> in;
+    std::cout &lt;&lt; "The base10 number: " &lt;&lt; in.btoi();
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">Enter a number in binary(base2) form: 1001110101110
+The base10 number: 5038</div>
+                <p id="btoll">
+                    This method is the inverse of the <a href="#bstring-friend">bstring()</a>
+                    function since for any integer <span class="mono">i: bstring(i).btoi() = i</span>
+                    and for any binary string b: <span class="mono">bstring(b.btoi(), b.size()) = b</span>
+                </p>
+            </dd>
+            <dt>long long btoll() const</dt>
+            <dd>
+                <p>
+                    This method is used to generate a long long integer from
+                    its binary
+                    representation stored in the string object. The string
+                    remains unchanged during this process. Whitespaces at the
+                    beginning or at the end of the string are skipped and the
+                    read starts from the first character encountered after
+                    skipping all the whitespace. The string should not contain
+                    any characters other than '0' or '1'. If it does then the
+                    method will always return 0.
+                </p>
+                <p id="modify">
+                    If the width of the binary
+                    representation (number of characters in it) exceeds 64 which
+                    is the capacity of long long int then the method returns
+                    2<sup>32</sup> i.e., the maximum value of type long long int
+                    (LLONG_MAX).
+                </p>
+            </dd>
+            <dt>
+                template&lt;typename Modifier, typename Predicate = identity><br>
+                &nbsp;&nbsp;&nbsp;string& modify(Modifier mod_fun = {}, Predicate pred = {})
+            </dt>
+            <dd>
+                <p>
+                    This method is used to modify the string character by
+                    character by executing <span class="mono"><em>mod_fun</em></span> on each character
+                    of the string which satisfies the predicate <span class="mono"><em>pred</em></span>
+                    and storing the return value of <span class="mono"><em>mod_fun</em></span>
+                    back into the character. This automatically imposes a
+                    restriction on <span class="mono"><em>mod_fun</em></span> that it cannot be a
+                    function like entity returning void i.e., it has to return
+                    a value which can be assigned to a character and it also
+                    has to be able to accept a single <span class="mono"><em>char</em></span> value as a
+                    parameter. Most often this will be a function like entity
+                    which has a <span class="mono"><em>char</em></span> value as parameter with return
+                    type <span class="mono"><em>char</em></span>.
+                </p>
+                <p>
+                    The result of this method will be the same as if the
+                    following is executed:
+                </p>
+                <div class="code-block">string str{"some string"};
+
+for (char& ch : str)
+    if (pred(ch))
+        ch = mod_fun(ch);</div>
+                <p>
+                    Template parameters:
+                    <ul class="params">
+                        <li>
+                            <b>Modifier:</b> The type of the function like entity which will be used to 
+                            modify the string (<span class="mono">mod_fun</span>).
+                        </li>
+                        <li>
+                            <b>Predicate [default = tautology]:</b> The type of the function like entity
+                            which will determine which characters of the string get modified.
+                        </li>
+                    </ul>
+                </p>
+                <p>
+                    Method Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>mod_fun [default = {}]:</b> The function like entity to be used
+                            to modify the string. It must be able to accept a <span class="mono"><em>char</em></span>
+                            as a parameter and return the modified value which will be 
+                            put back in the string. The default value of <span class="mono">mod_fun</span>
+                            is an object constructed using the constructor of the type
+                            <span class="mono">Modifier</span> which takes no arguments.
+                            If
+                            <span class="mono">Modifier</span> is a class which has a constructor which
+                            takes no arguments and <span class="mono">Modifier</span> is specified
+                            as a template parameter when calling the <span class="mono">modify</span> method
+                            then the <span class="mono"></span> <span class="mono">mod_fun</span>
+                            parameter is not needed to be specified as it will be constructed upon the
+                            method call using
+                            the constructor of <span class="mono">Modifier</span> which takes no
+                            arguments. If the <span class="mono">Modifer</span> doesn't have such a constructor
+                            or if some parameters are to be specified at the time of construction then
+                            an existing object has to be passed for the parameter
+                            <span class="mono">mod_fun</span>.
+                        </li>
+                        <li>
+                            <b>pred [default = {}]:</b> This function like entity will be used to 
+                            determine which characters of the string to modify. If <span class="mono"><em>pred</em></span> is
+                            left empty then an object of the <span class="mono"><em>tautology</em></span>
+                            class will be created and assigned to <span class="mono"><em>pred</em></span>.
+                            It is be a functor which takes a single <span class="mono"><em>char</em></span>
+                            as an argument and always returns <span class="mono"><em>true</em></span>, so all
+                            the characters will be modified by default.
+                            It must be able to accept a 
+                            <span class="mono"><em>char</em></span> as a parameter and must return a
+                            boolean value. The default value of <span class="mono"><em>pred</em></span>
+                            is an object constructed using the constructor of the type
+                            <span class="mono"><em>Predicate</em></span> which takes no arguments.
+                            If
+                            <span class="mono"><em>Predicate</em></span> is a class which has a constructor which
+                            takes no arguments and <span class="mono"><em>Predicate</em></span> is specified
+                            as a template parameter when calling the <span class="mono"><em>modify</em></span> method
+                            then the <span class="mono"></span> <span class="mono"><em>pred</em></span>
+                            parameter is not needed to be specified as it will be constructed upon the
+                            method call using
+                            the constructor of <span class="mono"><em>Predicate</em></span> which takes no
+                            arguments. If the <span class="mono"><em>Predicate</em></span> doesn't have such a constructor
+                            then an existing object has to be passed for the parameter
+                            <span class="mono"><em>pred</em></span>.
+                        </li>
+                    </ul>
+                </p>
+                <p>
+                    An example using a functor:
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+struct shift{
+    char operator()(char ch){
+        return ch + 3;
+    }
+};
+
+int main(void)
+{
+    string name{"Bruce Banner"};
+
+    <comment>// Passing a functor to the method</comment>
+    std::cout &lt;&lt; name.modify(shift()) &lt;&lt; '\n';
+
+    <comment>// Specifying the functor type as template parameter</comment>
+    std::cout &lt;&lt; name.modify&lt;modify>() &lt;&lt; '\n';
+
+    <comment>// Both the methods produce the same result</comment>
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Euxfh#Edqqhu
+Hx{ik&Hgttkx</div>
+                <p>An example using lambda expressions for modifier and predicate:</p>
+<div class="code-block">#include "arr_string.h"
+
+int main(void)
+{
+    string str{"This is some text"};
+
+    std::cout &lt;&lt; "Before modification: " &lt;&lt; str &lt;&lt; '\n';
+
+    std::cout &lt;&lt; str.modify([](char& ch){
+        return '-';
+    }, [](char& ch){
+        return (ch == ' ');
+    });
+
+    std::cout &lt;&lt; "\nAfter modification: " &lt;&lt; str &lt;&lt; '\n';
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Before modification: This is some text
+
+After modification: This-is-some-text</div>
+                <p>
+                    The predicate which we used returns <span class="mono"><em>true</em></span>
+                    for the space <span class="mono">' '</span> character so only the
+                    space characters in the string get modified.
+                </p>
+                <p id="set-precision">
+                    As is obvious this method is purely for convenience's
+                    sake.
+                </p>
+            </dd>
+            <dt>static void set_precision(int prec)</dt>
+            <dd>
+                <p>
+                    This method is used to set the precision flag which is a
+                    static member of the string class. The precision flag
+                    dictates the number of digits which appear after the
+                    decimal in the string representation of a floating point
+                    number generated using the <em>to_string()</em> method.
+                    The value of precision can only be in the range 1 to 15.
+                    If a value greater than 15 is specified for the precision
+                    then it is rejected and the precision is set to the
+                    maximum possible value it can take i.e., 15. If a value
+                    less than 1 is provided then a 
+                    <a href="#value-error" class="exception">ValueError</a> exception is
+                    thrown.
+                </p>
+                <p id="get-precision">
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>prec:</b> The new precision value
+                        </li>
+                    </ul>
+                </p>
+            </dd>
+            <dt>static int get_precision()</dt>
+            <dd>
+                <p id="begin">
+                    This is a getter which just returns the current value of
+                    the precision flag.
+                </p>
+            </dd>
+            <dt>iterator begin()</dt>
+            <dd>
+                <p id="end">
+                    Returns a <a href="#string-iterator"><span class="mono">string::iterator</span></a>
+                    pointing to the first character of the string.
+                </p>
+            </dd>
+            <dt>iterator end()</dt>
+            <dd>
+                <p id="const-begin">
+                    Returns a <a href="#string-iterator"><span class="mono">string::iterator</span></a>
+                    pointing to one character past the last character of the string.
+                </p>
+            </dd>
+            <dt>const_iterator begin() const</dt>
+            <dd>
+                <p id="const-end">
+                    This method is invoked for <em>const</em> string objects.
+                    It returns a <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    pointing to the first character of the string. A
+                    <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>const_iterator end() const</dt>
+            <dd>
+                <p id="cbegin">
+                    This method is invoked for <em>const</em> string objects.
+                    It returns a <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    pointing to one character past the last character of the string.
+                    A <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>const_iterator cbegin()</dt>
+            <dd>
+                <p id="cend">
+                    Returns a
+                    <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    pointing to the first character of the string. A
+                    <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>const_iterator cend()</dt>
+            <dd>
+                <p id="rbegin">
+                    Returns a
+                    <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    pointing to one character past the last character of the string. A
+                    <a href="#string-const-iterator"><span class="mono">string::const_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>reverse_iterator rbegin()</dt>
+            <dd>
+                <p id="rend">
+                    Returns a
+                    <a href="#string-reverse-iterator"><span class="mono">string::reverse_iterator</span></a>
+                    pointing to the last character of the string.
+                </p>
+            </dd>
+            <dt>reverse_iterator rend()</dt>
+            <dd>
+                <p id="const-rbegin">
+                    Returns a
+                    <a href="#string-reverse-iterator"><span class="mono">string::reverse_iterator</span></a>
+                    pointing to one character before the first character of the string.
+                </p>
+            </dd>
+            <dt>const_reverse_iterator rbegin() const</dt>
+            <dd>
+                <p id="const-rend">
+                    This method is invoked for <em>const</em> string objects.
+                    It returns a
+                    <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    pointing to the last character of the string.
+                    A <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>const_reverse_iterator rend() const</dt>
+            <dd>
+                <p id="crbegin">
+                    This method is invoked for <em>const</em> string objects.
+                    It returns a
+                    <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    pointing to one character before the first character of the string.
+                    A <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>const_reverse_iterator crbegin()</dt>
+            <dd>
+                <p id="crend">
+                    Returns a 
+                    <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    pointing to the last character of the string.
+                    A <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+            <dt>const_reverse_iterator crend()</dt>
+            <dd>
+                <p>
+                    Returns a 
+                    <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    pointing to one character before the first character of the string.
+                    A <a href="#string-const-reverse-iterator"><span class="mono">string::const_reverse_iterator</span></a>
+                    cannot be used to modify the contents of the string.
+                </p>
+            </dd>
+        </dl>
+        
+        <h3 id="paranths-operator">Operators</h3>
+        <dl class="main">
+            <dt>string operator()(size_t end)</dt>
+            <dt>string operator()(size_t start, size_t end)</dt>
+            <dd>
+                <p>
+                    Both the functions work in a similar fashion as the
+                    <a href="#slice">slice()</a> method. In fact when the ()
+                    operator is used on the string object, it calls the
+                    <a href="#slice">slice()</a> method to do its job.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string email{"iamthatguy@gmail.com"};
+    auto pos = email.search("@");
+
+    <comment>// Directly using () instead of slice()</comment>
+    std::cout &lt;&lt; "Username: " &lt;&lt; email(pos);
+    std::cout &lt;&lt; "\nDomain name: " &lt;&lt; email(pos + 1, email.size());
+
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">Username: iamthatguy
+Domain name: gmail.com</div>
+                <p id="comparison-operators">
+                    The ( ) operator is more intuitive to use than the
+                    <a href="#slice">slice()</a> method.
+                </p>
+            </dd>
+            <dt>std::strong_ordering operator&lt;=>(const string& lhs, const string& rhs)</dt>
+            <dt>std::strong_ordering operator&lt;=>(const string& lhs, const char* rhs)</dt>
+            <dd>
+                <p>
+                    Since the string library contains the definition for the
+                    spaceship operator therefore the comparison operations '&lt;',
+                    '&lt;=', '>', '>=' can be performed on two strings or a string
+                    and a const char* (C-string) in any order. The two strings are
+                    compared lexicographically, as they have been compared 
+                    traditionally since C. The method compares the first
+                    character of the two strings and if they are equal, it compares
+                    the second character and so on until either a mismatch is found
+                    or the null character is found for any of the two strings or for
+                    both of them.
+                </p>
+                <p>
+                    If a mismatch is found then if the character of the
+                    left string appears earlier in the alphabetical order then the left
+                    string is said to be <em>less</em> than the right string i.e.,
+                    <span class="mono">lhs &lt; rhs</span> will return true
+                    and
+                    if it appears later in the alphabetical order then the left string
+                    is said to be <em>greater</em> than the right string i.e., 
+                    <span class="mono">lhs > rhs</span> will return true.
+                </p>
+                <p>
+                    If instead of a mismatch a null character is reached in a string
+                    then the lengths of the two strings are compared and whichever
+                    string is the longer one is the one which is <em>greater</em>
+                    and the shorter string is <em>lesser</em>.
+                </p>
+                <p id="equality-operator">
+                    The <em>lesser</em>
+                    string appears before the <em>greater</em> string in the dictionary.
+                    This is what is meant by a <em>lexicographic</em> order.
+                </p>
+            </dd>
+            <dt>bool operator==(const string& lhs, const string& rhs)</dt>
+            <dt>bool operator==(const string& lhs, const char* rhs)</dt>
+            <dd>
+                <p>
+                    The equality operator(==) performs strict equality check
+                    (case-sensitive) on two strings. The strings being compared
+                    can have either the same string type or one can be of string
+                    type and another can be of const char* (C-string).
+                    So the '==' operator can be used to compare string objects
+                    with C-strings as well.
+                    The two strings are compared character by character and the
+                    operator returns true if and only if each and every character
+                    of the left operand matches each and every character of the
+                    right operand. The terminating null character is not included
+                    in the comparison. The comparisons are case-sensitive so
+                    'a' and 'A' are different when <span id="concatenation-operator">performing</span> an equality check
+                    using the '==' operator.
+                </p>
+            </dd>
+            <dt>string operator+(const string& lhs, const string& rhs)</dt>
+            <dt>string operator+(const string& lhs, const char* rhs)</dt>
+            <dt>string operator+(const char* lhs, const string& rhs)</dt>
+            <dd>
+                <p>
+                    The '+' operator is the concatenation operator in the
+                    context of strings. Concatenation is the process of taking
+                    a string and appending it at the end of another string.
+                    The '+' operator does the same with two string objects or
+                    one string object and one const char* (C-string).
+                    A new string with size sufficient to hold the two strings
+                    <em>lhs</em> and <em>rhs</em> is created and the contents
+                    of lhs and rhs are copied in this order. Finally this
+                    new string is returned as the result of concatenation.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string first_name{"Nikola"}, last_name{"Tesla"};
+    std::cout &lt;&lt; "Full name: " &lt;&lt; (first_name + " " + last_name) &lt;&lt; '\n';
+    return 0;
+}</div>
+            <p>Generates the following output:</p>
+            <div class="code-block output">Full name: Nikola Tesla</div>
+            <p id="compound-concatenation">
+                The '+' operator can be chained as above.
+            </p>
+            </dd>
+            <dt>string& operator+=(const string& rhs)</dt>
+            <dt>string& operator+=(const char* rhs)</dt>
+            <dd>
+                <p>
+                    These operators modify the existing string and append
+                    the string <em>rhs</em> at the end of the existing string.
+                    The capacity of the existing string is increased
+                    dynamically to a size sufficient to accomodate the
+                    characters from the string <em>rhs</em> as well. After
+                    the memory has been allocated the contents of the
+                    existing string followed by the contents of <em>rhs</em>
+                    are copied to the newly allocated memory.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    string first{"Matt"}, last{"Murdock"}, full;
+
+    std::cout &lt;&lt; "First name: " &lt;&lt; first &lt;&lt; '\n';
+    std::cout &lt;&lt; "Last name: " &lt;&lt; last &lt;&lt; '\n';
+
+    full += first;
+    full += (" " + last);
+
+    std::cout &lt;&lt; "Full name: " &lt;&lt; full &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">First name: Matt
+Last name: Murdock
+Full name: Matt Murdock</div>
+                <p id="assignment">
+                    The '+=' operator can be combined with the '+' operator
+                    as demonstrated above.
+                </p>
+            </dd>
+            <dt>string& operator=(const string& str)</dt>
+            <dt>string& operator=(const char* str)</dt>
+            <dt>string& operator=(string&& str)</dt>
+            <dd>
+                <p>
+                    The assignment operator can be used to assign an existing
+                    string to another string, a C-string (const char*) to a
+                    string object or move the contents of an existing string
+                    object to another string object. These implementations of
+                    the operator '=' do not dictate the behaviour of the
+                    assignment operator at the time of declaration. When used
+                    at the time of declaration it just invokes the constructor
+                    with the value on the right hand side.
+                    Let's have a look at each
+                    one of the above options one by one:
+                </p>
+                <p>
+                    <ul class="params overloads">
+                        <li>
+                            <b>string& operator=(const string& str):</b> This
+                            assigns an existing string object to another string
+                            object.
+                            <div class="code-block">string lhs{"left"}, rhs{"right"};
+left = right;</div>
+                            The string on the left hand side of the assignment
+                            operator(=) has some data as well
+                            as the string on the right hand side of the assignment
+                            operator(=). The memory allocated to <em>lhs</em> is
+                            deallocated and the data contained in it is lost.
+                            After deallocation a new memory block is allocated for
+                            <em>lhs</em> with a size adequate to hold the contents
+                            of the string <em>rhs</em> and then the contents of
+                            the string <em>rhs</em> are copied to <em>lhs</em>.
+                            Finally a reference to the string itself is returned
+                            which in this case is <em>lhs</em>.
+                        </li>
+                        <li>
+                            <b>string& operator=(const char* str):</b> This assigns
+                            a C-string to an existing string object.
+                            <div class="code-block">string lhs{"left"};
+const char* rhs = "right";
+left = right;</div>
+                            Same as in above the memory allocated to <em>lhs</em> is
+                            deallocated and the data contained in it is lost.
+                            After deallocation a new memory block is allocated for
+                            <em>lhs</em> with a size adequate to hold the contents
+                            of the string <em>rhs</em> and then the contents of
+                            the string <em>rhs</em> are copied to <em>lhs</em>.
+                            Finally a reference to the string itself is returned
+                            which in this case is <em>lhs</em>.
+                        </li>
+                        <li>
+                            <b>string& operator=(string&& str):</b> This moves an
+                            existing string object to another string object.
+                            <div class="code-block">string lhs{"left"}, rhs{"right"};
+left = std::move(right);</div>
+                            Since
+                            the object is moved, no new memory needs to be allocated
+                            however, the memory allocated to lhs is deallocated and
+                            the data it contained is lost. The ownership of memory
+                            resources of the string <em>rhs</em> are shifted to
+                            <em>lhs</em> and <em>rhs</em> no longer has any data. It
+                            is reduced to an empty string containing just the null
+                            character. While the above two operators are copy
+                            assignment operators, this one is the move assignment
+                            operator. While the copy assignment operation leaves
+                            two copies of data at completion, move assignment is
+                            required to leave only one.
+                        </li>
+                    </ul>
+                </p>
+                <p id="string-view">
+                    Just as a reminder remember that the above definition of the
+                    assignment operator holds when not used during initialization.
+                </p>
+            </dd>
+            <dt>operator std::string_view() const</dt>
+            <dd>
+                <p> 
+                    This defines the type casting of a <em>string</em> object to an
+                    object of type
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank">
+                        <em>std::string_view</em>
+                    </a>. Before we proceed
+                    any further let us first understand what a
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank"><em>std::string_view</em></a>
+                    is. The
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank"><em>std::string_view</em></a>
+                    is a read only non-owning
+                    reference to a char sequence. Many a times a string is needed
+                    to be passed to a function and using
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><em>const std::string&</em></a>
+                    has a drawback that it creates a new
+                    object each time if the type of the argument does not match
+                    i.e., if a function has an
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><em>const std::string&</em></a>
+                    as a
+                    parameter and if a <em>const char*</em> is passed as an argument
+                    to that function, a new temporary
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank"><em>const std::string</em></a>
+                    object
+                    will be created in memory and then the function will begin
+                    execution. This leads to unncecessary overheads of allocating
+                    memory and copying the contents when all the function requires
+                    is to read from the string.
+                </p>
+                <p>
+                    To overcome the above drawbacks the
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank"><em>std::string_view</em></a>
+                    type is used. It is a light-weight object which grants read
+                    only access to a sequence of characters. It can be thought
+                    of as a window through which we can view an existing string
+                    but not modify it.
+                </p>
+                <p id="stream-insertion">
+                    A view of the string object can be
+                    returned since this casting operator has been defined in the string
+                    class.
+                </p>
+            </dd>
+            <dt>std::ostream& operator&lt;&lt;(std::ostream& output, const string& str)</dt>
+            <dt>std::ofstream& operator&lt;&lt;(std::ofstream& output, const string& str)</dt>
+            <dd>
+                <p>
+                    The stream insertion operator enables us to insert the contents
+                    of the string object to an output stream, be it the standard
+                    output (display)
+                    or a file output stream of type
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><em>std::ofstream</em></a>.
+                    In the first case i.e.,
+                    when printing a string object on the display the object can
+                    directly be pushed into the standard output stream using the '&lt;&lt;'
+                    operator as follows:
+                </p>
+                <div class="code-block">string str{"XXYYXXYXYX"};
+std::cout &lt;&lt; str;</div>
+                <p>
+                    This invokes the operator function defined for the
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_ostream" target="_blank"><em>std::ostream</em></a>
+                    object and the contents of the string are pushed to the
+                    standard output stream since the
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_ostream" target="_blank"><em>std::ostream</em></a>
+                    object <em>std::cout</em> is linked to the standard output (display).
+                </p>
+                <p>
+                    The second function gives us the ability to push the contents
+                    of a string object directly into a file output stream
+                    (<a href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><em>std::ofstream</em></a>).
+                    It throws a <a href="" class="exception">FileOutputError</a> exception
+                    if an error has occurred on the associated file input stream.
+                    The contents of a string object can be pushed to a file output stream
+                    object of type <a href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><em>std::ofstream</em></a>
+                    as follows:
+                </p>
+                <div class="code-block">string text{"write this text to a file"};
+std::ofstream file("myfile.txt");
+file &lt;&lt; text;
+file.close();</div>
+                <p id="stream-extraction">
+                    It's as simple as that.
+                </p>
+            </dd>
+            <dt>std::istream& operator>>(std::istream& input, string& str)</dt>
+            <dt>std::ifstream& operator>>(std::ifstream& input, string& str)</dt>
+            <dd>
+                <p>
+                    The stream extraction operator enables us to extract the contents
+                    of an input stream be it the standard input (keyboard) or a
+                    file input stream
+                    (<a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank"><em>std::ifstream</em></a>)
+                    and put it into a string object. In the first case i.e.,
+                    when inserting the contents of the standard input (keyboard)
+                    to a string object, the contents can be pushed directly into
+                    the string object using the <span class="mono">'>>'</span> operator as follows:
+                </p>
+                <div class="code-block">string input;
+std::cout &lt;&lt; "Enter text: ";
+std::cin >> input;</div>
+                <p>
+                    This invokes the operator function defined for the
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_istream" target="_blank"><em>std::istream</em></a>
+                    object and the contents of the standard input are pushed into
+                    the string object since the <span class="mono"><em>std::cin</em></span> object is linked
+                    to the standard input.
+                </p>
+                <p>
+                    The second function gives us the ability to extract the
+                    contents of a file input stream
+                    (<a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank"><em>std::ifstream</em></a>)
+                    directly into a string object.
+                    It throws a <a href="" class="exception">FileInputError</a> exception
+                    if an error has occurred on the associated file input stream.
+                    The contents of a file input stream
+                    (<a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank"><em>std::ifstream</em></a>)
+                    can be pushed or read into a string object as follows:
+                </p>
+                <div class="code-block">string file_text;
+std::ifstream file("myfile.txt");
+file >> file_text;
+file.close()</div>
+                <p id="item-access">
+                    Have to say it again... <em>as simple as that!</em>
+                </p>
+            </dd>
+            <dt>char& operator[](long long i)</dt>
+            <dt>const char& operator[](long long i) const</dt>
+            <dd>
+                <p>
+                    The behaviour of the '[ ]' operator is almost the same as
+                    in the case of arrays other than the fact that when used with
+                    string objects the '[ ]' operator supports bounds checking as
+                    well as negative indexing. The operator returns a reference
+                    to the character at position specified by the index <em>i</em>.
+                    Since it returns a reference, the character can be directly
+                    modified like it is possible when using '[ ]' with arrays.
+                    When used with a <em>const string</em> however, the operator
+                    returns a constant reference which is read only and does
+                    not allow modifications to the character.
+                </p>
+                <p>
+                    Negative indexing assigns negative numbers to positions starting
+                    from the end of the string. The last character of the string has
+                    a negative index -1, the second last character has a negative
+                    index -2 and so on.
+                </p>
+                <dl class="small">
+                    <dt>This shows the default indexing of an array:</dt>
+                    <dd><img id="indexing" src="../static/zero-indexed.png" alt="Zero indexing"></dd>
+                    <dt>This shows the negative indexing:</dt>
+                    <dd><img id="indexing" src="../static/negative-indexed.png" alt="Zero indexing"></dd>
+                </dl>
+                <p>
+                    For a string of size <em>S</em>,
+                    the zero-index (<em>i<sub>0</sub></em>) and the negative index
+                    (<em>i<sub>n</sub></em>) satsify the following equation:<br>
+                    <div class="eqn">
+                        i<sub>0</sub> - i<sub>n</sub> = S
+                    </div>
+                    and the valid range of values for <em>i<sub>0</sub></em> and
+                    <em>i<sub>n</sub></em> are:
+                    <div class="eqn">
+                        0 &le; <em>i<sub>0</sub></em> &le; S - 1<br>
+                        -1 &le; <em>i<sub>n</sub></em> &le; -S
+                    </div>
+                </p>
+                <p id="string-iterators">
+                    An <a href="#index-error" class="exception">IndexError</a> is thrown if an attempt
+                    is made to access an element outside the above valid range.
+                </p>
+            </dd>
+        </dl>
+
+        <h3>Iterators</h3>
+        <dl class="main">
+            <p>
+                An <strong>Iterator</strong>
+                is a pointer like object which points to an element inside a 
+                container object.
+                It provides access to the element it is pointing towards using the
+                <span class="mono">'*'</span> operator and it can be
+                made to point to the next element in the container using the increment
+                <span class="mono">'++'</span> operator. Using the iterator all the
+                elements of a container can be accessed and modified (if it's not a 
+                <em>const</em> iterator). The element which the iterator is pointing
+                towards is accessed using the <span class="mono">'*'</span> operator
+                and two iterators can be compared using the <span class="mono">'=='</span>
+                and <span class="mono">'!='</span> operators.
+            </p>
+            <p>
+                A <strong>reverse iterator</strong> also a pointer like object which points
+                to an element inside a container object. It provides access to the element
+                it is pointing towards using the <span class="mono">'*'</span> operator.
+                What makes it different from the regular <strong>iterator</strong> is that
+                while an iterator move forwards through the container when incremented,
+                the reverse iterator moves backwards.
+            </p>
+            <p id="string-iterator">
+                These requirements however, are the bare minimum and there are several
+                types of iterators some of which have requirements more than just these
+                listed above. Having a full blown discussion about iterators is out of
+                scope here so we'll leave it at that.
+            </p>
+            <dt>string::iterator</dt>
+            <dd>
+                <p>
+                    The <span class="mono">string::iterator</span> is just a <em>char*</em>
+                    i.e., a pointer to a character and nothing more. Since a pointer
+                    serves as a rather powerful iterator we can use a pointer as an
+                    iterator. Also, since the <span class="mono">string::iterator</span> is
+                    a pointer, therefore it can be used for random access as well making
+                    the <span class="mono">string::iterator</span> a 
+                    <strong>random access iterator</strong>
+                    which means in addition to begin able to move forwards and backwards through
+                    the string <em>one element at a time</em> using <span class="mono">'++'</span> and 
+                    <span class="mono">'--'</span> operators, we can move forwards or backwards
+                    an arbitrary amount of steps by adding/subtracting some integer from
+                    the iterator. We can also access some element which is 
+                    <span class="mono">i</span> places ahead of where the iterator is currently
+                    pointing to by using the <span class="mono">[]</span> operator (offset access).
+                </p>
+                <p>
+                    It is returned by the methods 
+                    <a href="#begin"><span class="mono">begin()</span></a> which returns
+                    a <span class="mono">string::iterator</span> to the beginning of the string
+                    and 
+                    <a href="#end"><span class="mono">end()</span></a> which returns a
+                    <span class="mono">string::iterator</span> to one character past the last
+                    character of the <span id="string-const-iterator">string</span> which is the terminating null character.
+                </p>
+            </dd>
+            <dt>string::const_iterator</dt>
+            <dd>
+                <p>
+                    The <span class="mono">string::const_iterator</span> like the 
+                    <a href="#string-iterator"><span class="mono">string::iterator</span></a>
+                    is a pointer but with a <em>const</em> qualification i.e., the
+                    <span class="mono">string::const_iterator</span> is a <em>const char*</em>.
+                    Also, since the <span class="mono">string::const_iterator</span> is
+                    a pointer, therefore it can be used for random access as well making
+                    the <span class="mono">string::const_iterator</span> a 
+                    <strong>random access iterator</strong>
+                    which means in addition to begin able to move forwards and backwards through
+                    the string <em>one element at a time</em> using <span class="mono">'++'</span> and 
+                    <span class="mono">'--'</span> operators, we can move forwards or backwards
+                    an arbitrary amount of steps by adding/subtracting some integer from
+                    the iterator. We can also access some element which is 
+                    <span class="mono">i</span> places ahead of where the iterator is currently
+                    pointing to by using the <span class="mono">[]</span> operator (offset access).
+                </p>
+                <p>
+                    It is returned by the methods <a href="#cbegin"><span class="mono">cbegin()</span></a>
+                    which returns a <span class="mono">string::const_iterator</span> to the
+                    beginning of the string and <a href="#cend"><span class="mono">cend()</span></a>
+                    which returns a <span class="mono">string::const_iterator</span> to one
+                    character past the last character of the string which is the terminating null
+                    character.
+                </p>
+                <p id="string-reverse-iterator">
+                    For <em>const</em> string objects the <span class="mono"></span>
+                    <a href="#begin"><span class="mono">begin()</span></a> and 
+                    <a href="#end"><span class="mono">end()</span></a> methods also return a 
+                    <span class="mono">string::const_iterator</span>.
+                </p>
+            </dd>
+            <dt>string::reverse_iterator</dt>
+            <dd>
+                <p>
+                    The <span class="mono">string::reverse_iterator</span> is a reverse iterator
+                    which can be used to iterate through the string in the reverse
+                    direction i.e., from the last character of the string to the first character.
+                    The <span class="mono">string::reverse_iterator</span> is a 
+                    <strong>random access iterator</strong> which means
+                    in addition to begin able to move forwards and backwards through
+                    the string <em>one element at a time</em> using <span class="mono">'++'</span> and 
+                    <span class="mono">'--'</span> operators, we can move forwards or backwards
+                    an arbitrary amount of steps by adding/subtracting some integer from
+                    the iterator. We can also access some element which is 
+                    <span class="mono">i</span> places ahead of where the iterator is currently
+                    pointing to by using the <span class="mono">[]</span> operator (offset access).
+                </p>
+                <p>
+                    It is returned by the methods 
+                    <a href="#rbegin"><span class="mono">rbegin()</span></a> which returns
+                    a <span class="mono">string::reverse_iterator</span> to the last character
+                    of the string and 
+                    <a href="#rend"><span class="mono">rend()</span></a> which returns a 
+                    <span id="string-const-reverse-iterator" class="mono">string::reverse_iterator</span> to one character before
+                    the first character of the string.
+                </p>
+            </dd>
+            <dt>string::const_reverse_iterator</dt>
+            <dd>
+                <p>
+                    The <span class="mono">string::const_reverse_iterator</span> is a <em>read only</em>
+                    reverse iterator
+                    which can be used to iterate through the string in the reverse
+                    direction i.e., from the last character of the string to the first character.
+                    The <span class="mono">string::reverse_iterator</span> is a 
+                    <strong>random access iterator</strong> which means
+                    in addition to begin able to move forwards and backwards through
+                    the string <em>one element at a time</em> using <span class="mono">'++'</span> and 
+                    <span class="mono">'--'</span> operators, we can move forwards or backwards
+                    an arbitrary amount of steps by adding/subtracting some integer from
+                    the iterator. We can also access some element which is 
+                    <span class="mono">i</span> places ahead of where the iterator is currently
+                    pointing to by using the <span class="mono">[]</span> operator (offset access).
+                    Since the <span class="mono">string::const_reverse_iterator</span> is <em>read only</em>
+                    we can access the characters of the string using it but we cannot modify any
+                    character of the string through it.
+                </p>
+                <p>
+                    The <span class="mono">string::const_reverse_iterator</span> is returned
+                    by the methods 
+                    <a href="#crbegin"><span class="mono">crbegin()</span></a> which returns a
+                    <span class="mono">string::const_reverse_iterator</span> to the last
+                    character of the string and 
+                    <a href="#crend"><span class="mono">crend()</span></a> whic returns a 
+                    <span class="mono">string::const_reverse_iterator</span> to one character
+                    before the first character of the string.
+                </p>
+                <p>
+                    For <em>const</em> string objects the 
+                    <a href="#rbegin"><span class="mono">rbegin()</span></a> and 
+                    <a href="#rend"><span class="mono">rend()</span></a> methods also return
+                    a <span class="mono">string::const_reverse_iterator</span>
+                </p>
+            </dd>
+        </dl>
+
+        <h3 id="bstring-friend">Friend functions</h3>
+        <dl class="main">
+            <dt>string bstring(int num)</dt>
+            <dt>string bstring(long long num)</dt>
+            <dt>string bstring(int num, int width)</dt>
+            <dt>string bstring(long long num, int width)</dt>
+            <dd>
+                <p>
+                    This function creates and returns a string containing the
+                    binary (base2) representation of <em>num</em> and if the
+                    width is specified then with the
+                    specified <em>width</em> i.e., number of digits in the binary
+                    representation.
+                    A <a href="#value-error" class="exception">ValueError</a>
+                    exception is thrown when the value of the width
+                    parameter is less than 1. The range of values for which
+                    the correct binary representation can be found is
+                    <span class="math">
+                        -2<sup>32</sup> to 2<sup>32</sup> - 1
+                    </span>
+                    for the functions where the type of the parameter <em>num</em>
+                    is <em>int</em> and
+                    <span class="math">
+                        -2<sup>64</sup> to 2<sup>64</sup> - 1.
+                    </span>
+                    for the functions where the type of the parameter <em>num</em>
+                    is <em>long long</em>.
+                </p>
+                <p>
+                    The overloads which only accept a single parameter <em>num</em>
+                    generate a binary representation string such that it contains
+                    only the required number of characters and no extra zeroes are
+                    added for padding as is the case with the overloads accepting
+                    a <em>width</em> parameter, where extra zeroes will be added in
+                    front if required as per the <em>width</em> value.
+                    One thing to keep in mind when specifying the <em>width</em>
+                    is that if the <em>width</em> is less than the number of bits
+                    required to hold the number then the binary representation
+                    string will contain only <em>width</em> number of bits and the
+                    rest of the bits will be ignored.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>num:</b> The number whose binary representation is
+                            to be found out.
+                        </li>
+                        <li>
+                            <b>width:</b> When specified it determines the number
+                            of characters which will be used
+                            in the binary representation. The maximum value it can
+                            take is 32 (where type of <em>num</em> is <em>int</em>)
+                            and 64 (where the type of <em>num</em> is <em>long long</em>)
+                            but if a value is specified which is greater
+                            the maximum allowed it is silently readjusted to the maximum
+                            permissible value and no
+                            exception is thrown. If a value less than 1 is passed
+                            to width then a
+                            <a href="#value-error" class="exception">ValueError</a>
+                            exception is thrown.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    std::cout &lt;&lt; bstring(100LL) &lt;&lt; '\n';
+    <comment>// Specifying 3 as width will discard rest of the bits</comment>
+    std::cout &lt;&lt; bstring(100, 3) &lt;&lt; '\n';
+    std::cout &lt;&lt; bstring(100) &lt;&lt; '\n';
+    std::cout &lt;&lt; bstring(11LL) &lt;&lt; '\n';
+    std::cout &lt;&lt; bstring(0LL) &lt;&lt; '\n';
+    std::cout &lt;&lt; bstring(11LL, 64) &lt;&lt; '\n';
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">1100100
+100
+1100100
+1011
+0
+0000000000000000000000000000000000000000000000000000000000001011</div>
+                <p id="to-string-int">
+                    As discussed above when the <em>width</em> is specified as
+                    3 with <em>num</em> being 100, only 3 least significant
+                    bits are included in the binary representation.
+                </p>
+            </dd>
+            <dt>
+                template&lt;typename T&gt;<br>
+                &nbsp;&nbsp;&nbsp;requires std::is_integral_v&lt;T&gt;<br>
+                &nbsp;&nbsp;&nbsp;string to_string(T num)<br><br>
+            </dt>
+            <dt>
+                template&lt;typename T&gt;<br>
+                &nbsp;&nbsp;&nbsp;requires std::is_integral_v&lt;T&gt;<br>
+                &nbsp;&nbsp;&nbsp;string to_string(T num, int width)<br><br>
+            </dt>
+            <dt>
+                template&lt;typename T&gt;<br>
+                &nbsp;&nbsp;&nbsp;requires std::is_integral_v&lt;T&gt;<br>
+                &nbsp;&nbsp;&nbsp;string to_string(T num, int width, char padding_char)
+            </dt>
+            <dd>
+                <p>
+                    Creates and returns a string representation of the integral
+                    number <em>num</em>. There are three overloads of this function.
+                    The first one just returns the string containing the number.
+                    The second overload with an added parameter
+                    <span class="mono"><em>width</em></span> returns a string representation
+                    of <span class="mono"><em>num</em></span> with a fixed width i.e., if
+                    <span class="mono"><em>num</em></span> contains less number of digits than
+                    the specified width then the padding zeros <span class="mono">('0')</span>
+                    are added to the left of the string to make it of the desired width.
+                    The third overload takes care of the case where the padding character
+                    needs to be something other than zero. In this case, if <span class="mono"><em>num</em></span>
+                    contains less number of digits than <span class="mono"><em>width</em></span>
+                    then the string is padded to the left with
+                    <span class="mono"><em>padding_char</em></span> character.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>num:</b> The number whose string representation is desired. Can
+                            be of any integral type.
+                        </li>
+                        <li>
+                            <b>width:</b> The number of digits which are required to be in the
+                            string representation of <span class="mono"><em>num</em></span>.
+                        </li>
+                        <li>
+                            <b>padding_char:</b> The padding character to use if
+                            <span class="mono"><em>num</em></span> contains less number of digits
+                            than the <span class="mono"><em>width</em></span>.
+                        </li>
+                    </ul>
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    int octets[] = {192, 130, 45, 12};
+    
+    string addr;
+    addr += to_string(octets[0]);
+    
+    for (int i = 1; i &lt; 4; ++i)
+        addr += ("." + to_string(octets[i]));
+    std::cout &lt;&lt; addr &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+                <p>Generates the following output:</p>
+                <div class="code-block output">192.130.45.12</div>
+                <p id="to-string-float">
+                    The numbers can be concatenated after conversion to strings.
+                </p>
+            </dd>
+            <dt>
+                template&lt;typename T&gt;<br>
+                &nbsp;&nbsp;&nbsp;requires std::is_floating_point_v&lt;T&gt;<br>
+                &nbsp;&nbsp;&nbsp;string to_string(T num)<br><br>
+            </dt>
+            <dt>
+                template&lt;typename T&gt;<br>
+                &nbsp;&nbsp;&nbsp;requires std::is_floating_point_v&lt;T&gt;<br>
+                &nbsp;&nbsp;&nbsp;string to_string(T num, int precision)
+            </dt>
+            <dd>
+                <p>
+                    Creates and returns a string representation of the floating
+                    point number <em>num</em> with the set precision number of
+                    digits determined either by the <a href=""><em>string::precision</em></a>
+                    flag when no <em>precision</em> is specified or the 
+                    <em>precision</em> value if specified. If the <em>precision</em>
+                    is not specified then the default precision value determined
+                    by the <a href=""><em>string::precision</em></a> flag is used.
+                    In this case however, if the fractional part of the floating point
+                    number is zero then the string representation will not contain the
+                    decimal point at all.
+                </p>
+                <p>
+                    Specify the <em>precision</em> parameter to force the appearance of
+                    the decimal point in the string representation. The allowed range of
+                    values for the <em>precision</em> is from 1 to 15. If a value greater
+                    than 15 is specified, it is readjusted to 15 and if a value less than
+                    1 is specified then a <a href="#value-error" class="exception">ValueError</a>
+                    exception is thrown.
+                </p>
+<div class="code-block">#include &lt;iostream&gt;
+#include "arr_string.h"
+
+int main(void)
+{
+    double num{0.1245}, w{12};
+    
+    <comment>// Setting the precision flag to 8</comment>
+    string::set_precision(8);
+    
+    std::cout &lt;&lt; to_string(num) &lt;&lt; '\n';
+    std::cout &lt;&lt; to_string(num, 2) &lt;&lt; '\n';
+
+    std::cout &lt;&lt; to_string(w) &lt;&lt; '\n';
+    std::cout &lt;&lt; to_string(w, 2) &lt;&lt; '\n';
+    
+    return 0;
+}</div>
+                <p>Will generate the following output:</p>
+                <div class="code-block output">0.12450000
+0.12
+12
+12.00</div>
+                <p id="getline">
+                    It can be observed that when no precision is specified then
+                    the value of the precision flag is used as default and for
+                    a number with no fractional part the decimal is not shown until
+                    forced using the <em>precision</em> parameter.
+                </p>
+            </dd>
+            <dt>bool getline(std::istream& input, string& str)</dt>
+            <dd>
+                <p>
+                    This function is used to read a single line of characters
+                    from the input stream into a string object until a newline
+                    character('\n') is encountered. It returns <em>true</em>
+                    if a line has been succesfully read into the string and
+                    false if <em>eof</em> (end of file) returns true. This
+                    function can be used to read characters from the input
+                    stream line by line like the standard library function
+                    <a href="https://en.cppreference.com/w/cpp/string/basic_string/getline" target="_blank">
+                        <em>std::getline</em>
+                    </a>.
+                    It throws a
+                    <a href="" class="exception">FileInputError</a>
+                    exception if an error has
+                    occurred on the associated input stream.
+                </p>
+                <p>
+                    Parameters:
+                    <ul class="params">
+                        <li>
+                            <b>input:</b> A reference to the
+                            <a href="https://en.cppreference.com/w/cpp/io/basic_istream" target="_blank">
+                                <em>std::istream</em>
+                            </a>
+                            object.
+                        </li>
+                        <li>
+                            <b>str:</b> A reference to the string object in which
+                            the contents of the stream are to be read.
+                        </li>
+                    </ul>
+                </p>
+            </dd>
+        </dl>
+
+        <h3 id="split-global">Others</h3>
+        <dl class="main">
+            <dt>string::string_list split(const char* str, char ch = ' ')</dt>
+            <dd>
+                <p>
+                    Takes a <em>const char*</em> as a parameter and splits it
+                    at each occurrence of the character <em>ch</em> in <em>str</em>
+                    and returns a list of string objects containing the individual
+                    components obtained after the split. The data is copied so
+                    <em>str</em> remains unaffected.
+                </p>
+                <p>
+                    It produces output similar to the one we'll get with this:
+                    <span class="mono">string(str).split();</span>
+                </p>
+            </dd>
+        </dl>
+
+        <h3 id="index-error">Exceptions</h3>
+        <dl class="main">
+            <dt class="exception">IndexError</dt>
+            <dd>
+                <p id="value-error">
+                    This exception class is derived from the standard exception
+                    class
+                    <a href="https://en.cppreference.com/w/cpp/error/out_of_range" target="_blank"><em>std::out_of_range</em></a>
+                    and is thrown whenever an attempt is made to access elements outside
+                    the bounds of the memory allocated to the string object.
+                </p>
+            </dd>
+            <dt  class="exception">ValueError</dt>
+            <dd>
+                <p id="file-io-error">
+                    This exception class is derived from the standard exception class
+                    <a href="https://en.cppreference.com/w/cpp/error/domain_error" target="_blank"><em>std::domain_error</em></a>
+                    and is thrown whenever an invalid or empty value for a function
+                    parameter or a flag is provided.
+                </p>
+            </dd>
+            <dt class="exception">FileIOError</dt>
+            <dd>
+                <p  id="file-input-error">
+                    This exception class is derived from the standard exception class
+                    <a href="https://en.cppreference.com/w/cpp/io/ios_base/failure" target="_blank"><em>std::ios_base::failure</em></a>
+                    and is not used anywhere in the string library rather it serves
+                    as a base class for two other excpetion classes <em>viz.,</em>
+                    <a href="#file-input-error" class="exception"><em>FileInputError</em></a> and 
+                    <a href="#file-output-error" class="exception"><em>FileOutputError</em></a>.
+                </p>
+            </dd>
+            <dt class="exception">FileInputError</dt>
+            <dd>
+                <p id="file-output-error">
+                    This exception is thrown to indicate that an error has occurred on the
+                    input stream or the file input stream which is associated with an
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_istream" target="_blank"><em>std::istream</em></a>
+                    object or an
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_ifstream" target="_blank">std::ifstream</a> object.
+                    The <a href="#file-input-error" class="exception"><em>FileInputError</em></a>
+                    exception class is derived from the
+                    <a href="#file-io-error" class="exception"><em>FileIOError</em></a> exception class.
+                </p>
+            </dd>
+            <dt class="exception"><em>FileOutputError</em></dt>
+            <dd>
+                <p id="list-type">
+                    This exception is thrown to indicate that an error has occurred on the
+                    output stream or the file output stream which is associated with an
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_ostream" target="_blank"><em>std::ostream</em></a>
+                    object or an
+                    <a href="https://en.cppreference.com/w/cpp/io/basic_ofstream" target="_blank"><em>std::ofstream</em></a>
+                    object. The <a href="#file-output-error" class="exception"><em>FileOutputError</em></a>
+                    exception class is derived from the
+                    <a href="file-io-error" class="exception"><em>FileInputError</em></a> exception
+                    class.
+                </p>
+            </dd>
+        </dl>
+
+        <h3>string::string_list and string::index_list</h3>
+        <p>
+            These are type aliases for <span class="mono">List&lt;string&gt;</span> and
+            <span class="mono">List&lt;size_t&gt;</span> respectively. The
+            <a href="#list-type"><span class="mono">List</span></a>
+            is a container type which can grow according to the requirements. In the
+            context of strings, it is enough to know that this type can be treated as
+            an array with one difference that the <span class="mono">[]</span> operator
+            when used with <a href="#list-type"><span class="mono">List</span></a>
+            objects performs bounds checking and will throw an
+            <a href="#index-error" class="exception">IndexError</a> if any attempt is
+            made to access an element outside the bounds of the memory allocated to
+            the <a href="#list-type"><span class="mono">List</span></a> object.
+            The <a href="#list-type"><span class="mono">List</span></a> objects unlike
+            the array and other container type objects in <span class="mono">C++</span>
+            have
+            the capability to be directly printed on the screen using the stream
+            insertion operator <span class="mono">&lt;&lt;</span>. It also supports negative
+            indexing in exactly the same way as the string type does.
+        </p>
+    </div>
+    <div id="nav-bar">
+        <a href="../manual.html">Introduction</a>
+        <ul>
+            <li>
+                <a href="1.html">
+                    1. Getting Started
+                </a>
+                <ul>
+                    <li>
+                        <a href="1.html#declaring-an-empty-string">
+                            1.1 Declaring a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#printing-a-string">
+                            1.2 Printing a string
+                        </a>
+                    </li>
+                    <li>
+                        <a href="1.html#initializing-a-string">1.3 Initializing a string</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#default-character">
+                                    1.3.1 Initializing using a default character
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#string-literal">
+                                    1.3.2 Initializing using a C-string literal
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#std-string">
+                                    1.3.3 Initializing using an std::string
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#copy-construct">
+                                    1.3.4 Initializing using another string object
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#move-construct">
+                                    1.3.5 Initializing by moving an existing string to the new string
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#concatenating-strings">1.4 Concatenating strings</a>
+                        <ul>
+                            <li>
+                                <a href="1.html#concatenating-two-strings">
+                                    1.4.1 Concatenating two string objects</a>
+                            </li>
+                            <li>
+                                <a href="1.html#cstring-concat">
+                                    1.4.2 Concatenating a string object and a C-string</a>
+                            </li>
+                            <li>
+                                <a href="1.html#chaining-concat">
+                                    1.4.3 Chaining the + operator
+                                </a>
+                            </li>
+                            <li>
+                                <a href="1.html#compound-assignment">
+                                    1.4.4 Compound assignment operator
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#comparing-strings">1.5 Comparing strings</a>
+                        <ul>
+                            <li><a href="1.html#comp-strings">1.5.1 Comparing two string objects for equality</a></li>
+                            <li><a href="1.html#comp-cstring">1.5.2 Equality comparison between string objects and C-strings</a></li>
+                            <li><a href="1.html#comp-case">1.5.3 Case insensitive comparison</a></li>
+                            <li><a href="1.html#comp-others">1.5.4 Other comparison operators</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="1.html#basic-manipulation">1.6 Basic string manipulation</a>
+                        <ul>
+                            <li><a href="1.html#case-manip">1.6.1 Changing the letter casing</a></li>
+                            <li><a href="1.html#reverse-manip">1.6.2 Reversing</a></li>
+                            <li><a href="1.html#collapse-manip">1.6.3 Collapsing whitespace</a></li>
+                            <li><a href="1.html#replace-manip">1.6.4 Replacing characters</a></li>
+                            <li><a href="1.html#strip-manip">1.6.5 Trimming the string</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="2.html">
+                    2. The string class
+                </a>
+                <ul>
+                    <li>
+                        <a href="2.html#member-types">
+                            2.1 Member types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#member-functions">
+                            2.2 Member functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#operators">
+                            2.3 Operators
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#friend-functions">
+                            2.4 Friend functions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="2.html#others">
+                            2.5 Others
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="3.html">3. Deep dive</a>
+                <ul>
+                    <li><a href="3.html#extracting-substrings">3.1 Extracting substrings</a>
+                        <ul>
+                            <li><a href="3.html#slicing">3.1.1 Slicing</a></li>
+                            <li><a href="3.html#paranths-operator">3.1.2 Using the ( ) operator</a></li>
+                            <li><a href="3.html#fw-word">3.1.3 First word/Last word</a></li>
+                            <li><a href="3.html#from-pos">3.1.4 Extracting from a position</a></li>
+                            <li><a href="3.html#nlast">3.1.5 Getting n last characters</a></li>
+                            <li><a href="3.html#split">3.1.6 Split</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#iter-and-mod">3.2 Iteration and modification</a>
+                        <ul>
+                            <li><a href="3.html#iterators">3.2.1 Iterators</a></li>
+                            <li><a href="3.html#const-iterators">3.2.2 const iterators</a></li>
+                            <li><a href="3.html#reverse-iterators">3.2.3 Reverse iterators</a></li>
+                            <li><a href="3.html#const-reverse-iterators">3.2.4 const reverse iterators</a></li>
+                            <li><a href="3.html#modify-method">3.2.5 The modify method</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#numeric-operations">3.3 Numeric operations</a>
+                        <ul>
+                            <li><a href="3.html#stoi">3.3.1 String to integer</a></li>
+                            <li><a href="3.html#to-string">3.3.2 Integral values to strings</a></li>
+                            <li><a href="3.html#bstring">3.3.3 b-string from a number</a></li>
+                            <li><a href="3.html#btoi">3.3.4 Number from a b-string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#searching">3.4 Searching</a>
+                        <ul>
+                            <li><a href="3.html#count">3.4.1 Counting characters</a></li>
+                            <li><a href="3.html#contains">3.4.2 Checking for the existence of a query string</a></li>
+                            <li><a href="3.html#count-str">3.4.3 Counting the number of occurrences of query string</a></li>
+                            <li><a href="3.html#search">3.4.4 Position of first occurrence of query string</a></li>
+                            <li><a href="3.html#search-all">3.4.5 List of all occurrences of query string</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="3.html#file-io">3.5 File I/O</a>
+                        <ul>
+                            <li><a href="3.html#istream">3.5.1 Reading from an input stream</a></li>
+                            <li><a href="3.html#getline">3.5.2 Reading contents one line at a time</a></li>
+                            <li><a href="3.html#ostream">3.5.3 Writing to an output stream</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <a href=""><b>The complete reference</b></a>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="../static/script.js"></script>
+</body>
+</html>

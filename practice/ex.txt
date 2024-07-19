@@ -1,0 +1,13 @@
+Databases and database systems have become an essential part of our everyday life.
+We encounter several activities that involve some interaction with a database almost
+daily. The examples include deposit and/or withdrawal from a bank, hotel, airline or
+railway reservation, accessing a computerised library, order a magazine subscription
+from a publisher, purchase items from supermarkets. In all the above cases a database
+is accessed. These may be called Traditional Database Applications. In these types
+of databases, the information stored and accessed is textual or numeric. However, with
+advances in technology in the past few years, different databases have been developed
+such as Multimedia Databases that store pictures, video clips and sound messages;
+Geographical Information Systems (GIS) that can store maps, weather data and
+satellite images, etc., and Real time databases that can control industrial and
+manufacturing processes. In this unit, we will be introducing the concepts involved in
+the Database Management System.

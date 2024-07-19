@@ -1,0 +1,51 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "Build executable",
+			"command": "C:\\mingw64\\bin\\g++.exe",
+			"args": [
+				"-fmodules-ts",
+				"-std=c++20",
+				"-fdiagnostics-color=always",
+				"-g",
+				"${workspaceFolder}\\*.o",
+				"${workspaceFolder}\\*.cpp",
+				"-o",
+				"${fileDirname}\\out.exe"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: C:\\mingw64\\bin\\g++.exe"
+		},
+		{
+			"type": "cppbuild",
+			"label": "Compile modules",
+			"command": "C:\\mingw64\\bin\\g++.exe",
+			"args": [
+				"-fmodules-ts",
+				"-std=c++20",
+				"-fdiagnostics-color=always",
+				"-c",
+				"${workspaceFolder}\\*.cxx",
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:\\mingw64\\bin\\g++.exe"
+		}
+	]
+}

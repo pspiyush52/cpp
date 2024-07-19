@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+body{
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+h3 {
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+div.main-title{
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    background-color: rgb(220, 238, 255);
+    border-bottom: 3px solid rgb(255, 255, 255);
+    box-shadow: 0 1px 3px #0af;
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: 0;
+}
+
+div.main-content{
+    margin: 10px;
+    margin-top: 50px;
+}
+
+.code-block{
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.95em;
+    white-space: break-spaces;
+    word-wrap: break-word;
+    margin: 5px 0;
+    padding: 5px;
+    background-color: rgb(241, 241, 241);
+    border: 1px solid rgb(214, 214, 214);
+}
+
+span.mono {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
+}
+
+span.code-block {
+    margin: 0;
+}
+
+comment, span.comment {
+    font-style: italic;
+    color: green;
+}
+
+.exception {
+    text-decoration: double underline;
+    color: rgb(206, 0, 0);
+}
+
+.output {
+    background-color: black;
+    color: white;
+}
+
+table.def {
+    box-sizing: content-box;
+    width: 100%;
+    border: 2px solid black;
+    border-width: 2px 0;
+}
+
+table.def th{
+    border-bottom: 1px solid black;
+}
+
+table.def>tbody{
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.95em;
+}
+
+table.def li {
+    list-style-type: none;
+}
+
+table.def li::before{
+    content: '-';
+    display: inline-block;
+    margin-left: -2em;
+}
+
+table.border-table td{
+    border-bottom: 1px solid black;
+    font-size: 0.8rem;
+}
+
+table.solid {
+    font-size: 0.5em;
+    width: fit-content;
+    margin: 0 auto;
+    background-color: rgb(220, 238, 255);
+    font-size: 0.95em;
+    padding: 3px;
+}
+
+table.solid td, table.solid th{
+    border-bottom: 1px solid rgb(144, 233, 255);
+    padding: 10px;
+}
+
+div.eqn {
+    width: fit-content;
+    margin: 20px auto;
+    font-family: 'Latin Modern Math';
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1em;
+    line-height: 1.5em;
+}
+
+span.math {
+    font-family: 'Latin Modern Math';
+}
+
+div#nav-bar {
+    opacity: 0;
+    background-color: aliceblue;
+    position: fixed;
+    height: 85vh;
+    padding-inline-start: 10px;
+    padding-block-start: 20px;
+    padding-block-end: 20px;
+    top: 45px;
+    left: 0;
+    overflow-y: scroll;
+}
+
+@media(min-width: 600px) {
+    body {
+        font-size: 16px;
+    }
+    .code-block{
+        font-size: 0.9em;
+    }
+    table.def {
+        width: 70%;
+        margin: 0 auto;
+    }
+    table.def>tbody{
+        font-size: 0.9em;
+    }
+    table.def li::before{
+        margin-left: -1em;
+    }
+    table.border-table td{
+        padding: 10px;
+        border-bottom: 1px solid black;
+        font-size: inherit;
+    }
+    div.eqn {
+        font-size: 1.2em;
+    }
+    span.tabs::before {
+        content: "    ";
+    }
+    span#filenames::before {
+        content : "<< '\\t' ";
+    }
+    table.solid {
+        font-family: 'Roboto Mono', monospace;
+        width: 70%;
+    }
+    div#nav-bar{
+        height: 85vh;
+        width: 50%;
+        padding-inline-start: 20px;
+        padding-block-start: 20px;
+        padding-block-end: 80px;
+    }
+}
+
+div.main-title>.side-button{
+    box-sizing: border-box;
+    flex-basis: 40px;
+    border-right: 1px solid;
+    display: flex;
+    flex-direction: column;
+}
+
+div.side-button:hover {
+    background-color: rgb(160, 208, 248);
+    transition: background-color 400ms;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+div.side-button:hover {
+    animation-name: rotate;
+    animation-duration: 200ms;
+    animation-timing-function: linear;
+}
+
+div.main-title > div.side-button:hover {
+    cursor: pointer;
+}
+
+div.side-button > div:not(:last-child) {
+    flex-basis: 23%;
+    border-bottom: 2px solid black;
+    border-radius: 3px;
+    margin: 0 5px;
+}
+
+div.main-title>h1{
+    flex-grow: 1;
+    margin: 0;
+    text-align: center;
+}
+
+a{
+    text-decoration: none;
+    color: rgb(39, 140, 255);
+}
+
+a :hover {
+    cursor: pointer;
+}
+
+h2 > a.header-link{
+    visibility: hidden;
+}
