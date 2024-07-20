@@ -6,13 +6,17 @@
 
 template<typename Container, typename Comparator = less, typename Projection = identity>
 Container& isort(Container& arr, Comparator compare = {}, Projection proj = {}){
-    size_t size = arr.size(), i = 1, j = 0;
+    size_t i = 1, j = 0;
     for (; i < arr.size(); ++i)
         for (j = i; (j > 0) && compare(proj(arr[j]), proj(arr[j - 1])); --j)
-            swap(arr, j, j - 1);
+            swap(arr[j], arr[j - 1]);
     return arr;
 }
-
+struct Dist{
+    double operator()(Point& p) {
+        return p.length();
+    }
+};
 int main(void)
 {
     array<int> nums(20);
@@ -22,8 +26,7 @@ int main(void)
     array<Point> points = {
         {0, 1}, {-0.15, 23}, {10, 2}, {0.791, .31}, {1, 33}, {-0.41, -1.2}
     };
-    auto getx = [](Point& p){ return p.get_x(); };
 
-    std::cout << "\nBefore sorting:  " << points << "\nAfter sorting:  " << isort(points, less(), getx);
+    std::cout << "\nBefore sorting:  " << points << "\nAfter sorting:  " << isort<array<Point>, less, Dist>(points);
     return 0;
 }

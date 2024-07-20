@@ -1,28 +1,28 @@
 #include "print.h"
-#include <cstdlib>
+#include "frand.h"
 
-typedef unsigned long long Num;
-
-Num fib(Num n) {
-	Num first{}, second{1}, third{1}, i{}, fib_n{};
-	for (; i < n; ++i) {
-		fib_n = first;
-		std::cout << fib_n << "  ";
-		first = second;
-		second = third;
-		third = first + second;
-	}
-	std::cout << "\n\n";
-	return fib_n;
+void insertKey(int A[], int n, int key);
+void insertionSort(int A[], int n) {
+	int i{1};
+	for (; i < n; ++i)
+		insertKey(A, i, A[i]);
 }
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2) {
-		print("Missing num arg");
-		std::exit(EXIT_FAILURE);
-	}
-	Num n{std::stoull(argv[1])};
-	printf("Fib(%llu) = %llu\n", n, fib(n));
+	int arr[15];
+	rng r;
+	printer(r.integers(-20, 100, std::size(arr))) >> arr;
+	printer arr_printer(arr);
+	print("   The array: ", arr_printer);
+	insertionSort(arr, std::size(arr));
+	print("Sorted array: ", arr_printer);
 	return 0;
+}
+
+void insertKey(int A[], int n, int key) {
+	int i{n - 1};
+	for (; i >= 0 && key < A[i]; --i)
+		A[i + 1] = A[i];
+	A[i + 1] = key;
 }
