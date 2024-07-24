@@ -11,6 +11,17 @@ class node {
 };
 
 class List {
+    public:
+        List();
+        void append(int);
+        size_t find(int);
+        void display();
+        size_t len();
+        node* __get_tail__();
+        int& operator[](long long);
+        int pop();
+        ~List();
+    
     private:
         node* tail;
         node* create(int num)
@@ -22,16 +33,6 @@ class List {
         }
         size_t size;
         errno_t err;
-    public:
-        List();
-        ~List();
-        void append(int);
-        size_t find(int);
-        void display();
-        size_t len();
-        node* __get_tail__();
-        int& operator[](long long);
-        int pop();
 };
 
 std::ostream& operator<<(std::ostream& output, List& l);
