@@ -60,6 +60,13 @@
         "stack": "cpp",
         "variant": "cpp",
         "ranges": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "charconv": "cpp",
+        "chrono": "cpp",
+        "coroutine": "cpp",
+        "ratio": "cpp",
+        "format": "cpp",
+        "print": "cpp",
+        "text_encoding": "cpp"
     }
 }
