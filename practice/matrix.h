@@ -177,6 +177,12 @@ class Matrix{
         */
         unsigned int get_cols() const;
 
+        Matrix& set_row(unsigned int row, double val);
+        Matrix& set_col(unsigned int col, double val);
+
+        Matrix& add_row(double val);
+        Matrix& add_col(double val);
+
         Matrix& operator=(const double& rhs);
         Matrix& operator=(double&& rhs);
         Matrix& operator=(const Matrix& src);
@@ -598,6 +604,48 @@ unsigned int Matrix::get_rows() const{
 
 unsigned int Matrix::get_cols() const{
     return this->ncols;
+}
+
+Matrix& Matrix::set_row(unsigned int row, double val) {
+    if (row >= this->nrows)
+        throw IndexError("Row index out of bounds.");
+    double* row_ptr = (*this)[row];
+    for (unsigned int i{}; i < this->ncols; ++i)
+        (*(row_ptr++)) = val;
+    return *this;
+}
+
+Matrix& Matrix::set_col(unsigned int col, double val) {
+    if (col >= this->ncols)
+        throw IndexError("Column index out of bounds.");
+    double* col_ptr = (*this)[0] + col;
+    for (unsigned int i{}; i < this->ncols; ++i, col_ptr += this->nrows)
+        *col_ptr = val;
+    return *this;
+}
+
+Matrix& Matrix::add_row(double val) {
+    unsigned int arr_size = this->dim_prod();
+    double* new_arr = new double[arr_size + this->ncols];
+    memcpy(new_arr, this->matrix_arr, arr_size * sizeof(double));
+    for (unsigned int i{arr_size}; i < arr_size + this->ncols; ++i)
+        new_arr[i] = val;
+    ++(this->nrows);
+    delete[] this->matrix_arr;
+    this->matrix_arr = new_arr;
+    return *this;
+}
+
+Matrix& Matrix::add_col(double val) {
+    unsigned int arr_size{this->dim_prod()}, i{}, j{1};
+    double* new_arr = new double[arr_size + this->nrows];
+    double* mptr = this->matrix_arr;
+    ++(this->ncols);
+    for (; i < arr_size + this->nrows; ++i, ++j)
+        new_arr[i] = (j % (this->ncols)) ? (*(mptr++)) : val;
+    delete[] this->matrix_arr;
+    this->matrix_arr = new_arr;
+    return *this;
 }
 
 Matrix& Matrix::operator=(const double& rhs){

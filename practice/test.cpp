@@ -1,41 +1,44 @@
-#include "print.h"
-#include "frand.h"
-#include "llist.h"
+#include <iostream>
 
-class Bool {
+template <typename T, typename... Args>
+class crazy : public crazy<Args...>{
+    typedef crazy<Args...> Base;
     public:
-        static const Bool True;
-        static const Bool False;
-        Bool& operator=(const Bool& src){
-            this->val = src.val;
-            return *this;
+    	crazy() = default;
+        crazy(const T &data, const Args &...args) : m_data{data} {}
+        T getData() {
+            return this->m_data;
         }
-        bool operator==(const Bool& rhs) {
-            return this->val == rhs.val;
+        auto getParentData() {
+            return (static_cast<crazy<Args...>*>(this)) -> getData();
         }
-        bool operator!=(const Bool& rhs) {
-            return this->val != rhs.val;
+        auto getGParentData() {
+            return Base::getParentData();
         }
+
     private:
-        int val{};
-        Bool(int b): val(b) {}
+        T m_data{};
 };
-const Bool Bool::True{1};
-const Bool Bool::False{0};
+
+template <>
+class crazy<int> {
+    public:
+        crazy() = default;
+        crazy(int data) : m_data(data) {}
+        int getData() {
+            return this->m_data;
+        }
+
+    private:
+        int m_data{};
+};
 
 int main(void)
 {
-    // LList<int> nums;
-    // rng r;
-    // repeat(12) nums.append(r.randint(100));
-    // print(nums);
-    // print(nums.sort());
-    
-    Bool c{Bool::True};
-    c = Bool::False;
-    if (c == Bool::True)
-        print("True");
-    else
-        print("False");
+    crazy t(1.2, 'a', 2.5, 1);
+    t.getData();
+    std::cout << t.getData() << '\n';
+    std::cout << t.getParentData() << '\n';
+    std::cout << t.getGParentData() << '\n';
     return 0;
 }

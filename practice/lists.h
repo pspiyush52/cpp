@@ -43,6 +43,8 @@ namespace arr{
             bool is_empty() const;
             List& append(const T& item);
             List& append(T&& item);
+            List& push_back(const T& item);
+            List& push_back(T&& item);
             void pop();
             size_t size() const;
             size_t capacity() const;
@@ -54,8 +56,8 @@ namespace arr{
             const_iterator end() const;
             const_iterator cbegin() const;
             const_iterator cend() const;
-            reference operator[](long long i);
-            const_reference operator[](long long i) const;
+            reference operator[](int i);
+            const_reference operator[](int i) const;
             List& operator=(const List& rhs);
             List& operator=(List&& rhs);
             ~List();
@@ -65,8 +67,8 @@ namespace arr{
 
         protected:
             T* arr;
-            size_t list_size;
-            size_t cur;
+            int list_size;
+            int cur;
 
             void __expand(){
                 pointer new_arr = new value_type[2 * this->list_size], ptr = new_arr;
@@ -163,6 +165,16 @@ namespace arr{
     }
 
     template<typename T>
+    List<T>& List<T>::push_back(const T& item) {
+        return this->append(std::forward<const T>(item));
+    }
+
+    template<typename T>
+    List<T>& List<T>::push_back(T&& item) {
+        return this->append(std::forward<T>(item));
+    }
+
+    template<typename T>
     void List<T>::pop(){
         if (is_empty())
             std::cerr << "ERROR: List empty.\n";
@@ -177,7 +189,7 @@ namespace arr{
     size_t List<T>::capacity() const { return list_size; }
 
     template<typename T>
-    T& List<T>::operator[](long long i){
+    T& List<T>::operator[](int i){
         if (i < 0)
             i = this->cur + i;
         if (i >= cur || (i < 0))
@@ -186,7 +198,7 @@ namespace arr{
     }
 
     template<typename T>
-    const T& List<T>::operator[](long long i) const{
+    const T& List<T>::operator[](int i) const{
         if (i < 0)
             i = this->cur + i;
         if (i >= cur || (i < 0))
@@ -200,7 +212,7 @@ namespace arr{
             output << "[]";
         else
         {
-            size_t i{}, upto{cur - 1};
+            int i{}, upto{cur - 1};
             output << '[';
             for (; i < upto; i++)
                 output << arr[i] << ", ";
@@ -215,7 +227,7 @@ namespace arr{
             output << "[]";
         else
         {
-            size_t i{}, upto{cur - 1};
+            int i{}, upto{cur - 1};
             output << '[';
             for (; i < upto; i++)
                 output << '\'' << arr[i] << "\', ";
@@ -230,7 +242,7 @@ namespace arr{
             output << "[]";
         else
         {
-            size_t i{}, upto{cur - 1};
+            int i{}, upto{cur - 1};
             output << '[';
             for (; i < upto; i++)
                 output << '\"' << arr[i] << "\", ";

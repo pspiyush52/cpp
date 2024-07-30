@@ -9,6 +9,7 @@
  * methods using dynamic cast. This makes it possible to call non polymorphic
  * methods.
  */
+#include <iostream>
 #include "utils.h"
 
 class base {
@@ -17,6 +18,7 @@ class base {
         void print(){
             std::cout << "base::print\n";
         }
+        virtual ~base(){}
 };
 
 class one : public base {
@@ -24,6 +26,9 @@ class one : public base {
         void do_nothing(){}
         void print(){
             std::cout << "one::print\n";
+        }
+        void show() {
+            std::cout << "one::show\n";
         }
 };
 
@@ -44,21 +49,23 @@ int main(void)
     base* bptr = new two{9};
     bptr->print();
     (dynamic_cast<two*>(bptr))->print();
+    (dynamic_cast<two*>(bptr))->show();
     delete bptr;
-    sep;
+    fmt::line();
 
     two t{12};
     base& bref{t};
     bref.print();
     (dynamic_cast<two&>(bref)).print();
-    sep;
+    fmt::line();
 
     two& tref{dynamic_cast<two&>(bref)};
     tref.print();
-    sep;
+    fmt::line();
 
     bptr = new one;
     bptr->print();
+    (dynamic_cast<one*>(bptr))->print();
     /*
      * We cannot cast the base pointer to two* since bptr is pointing to a one
      * object and to convert it into a two* would require additional

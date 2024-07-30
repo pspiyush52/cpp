@@ -30,6 +30,10 @@ class printer{
         friend std::ostream& operator<<(std::ostream& output, const printer& d){
             auto iter = std::begin(d.__c);
             auto last = std::end(d.__c);
+            if (iter == last) {
+                output << "[]";
+                return output;
+            }
             --last;
             output.put('[');
             for (; iter != last; ++iter)
