@@ -72,13 +72,13 @@ class Heap {
             return this->H[this->n];
         }
         Heap& sort() {
-            int s{this->n};
+            // int s{this->n};
             while (this->n) {
                 --(this->n);
                 this->swap(0, this->n);
                 this->Heapify(0);
             }
-            this->n = s;
+            // this->n = s;
             return *this;
         }
 
@@ -98,7 +98,7 @@ class Heap {
         }
         void Heapify(int root) {
             int min{root}, left{}, right{};
-            while (root < n) {
+            while (root <= (n/2)) {
                 left = 2*root + 1;
                 right = left + 1;
                 if (left < n && comp(proj(H[left]), proj(H[min])))
