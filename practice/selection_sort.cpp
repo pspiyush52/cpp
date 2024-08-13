@@ -1,32 +1,40 @@
 #include "print.h"
-#include "functors.h"
 #include "frand.h"
-const int ARR_SIZE{7};
-int findMin(int A[], int n, int start);
+const int SIZE{7};
 
-void selectionSort(int A[], int n) {
-	for (int i{}; i < n - 1; ++i)
-		swap(A, i, findMin(A, n, i));
-}
+template<typename arr_tp, size_t size>
+void selectionSort(arr_tp (&A)[size]);
 
 int main(void)
 {
-	int arr[ARR_SIZE];
-	printer(rng().integers(-10, 100, ARR_SIZE)) >> arr;
-	printer arr_print(arr);
-	print("The array: ", arr_print);
-	selectionSort(arr, ARR_SIZE);
-	print("Sorted array:", arr_print);
-	return 0;
+    int A[SIZE];
+    printer(rng().integers(-10, 100, SIZE)) >> A;
+    print("The array: ", printer(A));
+    selectionSort(A);
+    print("Sorted: ", printer(A));
+    return 0;
 }
 
-int findMin(int A[], int n, int start) {
-	int min{INT_MAX}, pos;
-	for (int i{start}; i < n; ++i) {
-		if (A[i] < min) {
-			min = A[i];
-			pos = i;
-		}
-	}
-	return pos;
+template<typename T>
+size_t findMinIndex(T* A, size_t begin, size_t size) {
+    size_t minIndex{begin}, i{begin};
+    T min{A[minIndex]};
+    for (; i < size; ++i) {
+        if (A[i] < min) {
+            min = A[i];
+            minIndex = i;
+        }
+    }
+    return minIndex;
+}
+template<typename T>
+void arraySwap(T* A, int i, int j) {
+    T tmp{A[i]};
+    A[i] = A[j];
+    A[j] = tmp;
+}
+template<typename arr_tp, size_t size>
+void selectionSort(arr_tp (&A)[size]) {
+    for (size_t i = 0; i < size - 1; ++i)
+        arraySwap(A, i, findMinIndex(A, i, size));
 }
