@@ -4,117 +4,131 @@
 #include <cstdio>
 #include "frand.h"
 #include <climits>
-#include <iterator>
+#include "reverse_iterator.h"
 
-class __range_gen_iterator{
+class range {
     public:
-        __range_gen_iterator(long long num) : __num(num){}
-        long long& operator*(){ return __num; }
-        __range_gen_iterator& operator++(){
-            ++__num;
-            return *this;
+    class iterator {
+            public:
+                typedef              const int             value_type;
+                iterator(int from): cur{from} {}
+                value_type& operator*() {
+                    return this->cur;
+                }
+                iterator& operator++() {
+                    ++(this->cur);
+                    return *this;
+                }
+                iterator operator++(int) {
+                    iterator tmp{*this};
+                    ++(this->cur);
+                    return tmp;
+                }
+                iterator& operator--() {
+                    --(this->cur);
+                    return *this;
+                }
+                iterator operator--(int) {
+                    iterator tmp{*this};
+                    --(this->cur);
+                    return tmp;
+                }
+                bool operator==(const iterator& rhs) {
+                    return (this->cur == rhs.cur);
+                }
+                bool operator!=(const iterator& rhs) {
+                    return (this->cur != rhs.cur);
+                }
+            private:
+                int cur;
+        };
+        typedef                                                 int               value_type;
+        typedef              BidirectionalReverseIterator<iterator>               reverse_iterator;
+        range(int from, int to): m_from{from}, m_to{to} {}
+        range(int to): range(0, to) {}
+        int size() const {
+            return (this->m_to - this->m_from + 1);
         }
-        __range_gen_iterator operator++(int){
-            __range_gen_iterator tmp(*this);
-            ++__num;
-            return tmp;
+        iterator begin() const {
+            return {this->m_from};
         }
-        bool operator==(__range_gen_iterator& rhs){
-            return (this->__num == rhs.__num);
+        iterator end() const {
+            return {this->m_to};
         }
-        bool operator==(__range_gen_iterator&& rhs){
-            return (this->__num == rhs.__num);
+        reverse_iterator rbegin() const {
+            return {iterator(this->m_to - 1)};
+        }
+        reverse_iterator rend() const {
+            return {iterator(this->m_from - 1)};
         }
     private:
-        long long __num;
+        int m_from;
+        int m_to;
 };
 
-class range{
+class rand_range {
     public:
-        typedef __range_gen_iterator iterator;
-        typedef long long value_type;
-        explicit range(long long end) : __end(end){}
-        range(long long start, long long end) : __start(start), __end(end){}
-        iterator begin(){
-            return iterator(__start);
+        class iterator {
+            public:
+                typedef             const int             value_type;
+                iterator(const rand_range* ptr, int cur): p{ptr}, cur_count{cur} {}
+                value_type& operator*() {
+                    this->cur = p->r.randint(p->m_from, p->m_to);
+                    return this->cur;
+                }
+                iterator& operator++() {
+                    ++(this->cur_count);
+                    return *this;
+                }
+                iterator operator++(int) {
+                    iterator tmp{*this};
+                    ++(this->cur_count);
+                    return tmp;
+                }
+                iterator& operator--() {
+                    --(this->cur_count);
+                    return *this;
+                }
+                iterator operator--(int) {
+                    iterator tmp{*this};
+                    --(this->cur_count);
+                    return tmp;
+                }
+                bool operator==(const iterator& rhs) {
+                    return (this->cur_count == rhs.cur_count);
+                }
+                bool operator!=(const iterator& rhs) {
+                    return (this->cur_count != rhs.cur_count);
+                }
+            private:
+                int cur{};
+                const rand_range* p;
+                int cur_count{};
+        };
+        typedef                                                      int             value_type;
+        typedef                   BidirectionalReverseIterator<iterator>             reverse_iterator;
+        rand_range(int from, int to, int count): m_from{from}, m_to{to}, m_count{count} {}
+        constexpr int size() const {
+            return this->m_count;
         }
-        iterator end(){
-            return iterator(__end);
+        iterator begin() const {
+            return {this, 0};
         }
-
+        iterator end() const {
+            return {this, m_count};
+        }
+        reverse_iterator rbegin() const {
+            return {iterator{this, m_count}};
+        }
+        reverse_iterator rend() const {
+            return {iterator{this, 0}};
+        }
+        
     private:
-        long long __start{};
-        long long __end;
-};
-
-class __rand_range_iterator{
-    public:
-        __rand_range_iterator(const int& from, const int& to, const unsigned int& count):
-            __from(from),
-            __to(to),
-            __count(count),
-            __counter(0)
-            {
-                __cur = r.randint(from, to);
-            }
-        int& operator*(){
-            return __cur;
-        }
-        __rand_range_iterator& operator++(){
-            ++__counter;
-            if (__counter >= __count)
-                this->__from = INT_MIN;
-            __cur = r.randint(__from, __to);
-            return *this;
-        }
-        __rand_range_iterator operator++(int){
-            __rand_range_iterator tmp(*this);
-            ++__counter;
-            if (__counter >= __count)
-                this->__from = INT_MIN;
-            __cur = r.randint(__from, __to);
-            return tmp;
-        }
-        bool operator==(__rand_range_iterator& rhs){
-            return (this->__from == rhs.__from);
-        }
-        bool operator==(__rand_range_iterator&& rhs){
-            return (this->__from == rhs.__from);
-        }
-    
-    private:
-        int __from;
-        int __to;
-        unsigned int __count;
-        unsigned int __counter;
-        int __cur;
-        rng r{};
-};
-
-class rand_range{
-    public:
-        typedef __rand_range_iterator iterator;
-        typedef int value_type;
-        rand_range(int from, int to) : __from(from), __to(to), __count(UINT_MAX){}
-        rand_range(int from, int to, unsigned int count) : __from(from), __to(to), __count(count){}
-        rand_range(unsigned int count) : __from(0), __to(INT_MAX), __count(count){}
-        iterator begin(){
-            return iterator(__from, __to, __count);
-        }
-        iterator end(){
-            return iterator(INT_MIN, 0, 0);
-        }
-
-        template<typename Container>
-        friend Container& operator>>(rand_range& r, Container& container);
-
-        template<typename Container>
-        friend Container& operator>>(rand_range&& r, Container& container);
-
-    private:
-        int __from{INT_MAX};
-        int __to{INT_MAX};
-        unsigned int __count;
+        int m_from;
+        int m_to;
+        int m_count;
+        inline static rng r{};
 };
 
 template<typename Container>

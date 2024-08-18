@@ -105,4 +105,116 @@ class __const_reverse_iterator{
         _iterator_type __riter;
 };
 
+template<typename iter_tp>
+class BidirectionalReverseIterator {
+    typedef                        BidirectionalReverseIterator                   self;
+    typedef                                               self&                   reference;
+    public:
+        typedef                    typename iter_tp::value_type                   value_type;
+        BidirectionalReverseIterator(const iter_tp& iter): it{iter} {}
+        typename iter_tp::value_type& operator*() {
+            return (*it);
+        }
+        reference operator++() {
+            --it;
+            return *this;
+        }
+        self operator++(int) {
+            self tmp{it};
+            --it;
+            return tmp;
+        }
+        reference operator--() {
+            ++it;
+            return *this;
+        }
+        self operator--(int) {
+            self tmp{it};
+            --it;
+            return tmp;
+        }
+        bool operator==(const self& rhs) {
+            return (it == rhs.it);
+        }
+        bool operator!=(const self& rhs) {
+            return (it != rhs.it);
+        }
+    
+    private:
+        iter_tp it;
+};
+
+template<typename iter_tp>
+class ConstIterator {
+    typedef           ConstIterator            self;
+    public:
+        ConstIterator(const iter_tp& iter): it{iter} {}
+        const typename iter_tp::value_type& operator*() {
+            return (*it);
+        }
+        self& operator++() {
+            ++it;
+            return *this;
+        }
+        self operator++(int) {
+            self tmp{it};
+            ++it;
+            return tmp;
+        }
+        self& operator--() {
+            --it;
+            return *this;
+        }
+        self operator--(int) {
+            self tmp{it};
+            --it;
+            return tmp;
+        }
+        bool operator==(const self& rhs) {
+            return (this->it == rhs.it);
+        }
+        bool operator!=(const self& rhs) {
+            return (this->it != rhs.it);
+        }
+    
+    private:
+        iter_tp it;
+};
+
+template<typename T>
+class PointerIterator {
+    public:
+        typedef                        T                          value_type;
+        PointerIterator(T* p): ptr{p} {}
+        T& operator*() {
+            return *(this->ptr);
+        }
+        PointerIterator& operator++() {
+            ++(this->ptr);
+            return *this;
+        }
+        PointerIterator operator++(int) {
+            PointerIterator tmp{*this};
+            ++(this->ptr);
+            return tmp;
+        }
+        PointerIterator& operator--() {
+            --(this->ptr);
+            return *this;
+        }
+        PointerIterator operator--(int) {
+            PointerIterator tmp{*this};
+            --(this->ptr);
+            return tmp;
+        }
+        bool operator==(const PointerIterator& rhs) {
+            return (this->ptr == rhs.ptr);
+        }
+        bool operator!=(const PointerIterator& rhs) {
+            return (this->ptr != rhs.ptr);
+        }
+    private:
+        T* ptr;
+};
+
 #endif  // __REVERSE_ITERATOR_H

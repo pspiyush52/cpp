@@ -6,6 +6,7 @@
 			"label": "G++ Build",
 			"command": "C:\\mingw64\\bin\\g++.exe",
 			"args": [
+				"-g",
 				"-fdiagnostics-color=always",
 				"-Wall",
 				"-std=c++20",
