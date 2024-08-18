@@ -31,7 +31,7 @@ class BaseClass {
         }
         BaseClass& operator=(BaseClass&& src) {
             if (this != &src) {
-                ::print("BaseClass move assign");
+                ::print("BaseClass move assign", &src, "to", this);
                 if (this->isValid())
                     delete this->ptr;
                 this->alloc(*(src.ptr));
@@ -81,11 +81,11 @@ class Derived : public BaseClass {
         Derived(const Derived& src): Base{static_cast<const Base&>(src)} {}
         Derived(Derived&& src): Base{static_cast<Base&&>(src)} {}
         Derived& operator=(const Derived& src) {
-            *(static_cast<Base*>(this)) = static_cast<Base>(src);
+            static_cast<Base&>(*this) = static_cast<const Base&>(src);
             return *this;
         }
         Derived& operator=(Derived&& src) {
-            *(static_cast<Base*>(this)) = static_cast<Base&&>(src);
+            static_cast<Base&>(*this) = static_cast<Base&&>(src);
             return *this;
         }
     private:

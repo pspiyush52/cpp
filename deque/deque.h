@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <initializer_list>
 #include <concepts>
+#include "..\practice\print.h"
 
 template<typename T>
 concept ForwardIterable = requires (T obj) {
@@ -83,13 +84,15 @@ class deque {
             this->cur = i;
         }
         deque(deque&& src) {
-            delete[] this->arr;
+            if (this->arr)
+                delete[] this->arr;
             this->set(src.arr, src.front, src.cur, src.arr_size);
             src.invalidate();
         }
         deque& operator=(const deque& src) {
             if (this != &src) {
-                delete[] this->arr;
+                if (this->arr)
+                    delete[] this->arr;
                 this->initialize(src.size() * 2);
                 const_iterator iter = src.cbegin();
                 int i{};
@@ -101,7 +104,8 @@ class deque {
         }
         deque& operator=(deque&& src) {
             if (this != &src) {
-                delete[] this->arr;
+                if (this->arr)
+                    delete[] this->arr;
                 this->set(src.arr, src.front, src.cur, src.arr_size);
                 src.invalidate();
             }
@@ -155,7 +159,7 @@ class deque {
             if (this->isFull())
                 this->alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
-            this->arr[this->front] = std::move(item);
+            this->arr[this->front] = static_cast<T&&>(item);
             ++(this->cur);
             return *this;
         }
@@ -207,7 +211,7 @@ class deque {
         deque& push_back(T&& item) {
             if (this->isFull())
                 this->alter(EXPAND);
-            this->arr[(this->front + this->cur) % this->arr_size] = std::move(item);
+            this->arr[(this->front + this->cur) % this->arr_size] = static_cast<T&&>(item);
             ++(this->cur);
             return *this;
         }
@@ -218,6 +222,16 @@ class deque {
         deque& push_back(const deque& d) {
             const_iterator it = d.cbegin();
             for (; it != d.cend(); ++it)
+                this->push_back(*it);
+            return *this;
+        }
+        /**
+         * Inserts all the items from an initializer list containing the same
+         * type of data at the back of the list.
+         */
+        deque& push_back(std::initializer_list<value_type> args) {
+            auto it = args.begin();
+            for (; it != args.end(); ++it)
                 this->push_back(*it);
             return *this;
         }
@@ -247,7 +261,7 @@ class deque {
          * @note This method delegates to the push_front() method.
          */
         deque& prepend(const T& item) {
-            return this->push_front(std::forward<const T>(item));
+            return this->push_front(item);
         }
         /**
          * Insert an item at the front of the list.
@@ -255,7 +269,7 @@ class deque {
          * @note This method delegates to the push_front() method.
          */
         deque& prepend(T&& item) {
-            return this->push_front(std::move(item));
+            return this->push_front(static_cast<T&&>(item));
         }
         /**
          * Inserts all the items from a deque containing the same type of
@@ -263,7 +277,7 @@ class deque {
          * @note This method delegates to the push_front() method.
          */
         deque& prepend(const deque& d) {
-            return this->push_front(std::forward<const deque<T>>(d));
+            return this->push_front(d);
         }
         /**
          * Inserts all the items from a container containing compatible types
@@ -276,7 +290,7 @@ class deque {
          */
         template<ReverseIterable Container>
         deque& prepend(const Container& c) {
-            return this->push_front<Container>(std::forward<const Container>(c));
+            return this->push_front<Container>(c);
         }
         /**
          * Insert an item at the back of the list.
@@ -284,7 +298,7 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& append(const T& item) {
-            return this->push_back(std::forward<const T>(item));
+            return this->push_back(item);
         }
         /**
          * Insert an item at the back of the list.
@@ -292,7 +306,7 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& append(T&& item) {
-            return this->push_back(std::move(item));
+            return this->push_back(static_cast<T&&>(item));
         }
         /**
          * Inserts all the items from a deque containing the same type of
@@ -300,7 +314,7 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& append(const deque& d) {
-            return this->push_back(std::forward<const deque<T>>(d));
+            return this->push_back(d);
         }
         /**
          * Inserts all the items from a container containing compatible types
@@ -313,7 +327,7 @@ class deque {
          */
         template<ForwardIterable Container>
         deque& append(const Container& c) {
-            return this->push_back<Container>(std::forward<const Container>(c));
+            return this->push_back<Container>(c);
         }
         /**
          * This method removes an item from the front of the list.
@@ -351,7 +365,7 @@ class deque {
             if (this->isFull())
                 this->alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
-            this->arr[this->front] = std::move(T(std::move(args)...));
+            this->arr[this->front] = static_cast<T&&>(T{static_cast<Args&&>(args)...});
             ++(this->cur);
             return *this;
         }
@@ -366,7 +380,7 @@ class deque {
         deque& emplace_back(Args&& ...args) {
             if (this->isFull())
                 this->alter(EXPAND);
-            this->arr[(this->front + this->cur) % this->arr_size] = std::move(T(std::move(args)...));
+            this->arr[(this->front + this->cur) % this->arr_size] = static_cast<T&&>(T{static_cast<Args&&>(args)...});
             ++(this->cur);
             return *this;
         }
@@ -618,7 +632,7 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& operator+=(T&& item) {
-            return this->push_back(std::move(item));
+            return this->push_back(static_cast<T&&>(item));
         }
         /**
          * Inserts all the items from a deque containing the same type of

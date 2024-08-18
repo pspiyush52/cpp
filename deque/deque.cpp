@@ -2,33 +2,19 @@
 #include "..\practice\stream_insertable.h"
 #include "..\practice\defs.h"
 #include "..\practice\print.h"
-
-class Pair : public StreamInsertable {
-    public:
-        Pair() = default;
-        Pair(int x, int y): m_x{x}, m_y{y} {}
-        int m_x{};
-        int m_y{};
-        void stream_insert(std::ostream& out) const {
-            out << "(x: " << this->m_x << ", y: " << this->m_y << ")";
-        }
-};
+#include "..\practice\base_derived.h"
+#include <vector>
 
 int main(void)
 {
-    // deque<int> nums{43, 17, 8, 12, 78};
-    // deque<short> points{0, 1, 3, 18, 9, 11};
-    // print(nums, points);
-    // nums.push_front(points);
-    // print(nums);
-    // for (auto& x : nums(3, 10))
-    //     std::cout << x << "  ";
-    // print();
-    Pair x, y{2, 3}, z{y};
-    auto det = [](std::initializer_list<Pair> args) {
-        for (auto& arg : args)
-            print(arg);
-    };
-    det({x, y, z});
+    Derived x{44};
+    deque<Derived> d;
+    print();
+    print(x.isValid());
+    d.push_back(static_cast<Derived&&>(x));
+    // d.push_back(Derived(10));
+    print(x.isValid());
+    print(d);
+    print();
     return 0;
 }
