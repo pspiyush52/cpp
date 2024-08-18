@@ -84,8 +84,6 @@ class deque {
             this->cur = i;
         }
         deque(deque&& src) {
-            if (this->arr)
-                delete[] this->arr;
             this->set(src.arr, src.front, src.cur, src.arr_size);
             src.invalidate();
         }
