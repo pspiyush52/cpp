@@ -47,7 +47,7 @@ class range {
         range(int from, int to): m_from{from}, m_to{to} {}
         range(int to): range(0, to) {}
         int size() const {
-            return (this->m_to - this->m_from + 1);
+            return (this->m_to - this->m_from);
         }
         iterator begin() const {
             return {this->m_from};

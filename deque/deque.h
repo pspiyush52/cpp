@@ -44,6 +44,9 @@ class deque {
             return std::forward<value_tp>(x);
         }
     };
+    static int max(int x, int y) {
+        return (x > y) ? x : y;
+    }
     
     public:
         typedef                            T                      value_type;
@@ -61,12 +64,37 @@ class deque {
     public:
         deque(): arr{new T[DEFAULT_SIZE + 1]}, front{}, cur{}, arr_size{DEFAULT_SIZE + 1} {}
         deque(int size) {
-            size = (size < DEFAULT_SIZE) ? DEFAULT_SIZE : size;
-            this->initialize(size + 1);
+            this->initialize(max(size, DEFAULT_SIZE) + 1);
         }
-        deque(std::initializer_list<T> args) {
-            int size = (args.size() < DEFAULT_SIZE) ? DEFAULT_SIZE : args.size();
-            this->initialize(size * 2 + 1);
+        deque(int size, const value_type& default_value): deque(2 * size) {
+            for (int i{}; i < size; ++i)
+                this->arr[i] = default_value;
+            if (size >= 0)
+                this->cur = size;
+        }
+        deque(const deque& src, int from, int to) {
+            if ((from < 0) || (from >= src.size()) || (to <= from)) {
+                this->initialize(DEFAULT_SIZE + 1);
+            }
+            else {
+                int src_size{src.size()}, dsize{};
+                to = (to > src_size) ? (src_size - 1) : to;
+                dsize = to - from + 1;
+                this->initialize(2 * dsize + 1);
+                this->cur = dsize;
+                for (int i{}; i < dsize; ++i, ++from)
+                    this->arr[i] = src[from];
+            }
+        }
+        deque(const_iterator& from, const_iterator& to): deque(2 * from.getSize()) {
+            int i{};
+            for (; from != to; ++from, ++i)
+                this->arr[i] = *from;
+            this->cur = i;
+        }
+        deque(const_iterator&& from, const_iterator&& to): deque(from, to) {}
+        deque(std::initializer_list<value_type> args) {
+            this->initialize(args.size() * 2 + 1);
             auto iter = args.begin();
             for (; iter != args.end(); ++iter)
                 this->push_back(*iter);
@@ -141,7 +169,7 @@ class deque {
          * Insert an item at the front of the list.
          * Similar to the enqueue() operation of a Queue.
          */
-        deque& push_front(const T& item) {
+        deque& push_front(const value_type& item) {
             if (this->isFull())
                 this->alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
@@ -153,7 +181,7 @@ class deque {
          * Insert an item at the front of the list.
          * Similar to the enqueue() operation of a Queue.
          */
-        deque& push_front(T&& item) {
+        deque& push_front(value_type&& item) {
             if (this->isFull())
                 this->alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
@@ -195,7 +223,10 @@ class deque {
          * Inserts an item at the back of the list.
          * Similar to the push() operation on a Stack.
          */
-        deque& push_back(const T& item) {
+        deque& push_back(const value_type& item) {
+#ifdef DEQUE_DEBUG
+            std::cout << "deque::push_back(const value_type&)\n";
+#endif
             if (this->isFull())
                 this->alter(EXPAND);
             this->arr[(this->front + this->cur) % this->arr_size] = item;
@@ -206,7 +237,10 @@ class deque {
          * Inserts an item at the back of the list.
          * Similar to the push() operation on a Stack.
          */
-        deque& push_back(T&& item) {
+        deque& push_back(value_type&& item) {
+#ifdef DEQUE_DEBUG
+            std::cout << "deque::push_back(value_type&&)\n";
+#endif
             if (this->isFull())
                 this->alter(EXPAND);
             this->arr[(this->front + this->cur) % this->arr_size] = static_cast<T&&>(item);
@@ -258,7 +292,7 @@ class deque {
          * Similar to the enqueue() operation of a Queue.
          * @note This method delegates to the push_front() method.
          */
-        deque& prepend(const T& item) {
+        deque& prepend(const value_type& item) {
             return this->push_front(item);
         }
         /**
@@ -266,7 +300,7 @@ class deque {
          * Similar to the enqueue() operation of a Queue.
          * @note This method delegates to the push_front() method.
          */
-        deque& prepend(T&& item) {
+        deque& prepend(value_type&& item) {
             return this->push_front(static_cast<T&&>(item));
         }
         /**
@@ -295,7 +329,10 @@ class deque {
          * Similar to the push() operation of a Stack.
          * @note This method delegates to the push_back() method.
          */
-        deque& append(const T& item) {
+        deque& append(const value_type& item) {
+#ifdef DEQUE_DEBUG
+            print("deque::append(const value_type&)");
+#endif
             return this->push_back(item);
         }
         /**
@@ -303,7 +340,10 @@ class deque {
          * Similar to the push() operation of a Stack.
          * @note This method delegates to the push_back() method.
          */
-        deque& append(T&& item) {
+        deque& append(value_type&& item) {
+#ifdef DEQUE_DEBUG
+            print("deque::append(value_type&&)");
+#endif
             return this->push_back(static_cast<T&&>(item));
         }
         /**
@@ -426,6 +466,12 @@ class deque {
             for (auto iter = this->begin(); iter != this->end(); ++iter)
                 if (pred(*iter))
                     *iter = mod_fun(*iter);
+            return *this;
+        }
+        deque& setValue(const value_type& val) {
+            deque& self{*this};
+            for (int i{}; i < self.size(); ++i)
+                self[i] = val;
             return *this;
         }
         /**
@@ -621,7 +667,7 @@ class deque {
          * Similar to the push() operation of a Stack.
          * @note This method delegates to the push_back() method.
          */
-        deque& operator+=(const T& item) {
+        deque& operator+=(const value_type& item) {
             return this->push_back(std::forward<const T>(item));
         }
         /**
@@ -629,7 +675,7 @@ class deque {
          * Similar to the push() operation of a Stack.
          * @note This method delegates to the push_back() method.
          */
-        deque& operator+=(T&& item) {
+        deque& operator+=(value_type&& item) {
             return this->push_back(static_cast<T&&>(item));
         }
         /**
@@ -706,7 +752,7 @@ class deque {
         }
 
     private:
-        T* arr{};
+        value_type* arr{};
         int front{};
         int cur{};
         int arr_size{};
@@ -770,7 +816,7 @@ class deque {
                     newSize = this->arr_size / 2;
                 break;
             }
-            newArray = new T[newSize];
+            newArray = new value_type[newSize];
             iterator iter = this->begin();
             for (; iter != this->end(); ++i, ++iter)
                 newArray[i] = std::move(*iter);
@@ -778,15 +824,15 @@ class deque {
             this->set(newArray, {}, this->cur, newSize);
         }
         void invalidate() {
-            this->set({}, {}, {}, {});
+            this->set({}, {}, {}, 1);
         }
         /**
          * Swap elements at indices i and j in the containing array.
          */
         void swap(int i, int j) {
-            T tmp{this->arr[i]};
-            this->arr[i] = this->arr[j];
-            this->arr[j] = tmp;
+            value_type tmp{this->arr[i]};
+            this->arr[i] = static_cast<value_type&&>(this->arr[j]);
+            this->arr[j] = static_cast<value_type&&>(tmp);
         }
         /**
          * Returns the actual index at which the element at index i in the
@@ -873,6 +919,9 @@ class deque<T>::const_iterator {
         }
         int getPos() {
             return this->pos;
+        }
+        int getSize() {
+            return p->size();
         }
 
     private:
