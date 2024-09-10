@@ -4,16 +4,43 @@
 #include <stdexcept>
 #include <ios>
 
-class IndexError : public std::out_of_range{
+class IndexError : public std::exception {
     public:
-        IndexError() : std::out_of_range("Index value out of bounds"){}
-        IndexError(const char* msg) : std::out_of_range(msg){}
+        IndexError() : msg("Index out of bounds"){}
+        IndexError(const char* msg) : msg(msg){}
+        virtual const char* what() const noexcept {
+            return msg;
+        }
+    private:
+        const char* msg;
 };
 
-class ListEmpty : public std::out_of_range{
+class SizeError : public std::exception {
     public:
-        ListEmpty() : std::out_of_range("List empty"){}
-        ListEmpty(const char* msg) : std::out_of_range(msg){}
+        SizeError(const char* message) : msg{message} {}
+        virtual const char* what() const noexcept {
+            return msg;
+        }
+    private:
+        const char* msg;
+};
+
+class ListEmpty : public SizeError {
+    public:
+        ListEmpty() : SizeError("List empty"){}
+        ListEmpty(const char* message) : SizeError(message){}
+};
+
+class StringEmpty : public SizeError {
+    public:
+        StringEmpty(): SizeError("String empty") {}
+        StringEmpty(const char* message): SizeError(message) {}
+};
+
+class SetEmptyError : public SizeError {
+    public:
+        SetEmptyError() : SizeError("Set empty"){}
+        SetEmptyError(const char* msg) : SizeError(msg){}
 };
 
 class ArgError : public std::invalid_argument {
@@ -22,7 +49,7 @@ class ArgError : public std::invalid_argument {
         ArgError(const char* msg) : std::invalid_argument(msg){}
 };
 
-class ValueError : public std::domain_error{
+class ValueError : public std::domain_error {
     public:
         ValueError() : std::domain_error("Invalid value"){}
         ValueError(const char* msg) : std::domain_error(msg){}

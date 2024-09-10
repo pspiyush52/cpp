@@ -13,17 +13,17 @@ const T& max(const T& x, const T& y){
     return (x > y) ? x : y;
 }
 
-struct less{
-    template<typename T>
-    bool operator()(const T& lhs, const T& rhs){
-        return (lhs < rhs);
+struct less {
+    template<typename T, typename U>
+    bool operator()(T&& x, U&& y) {
+        return x < y;
     }
 };
 
-struct greater{
+struct greater {
     template<typename T>
-    bool operator()(const T& lhs, const T& rhs){
-        return (lhs > rhs);
+    bool operator()(T&& x, T&& y) {
+        return x > y;
     }
 };
 

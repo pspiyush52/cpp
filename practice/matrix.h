@@ -144,7 +144,7 @@ class Matrix{
         requires NumContents<ContainerType>
         Matrix(unsigned int row_col, const ContainerType& src);
         Matrix(const Matrix& src);
-        Matrix(Matrix&& src);
+        Matrix(Matrix&& src) noexcept;
 
         /**
          * @brief Access element at (i, j) location in the matrix with bounds
@@ -213,6 +213,7 @@ class Matrix{
          * @return A reference to the matrix object.
         */
         Matrix& fill(double value);
+        Matrix& fill(const std::initializer_list<double>& args);
 
         /**
          * @brief Fills the diagonal of a square matrix with a single value.
@@ -564,7 +565,7 @@ Matrix::Matrix(const Matrix& src) : Matrix(src.nrows, src.ncols){
     memcpy(this->matrix_arr, src.matrix_arr, sizeof(double) * (nrows * ncols));
 }
 
-Matrix::Matrix(Matrix&& src){
+Matrix::Matrix(Matrix&& src) noexcept {
 
 #ifdef __MATRIX_H_DEBUG
     std::cout << "Matrix created by moving matrix from " << &src << " to " << this << '\n';
@@ -749,6 +750,12 @@ Matrix& Matrix::fill(double value){
         this->matrix_arr[i] = value;
     return *this;
 }
+Matrix& Matrix::fill(const std::initializer_list<double>& args) {
+    auto it = args.begin();
+    for(unsigned int i{}; i < this->dim_prod() && it != args.end(); ++i, ++it)
+        this->matrix_arr[i] = *it;
+    return *this;
+}
 
 Matrix& Matrix::make_diagonal(double value){
     if (!this->is_square())
@@ -783,7 +790,7 @@ Matrix& Matrix::resize(unsigned int new_rows, unsigned int new_cols){
     return *this;
 }
 
-Matrix Matrix::get_resized(unsigned int new_rows, unsigned int new_cols) const{
+Matrix Matrix::get_resized(unsigned int new_rows, unsigned int new_cols) const {
     if (!(new_rows && new_cols))
         throw SizeError("Invalid matrix size to resize.");
     

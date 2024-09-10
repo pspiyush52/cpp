@@ -93,7 +93,7 @@ class deque {
             this->cur = i;
         }
         deque(const_iterator&& from, const_iterator&& to): deque(from, to) {}
-        deque(std::initializer_list<value_type> args) {
+        deque(const std::initializer_list<value_type>& args) {
             this->initialize(args.size() * 2 + 1);
             auto iter = args.begin();
             for (; iter != args.end(); ++iter)

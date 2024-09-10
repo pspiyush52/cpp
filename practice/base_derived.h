@@ -5,7 +5,7 @@
 
 class BaseClass {
     public:
-        BaseClass() {
+        BaseClass(): ptr{new int{}} {
             ::print("BaseClass object created @", this);
         }
         BaseClass(int n): ptr{new int{n}} {
@@ -50,10 +50,11 @@ class BaseClass {
         }
         virtual ~BaseClass() {
             ::print("BaseClass object destroyed @", this);
-            if (this->ptr)
-                this->clear();
+            this->clear();
         }
-
+        int getValue() const {
+            return *(this->ptr);
+        }
         friend std::ostream& operator<<(std::ostream& out, const BaseClass& b) {
             b.streamInsert(out);
             return out;
