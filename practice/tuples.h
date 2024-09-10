@@ -298,14 +298,16 @@ class Pair {
             this->m_second = second;
         }
         void clearFirst() {
-            if (this->m_first)
+            if (this->m_first) {
                 delete this->m_first;
-            this->m_first = {};
+                this->m_first = {};
+            }
         }
         void clearSecond() {
-            if (this->m_second)
+            if (this->m_second) {
                 delete this->m_second;
-            this->m_second = {};
+                this->m_second = {};
+            }
         }
         void invalidate() {
             this->m_first = {};

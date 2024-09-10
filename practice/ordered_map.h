@@ -494,8 +494,11 @@ class OrderedSMap {
         bool isEmpty() const {
             return (this->root == nullptr);
         }
-        constexpr size_t size() {
+        constexpr size_t size() const noexcept {
             return this->setSize;
+        }
+        constexpr int getHeight() const noexcept {
+            return this->height(this->root);
         }
         bool contains(const key_type& key) const {
             hash_type h{hash(key)};
@@ -697,8 +700,8 @@ class OrderedSMap {
         static void _clear(SetNode* root) {
             if (root) {
                 _clear(root->left);
-                delete root;
                 _clear(root->right);
+                delete root;
             }
         }
         static int max(int x, int y) {

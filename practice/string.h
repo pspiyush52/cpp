@@ -8,9 +8,9 @@
 #include "compact_string.h"
 
 class String {
-    static const int DEFAULT_SIZE{8};
-    static const int SHRINK{};
-    static const int EXPAND{1};
+    static const std::size_t DEFAULT_SIZE{8};
+    static const std::size_t SHRINK{};
+    static const std::size_t EXPAND{1};
     struct Tautology {
         bool operator()(const char&) {
             return true;
@@ -30,7 +30,7 @@ class String {
             return std::forward<value_tp>(x);
         }
     };
-    static int max(int x, int y) {
+    static std::size_t max(std::size_t x, std::size_t y) {
         return (x > y) ? x : y;
     }
     typedef int (*check_fun)(int);
@@ -44,7 +44,7 @@ class String {
         typedef                deque<String>                      StringList;
         class iterator {
             public:
-                iterator(String* ptr, int i): p{ptr}, pos{i} {}
+                iterator(String* ptr, std::size_t i): p{ptr}, pos{i} {}
                 reference operator*() {
                     return p->arr[pos];
                 }
@@ -62,17 +62,17 @@ class String {
                 bool operator!=(const iterator& rhs) {
                     return (this->pos != rhs.pos);
                 }
-                int getPos() {
+                std::size_t getPos() {
                     return this->pos;
                 }
             
             private:
                 String* p;
-                int pos;
+                std::size_t pos;
         };
         class const_iterator {
             public:
-                const_iterator(const String* ptr, int i): p{ptr}, pos{i} {}
+                const_iterator(const String* ptr, std::size_t i): p{ptr}, pos{i} {}
                 const_reference operator*() {
                     return p->arr[pos];
                 }
@@ -90,20 +90,20 @@ class String {
                 bool operator!=(const const_iterator& rhs) {
                     return (this->pos != rhs.pos);
                 }
-                int getPos() {
+                std::size_t getPos() {
                     return this->pos;
                 }
-                int getSize() {
+                std::size_t getSize() {
                     return p->size();
                 }
 
             private:
                 const String* p;
-                int pos;
+                std::size_t pos;
         };
         class reverse_iterator {
             public:
-                reverse_iterator(String* ptr, int i): p{ptr}, pos{i} {}
+                reverse_iterator(String* ptr, std::size_t i): p{ptr}, pos{i} {}
                 reference operator*() {
                     return p->arr[pos];
                 }
@@ -121,17 +121,17 @@ class String {
                 bool operator!=(const reverse_iterator& rhs) {
                     return (this->pos != rhs.pos);
                 }
-                int getPos() {
+                std::size_t getPos() {
                     return this->pos;
                 }
             
             private:
                 String* p;
-                int pos;
+                std::size_t pos;
         };
         class const_reverse_iterator {
             public:
-                const_reverse_iterator(const String* ptr, int i): p{ptr}, pos{i} {}
+                const_reverse_iterator(const String* ptr, std::size_t i): p{ptr}, pos{i} {}
                 const_reference operator*() {
                     return p->arr[pos];
                 }
@@ -149,17 +149,17 @@ class String {
                 bool operator!=(const const_reverse_iterator& rhs) {
                     return (this->pos != rhs.pos);
                 }
-                int getPos() {
+                std::size_t getPos() {
                     return this->pos;
                 }
             
             private:
                 const String* p;
-                int pos;
+                std::size_t pos;
         };
         class view_iterator {
             public:
-                view_iterator(String* ptr, int i, int j): p{ptr}, front{i}, rear{j} {}
+                view_iterator(String* ptr, std::size_t i, std::size_t j): p{ptr}, front{i}, rear{j} {}
                 String::iterator begin() {
                     return {p, p->__relativePosition(front)};
                 }
@@ -168,12 +168,12 @@ class String {
                 }
             private:
                 String* p;
-                int front;
-                int rear;
+                std::size_t front;
+                std::size_t rear;
         };
         class const_view_iterator {
             public:
-                const_view_iterator(const String* ptr, int i, int j): p{ptr}, front{i}, rear{j} {}
+                const_view_iterator(const String* ptr, std::size_t i, std::size_t j): p{ptr}, front{i}, rear{j} {}
                 String::const_iterator begin() {
                     return {p, p->__relativePosition(front)};
                 }
@@ -182,37 +182,37 @@ class String {
                 }
             private:
                 const String* p;
-                int front;
-                int rear;
+                std::size_t front;
+                std::size_t rear;
         };
     
     public:
-        String() noexcept: arr{new value_type[DEFAULT_SIZE + 1]}, front{}, cur{}, arr_size{DEFAULT_SIZE + 1} {}
-        String(int size) {
+        String() : arr{new value_type[DEFAULT_SIZE + 1]}, front{}, cur{}, arr_size{DEFAULT_SIZE + 1} {}
+        String(std::size_t size) {
             this->__initialize(max(size, DEFAULT_SIZE) + 1);
         }
-        String(int size, const value_type& default_value): String(2 * size) {
-            for (int i{}; i < size; ++i)
+        String(std::size_t size, value_type default_value): String(2 * size) {
+            for (std::size_t i{}; i < size; ++i)
                 this->arr[i] = default_value;
             if (size >= 0)
                 this->cur = size;
         }
-        String(const String& src, int from, int to) {
-            if ((from < 0) || (from >= src.size()) || (to <= from)) {
+        String(const String& src, std::size_t from, std::size_t to) {
+            if ((from >= src.size()) || (to <= from)) {
                 this->__initialize(DEFAULT_SIZE + 1);
             }
             else {
-                int src_size{src.size()}, dsize{};
+                std::size_t src_size{src.size()}, dsize{};
                 to = (to > src_size) ? (src_size - 1) : to;
                 dsize = to - from + 1;
                 this->__initialize(2 * dsize + 1);
                 this->cur = dsize;
-                for (int i{}; i < dsize; ++i, ++from)
+                for (std::size_t i{}; i < dsize; ++i, ++from)
                     this->arr[i] = src[from];
             }
         }
         String(const_iterator& from, const_iterator& to): String(2 * from.getSize()) {
-            int i{};
+            std::size_t i{};
             for (; from != to; ++from, ++i)
                 this->arr[i] = *from;
             this->cur = i;
@@ -222,9 +222,16 @@ class String {
             for (; *str; ++str)
                 this->push_back(*str);
         }
-        String(const String& src) noexcept: String(src.size() * 2) {
+        String(const CompactString& src): String(src.size() * 2) {
+            CompactString::const_iterator it = src.cbegin();
+            size_t i{};
+            for (; it != src.cend(); ++it, ++i)
+                this->arr[i] = *it;
+            this->cur = i;
+        }
+        String(const String& src): String(src.size() * 2) {
             const_iterator iter = src.cbegin();
-            int i{};
+            std::size_t i{};
             for (; iter != src.cend(); ++iter, ++i)
                 this->arr[i] = *iter;
             this->cur = i;
@@ -239,7 +246,7 @@ class String {
                     delete[] this->arr;
                 this->__initialize(src.size() * 2);
                 const_iterator iter = src.cbegin();
-                int i{};
+                std::size_t i{};
                 for (; iter != src.cend(); ++iter, ++i)
                     this->arr[i] = *iter;
                 this->cur = i;
@@ -256,26 +263,26 @@ class String {
             return *this;
         }
 
-        constexpr bool isEmpty() const {
+        constexpr bool isEmpty() const noexcept {
             return (!this->cur);
         }
-        constexpr int size() const {
+        constexpr std::size_t size() const noexcept {
             return this->cur;
         }
-        constexpr int capacity() const {
-            return (this->arr_size - 1);
-        }
-        
-        String& push_front(const value_type& item) {
-            if (this->__isFull())
-                this->__alter(EXPAND);
-            this->front = (this->front + this->arr_size - 1) % this->arr_size;
-            this->arr[this->front] = item;
-            ++(this->cur);
-            return *this;
+        constexpr std::size_t capacity() const noexcept {
+            return (this->arr_size) ? (this->arr_size - 1) : 0;
         }
 
-        String& push_front(value_type&& item) {
+        void swap(String& rhs) noexcept {
+            value_type* larr = this->arr;
+            size_t lfront = this->front;
+            size_t lcur = this->cur;
+            size_t larr_size = this->arr_size;
+            this->__set(rhs.arr, rhs.front, rhs.cur, rhs.arr_size);
+            rhs.__set(larr, lfront, lcur, larr_size);
+        }
+        
+        String& push_front(value_type item) {
             if (this->__isFull())
                 this->__alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
@@ -308,20 +315,7 @@ class String {
                 this->push_front(*it);
             return *this;
         }
-        String& push_back(const value_type& item) {
-#ifdef STRING_DEBUG
-            std::cout << "String::push_back(const value_type&)\n";
-#endif
-            if (this->__isFull())
-                this->__alter(EXPAND);
-            this->arr[(this->front + this->cur) % this->arr_size] = item;
-            ++(this->cur);
-            return *this;
-        }
-        String& push_back(value_type&& item) {
-#ifdef DEQUE_DEBUG
-            std::cout << "String::push_back(value_type&&)\n";
-#endif
+        String& push_back(value_type item) {
             if (this->__isFull())
                 this->__alter(EXPAND);
             this->arr[(this->front + this->cur) % this->arr_size] = item;
@@ -358,10 +352,7 @@ class String {
             return *this;
         }
         
-        String& prepend(const value_type& item) {
-            return this->push_front(item);
-        }
-        String& prepend(value_type&& item) {
+        String& prepend(value_type item) {
             return this->push_front(item);
         }
         String& prepend(const char* str) {
@@ -379,24 +370,12 @@ class String {
          * Similar to the push() operation of a Stack.
          * @note This method delegates to the push_back() method.
          */
-        String& append(const value_type& item) {
-#ifdef DEQUE_DEBUG
-            print("String::append(const value_type&)");
-#endif
+        String& append(value_type item) {
             return this->push_back(item);
         }
-        /**
-         * Insert an item at the back of the list.
-         * Similar to the push() operation of a Stack.
-         * @note This method delegates to the push_back() method.
-         */
-        String& append(value_type&& item) {
-#ifdef DEQUE_DEBUG
-            print("String::append(value_type&&)");
-#endif
-            return this->push_back(item);
+        String& append(const char* str) {
+            return this->push_back(str);
         }
-        
         String& append(const String& d) {
             return this->push_back(d);
         }
@@ -438,7 +417,7 @@ class String {
                 this->__initialize(DEFAULT_SIZE + 1);
             }
             else {
-                int newSize = this->cur + 1;
+                std::size_t newSize = this->cur + 1;
                 pointer newArray = new value_type[newSize];
                 pointer ptr = newArray;
                 iterator iter = this->begin();
@@ -454,7 +433,7 @@ class String {
          * according to the function like entity mod_fun.
          * @param mod_fun Function like entity that can accept an item of the
          * list and returns an item of the same type. So if the deque holds
-         * int values then the mod_fun must have a signature: int mod_fun(int).
+         * std::size_t values then the mod_fun must have a signature: std::size_t mod_fun(int).
          * The value returned by mod_fun will replace the original value
          * present in the deque.
          * @param pred Function like entity that can accept an item of the
@@ -470,7 +449,7 @@ class String {
         }
         String& setValue(value_type val) {
             String& self{*this};
-            for (int i{}; i < self.size(); ++i)
+            for (std::size_t i{}; i < self.size(); ++i)
                 self[i] = val;
             return *this;
         }
@@ -480,7 +459,7 @@ class String {
         String& reverse() {
             reverse_iterator riter = this->rbegin();
             iterator iter = this->begin();
-            for (int i{}; i < (this->cur / 2); ++i) {
+            for (std::size_t i{}; i < (this->cur / 2); ++i) {
                 this->__swap(iter.getPos(), riter.getPos());
                 ++riter;
                 ++iter;
@@ -512,6 +491,20 @@ class String {
             for (; it != this->cend(); ++it, ++s_it)
                 if (std::tolower(*it) != std::tolower(*s_it))
                     return false;
+            if (it != this->cend() || s_it != str.cend())
+                return false;
+            return true;
+        }
+        bool similar(const CompactString& rhs) const {
+            if (this->size() != rhs.size())
+                return false;
+            const_iterator it = this->cbegin();
+            CompactString::const_iterator rit = rhs.cbegin();
+            for (; it != this->cend(); ++it, ++rit)
+                if (std::tolower(*it) != std::tolower(*rit))
+                    return false;
+            if (it != this->cend() || rit != rhs.cend())
+                return false;
             return true;
         }
         String& replace(char toReplace, char replacementChar) {
@@ -521,7 +514,6 @@ class String {
             return *this;
         }
         
-
         bool isAlpha() const {
             return this->__checkString(std::isalpha);
         }
@@ -590,7 +582,7 @@ class String {
                 return *this;
             }
             for (--end; end != it && __isWhiteSpace(*end); --end);
-            int i{};
+            std::size_t i{};
             for (++end; it != end; ++it) {
                 if (__isWhiteSpace(*it)) {
                     for (; it != end && __isWhiteSpace(*it); ++it);
@@ -623,15 +615,15 @@ class String {
             return tmp;
         }
         
-        int search(const value_type& key) const {
+        std::size_t search(value_type key) const {
             const_iterator it = this->cbegin();
             for (; it != this->cend(); ++it)
                 if (*it == key)
                     return it.getPos();
             return -1;
         }
-        int search(const value_type& key, int fromPosition) const {
-            if (fromPosition >= this->cur - 1)
+        std::size_t search(value_type key, std::size_t fromPosition) const {
+            if (this->__isOutOfBounds(fromPosition))
                 throw IndexError();
             const_iterator it{this, this->__relativePosition(fromPosition)};
             for (; it != this->cend(); ++it)
@@ -640,32 +632,32 @@ class String {
             return -1;
         }
         
-        view_iterator sliceView(int i, int j) {
+        view_iterator sliceView(std::size_t i, std::size_t j) {
             if (__isOutOfBounds(i) || __isOutOfBounds(j) || (i >= j))
                 throw IndexError();
             return {this, i, j};
         }
-        view_iterator sliceView(int i) {
+        view_iterator sliceView(std::size_t i) {
             if (__isOutOfBounds(i))
                 throw IndexError();
             if (i >= this->cur - 1)
                 return {this, 0, this->cur - 1};
             return {this, 0, i};
         }
-        const_view_iterator sliceView(int i, int j) const {
+        const_view_iterator sliceView(std::size_t i, std::size_t j) const {
             if (__isOutOfBounds(i) || __isOutOfBounds(j) || (i >= j))
                 throw IndexError();
             return {this, i, j};
         }
-        const_view_iterator sliceView(int i) const {
+        const_view_iterator sliceView(std::size_t i) const {
             if (__isOutOfBounds(i))
                 throw IndexError();
             if (i >= this->cur - 1)
                 return {this, 0, this->cur - 1};
             return {this, 0, i};
         }
-        String slice(int i, int j) const {
-            if ((i < 0) || (j < 0) || (i >= j))
+        String slice(std::size_t i, std::size_t j) const {
+            if (__isOutOfBounds(i) || __isOutOfBounds(j) || (i >= j))
                 throw IndexError();
             String res;
             const_iterator it{this, __relativePosition(i)}, end{this, __relativePosition(j)};
@@ -673,7 +665,7 @@ class String {
                 res.append(*it);
             return res;
         }
-        String slice(int j) const {
+        String slice(std::size_t j) const {
             if (__isOutOfBounds(j))
                 throw IndexError();
             String res{};
@@ -682,7 +674,7 @@ class String {
                 res.append(*it);
             return res;
         }
-        String from_pos(int pos) const {
+        String from_pos(std::size_t pos) const {
             if (__isOutOfBounds(pos))
                 throw IndexError();
             const_iterator it{this, __relativePosition(pos)};
@@ -691,32 +683,33 @@ class String {
                 res.append(*it);
             return res;
         }
-        String nlast(int n) const {
-            if (n <= 0 || n > this->cur)
+        String nlast(std::size_t n) const {
+            if (n > this->cur)
                 throw ArgError();
             return this->from_pos(this->cur - n);
         }
         String& lstrip() {
-            iterator it = this->__skipwf();
+            if (this->isEmpty())
+                return *this;
+            iterator it = this->begin();
+            std::size_t count{};
+            for (; it != this->end() && __isWhiteSpace(*it); ++it, ++count);
             if (it == this->end()) {
                 delete[] this->arr;
                 this->__initialize(DEFAULT_SIZE + 1);
                 return *this;
             }
-            int i{};
-            for (; it != this->end(); ++it) {
-                this->arr[i] = *it;
-                i = (i + 1) % this->arr_size;
-            }
-            this->front = 0;
-            this->cur = i;
+            this->front = it.getPos();
+            this->cur -= count;
             return *this;
         }
         String& rstrip() {
-            iterator end = {this, __relativePosition(this->cur - 1)};
-            int count{};
-            for (; end != this->begin() && __isWhiteSpace(*end); --end, ++count);
-            if (end == this->begin()) {
+            if (this->isEmpty())
+                return *this;
+            iterator end = {this, __relativePosition(this->cur - 1)}, begin = this->begin();
+            std::size_t count{};
+            for (--begin; end != begin && __isWhiteSpace(*end); --end, ++count);
+            if (end == begin) {
                 delete[] this->arr;
                 this->__initialize(DEFAULT_SIZE + 1);
                 return *this;
@@ -728,7 +721,7 @@ class String {
             return this->lstrip().rstrip();
         }
 
-        int stoi() const {
+        std::size_t stoi() const {
             try {
                 return static_cast<int>(this->stod());
             } catch(ValueError&) {
@@ -784,8 +777,8 @@ class String {
                 isNegative = false;
                 ++it;
             }
-            for (; it != end &&  *it != '.'; ++it) {
-                if (std::isdigit(*it) && (*it >= '0' && *it <= '9'))
+            for (; it != end && *it != '.'; ++it) {
+                if (std::isdigit(*it))
                     num = ((num * 10) + *it - '0');
                 else
                     throw ValueError();
@@ -793,7 +786,7 @@ class String {
             if (it != end) {
                 ++it;
                 for (double div{10}; it != end; ++it, div *= 10) {
-                    if (std::isdigit(*it) && (*it >= '0' && *it <= '9'))
+                    if (std::isdigit(*it))
                         num += ((*it - '0') / div);
                     else
                         throw ValueError();
@@ -816,7 +809,7 @@ class String {
                 ++it;
             }
             for (; it != end &&  *it != '.'; ++it) {
-                if (std::isdigit(*it) && (*it >= '0' && *it <= '9'))
+                if (std::isdigit(*it))
                     num = ((num * 10) + *it - '0');
                 else
                     throw ValueError();
@@ -824,7 +817,7 @@ class String {
             if (it != end) {
                 ++it;
                 for (float div{10}; it != end; ++it, div *= 10) {
-                    if (std::isdigit(*it) && (*it >= '0' && *it <= '9'))
+                    if (std::isdigit(*it))
                         num += ((*it - '0') / div);
                     else
                         throw ValueError();
@@ -847,7 +840,7 @@ class String {
                 ++it;
             }
             for (; it != end &&  *it != '.'; ++it) {
-                if (std::isdigit(*it) && (*it >= '0' && *it <= '9'))
+                if (std::isdigit(*it))
                     num = ((num * 10) + *it - '0');
                 else
                     throw ValueError();
@@ -855,7 +848,7 @@ class String {
             if (it != end) {
                 ++it;
                 for (long double div{10}; it != end; ++it, div *= 10) {
-                    if (std::isdigit(*it) && (*it >= '0' && *it <= '9'))
+                    if (std::isdigit(*it))
                         num += ((*it - '0') / div);
                     else
                         throw ValueError();
@@ -949,24 +942,24 @@ class String {
                 return {this, this->front};
         }
 
-        view_iterator operator()(int i, int j) {
+        view_iterator operator()(std::size_t i, std::size_t j) {
             if (__isOutOfBounds(i) || __isOutOfBounds(j) || (i >= j))
                 throw IndexError();
             return {this, i, j};
         }
-        view_iterator operator()(int i) {
+        view_iterator operator()(std::size_t i) {
             if (__isOutOfBounds(i))
                 throw IndexError();
             if (i >= this->cur - 1)
                 return {this, 0, this->cur - 1};
             return {this, 0, i};
         }
-        const_view_iterator operator()(int i, int j) const {
+        const_view_iterator operator()(std::size_t i, std::size_t j) const {
             if (__isOutOfBounds(i) || __isOutOfBounds(j) || (i >= j))
                 throw IndexError();
             return {this, i, j};
         }
-        const_view_iterator operator()(int i) const {
+        const_view_iterator operator()(std::size_t i) const {
             if (__isOutOfBounds(i))
                 throw IndexError();
             if (i >= this->cur - 1)
@@ -977,14 +970,14 @@ class String {
          * Returns a reference to an object at index i in the list.
          * @note The operator[] does not perform bounds checking.
          */
-        reference operator[](int i) {
+        reference operator[](std::size_t i) {
             return this->arr[(this->front + i) % this->arr_size];
         }
         /**
          * Returns a const reference to an object at index i in the list.
          * @note The operator[] does not perform bounds checking.
          */
-        const_reference operator[](int i) const {
+        const_reference operator[](std::size_t i) const {
             return this->arr[(this->front + i) % this->arr_size];
         }
         /**
@@ -1003,6 +996,9 @@ class String {
         String& operator+=(const String& d) {
             return this->push_back(d);
         }
+        String& operator+=(const char* str) {
+            return this->push_back(str);
+        }
         /**
          * Inserts all the items from a container containing compatible types
          * if items at the back of the list.
@@ -1017,25 +1013,180 @@ class String {
             return this->push_back<Container>(c);
         }
 
+        String operator+(value_type ch) const {
+            String tmp{*this};
+            tmp.push_back(ch);
+            return tmp;
+        }
         String operator+(const char* str) const {
             String tmp{*this};
-            for (; *str; ++str)
-                tmp.push_back(*str);
+            tmp.push_back(str);
             return tmp;
         }
         String operator+(const String& str) const {
             String tmp{*this};
-            const_iterator it = str.cbegin();
-            for (; it != str.cend(); ++it)
-                tmp.push_back(*it);
+            tmp.push_back(str);
             return tmp;
         }
         friend String operator+(const char* lhs, const String& rhs) {
             String res{lhs};
-            const_iterator it = rhs.cbegin();
-            for (; it != rhs.cend(); ++it)
-                res.push_back(*it);
+            res.push_back(rhs);
             return res;
+        }
+
+        std::strong_ordering operator<=>(const String& rhs) const {
+            const_iterator it = this->cbegin();
+            const_iterator rit = rhs.cbegin();
+            int diff{};
+            for (; it != this->cend() && rit != rhs.cend() && (diff == 0); ++it, ++rit) {
+                diff = static_cast<int>(*it) - static_cast<int>(*rit);
+            }
+            if (diff == 0) {
+                if (it != this->cend())
+                    return std::strong_ordering::greater;
+                else if (rit != rhs.cend())
+                    return std::strong_ordering::less;
+                else
+                    return std::strong_ordering::equal;
+            }
+            else if (diff < 0)
+                return std::strong_ordering::less;
+            else
+                return std::strong_ordering::greater;
+        }
+        std::strong_ordering operator<=>(const CompactString& rhs) const {
+            const_iterator it = this->cbegin();
+            CompactString::const_iterator rit = rhs.cbegin();
+            int diff{};
+            for (; it != this->cend() && rit != rhs.cend() && (diff == 0); ++it, ++rit) {
+                diff = static_cast<int>(*it) - static_cast<int>(*rit);
+            }
+            if (diff == 0) {
+                if (it != this->cend())
+                    return std::strong_ordering::greater;
+                else if (rit != rhs.cend())
+                    return std::strong_ordering::less;
+                else
+                    return std::strong_ordering::equal;
+            }
+            else if (diff < 0)
+                return std::strong_ordering::less;
+            else
+                return std::strong_ordering::greater;
+        }
+        friend std::strong_ordering operator<=>(const CompactString& lhs, const String& rhs) {
+            CompactString::const_iterator lit = lhs.cbegin();
+            const_iterator rit = rhs.cbegin();
+            int diff{};
+            for (; lit != lhs.cend() && rit != rhs.cend() && (diff == 0); ++lit, ++rit)
+                diff = static_cast<int>(*lit) - static_cast<int>(*rit);
+            if (diff == 0) {
+                if (lit != lhs.cend())
+                    return std::strong_ordering::greater;
+                else if (rit != rhs.cend())
+                    return std::strong_ordering::less;
+                else
+                    return std::strong_ordering::equal;
+            }
+            else if (diff < 0)
+                return std::strong_ordering::less;
+            else
+                return std::strong_ordering::greater;
+        }
+        std::strong_ordering operator<=>(const char* rhs) const {
+            if (rhs == nullptr)
+                return std::strong_ordering::greater;
+            const_iterator it = this->cbegin();
+            int diff{};
+            for (; it != this->cend() && *rhs && (diff == 0); ++it, ++rhs)
+                diff = static_cast<int>(*it) - static_cast<int>(*rhs);
+            if (diff == 0) {
+                if (it != this->cend())
+                    return std::strong_ordering::greater;
+                else if (*rhs)
+                    return std::strong_ordering::less;
+                else
+                    return std::strong_ordering::equal;
+            }
+            else if (diff < 0)
+                return std::strong_ordering::less;
+            else
+                return std::strong_ordering::greater;
+        }
+        friend std::strong_ordering operator<=>(const char* lhs, const String& rhs) {
+            if (lhs == nullptr)
+                return std::strong_ordering::less;
+            const_iterator rit = rhs.cbegin();
+            int diff{};
+            for (; *lhs && rit != rhs.cend() && (diff == 0); ++lhs, ++rit)
+                diff = static_cast<int>(*lhs) - static_cast<int>(*rit);
+            if (diff == 0) {
+                if (*lhs)
+                    return std::strong_ordering::greater;
+                else if (rit != rhs.cend())
+                    return std::strong_ordering::less;
+                else
+                    return std::strong_ordering::equal;
+            }
+            else if (diff < 0)
+                return std::strong_ordering::less;
+            else
+                return std::strong_ordering::greater;
+        }
+
+        bool operator==(const String& rhs) const {
+            if (this->size() != rhs.size())
+                return false;
+            const_iterator it = this->cbegin();
+            const_iterator rit = rhs.cbegin();
+            for (; it != this->cend(); ++it, ++rit)
+                if (*it != *rit)
+                    return false;
+            return true;
+        }
+
+        bool operator==(const CompactString& rhs) const {
+            if (this->size() != rhs.size())
+                return false;
+            const_iterator it = this->cbegin();
+            CompactString::const_iterator rit = rhs.cbegin();
+            for (; it != this->cend(); ++it, ++rit)
+                if (*it != *rit)
+                    return false;
+            return true;
+        }
+        friend bool operator==(const CompactString& lhs, const String& rhs) {
+            if (lhs.size() != rhs.size())
+                return false;
+            CompactString::const_iterator lit = lhs.cbegin();
+            const_iterator rit = rhs.cbegin();
+            for (; lit != lhs.cend(); ++lit, ++rit)
+                if (*lit != *rit)
+                    return false;
+            return true;
+        }
+
+        bool operator==(const char* rhs) const {
+            if (rhs == nullptr)
+                return false;
+            const_iterator it = this->cbegin();
+            for (; it != this->cend() && *rhs; ++it, ++rhs)
+                if (*it != *rhs)
+                    return false;
+            if (it != this->cend() || *rhs)
+                return false;
+            return true;
+        }
+        friend bool operator==(const char* lhs, const String& rhs) {
+            if (lhs == nullptr)
+                return false;
+            const_iterator rit = rhs.begin();
+            for (; *lhs && rit != rhs.cend(); ++lhs, ++rit)
+                if (*lhs != *rit)
+                    return false;
+            if (*lhs || rit != rhs.cend())
+                return false;
+            return true;
         }
 
         // DBG
@@ -1045,14 +1196,14 @@ class String {
          * @note The rear is calculated and not stored.
          */
         void __print_status() const {
-            printf("(Front: %d, Rear: %d, Cur: %d, size: %d)\n", front, (front + cur) % (arr_size + 1), cur, arr_size);
+            printf("(Front: %lld, Rear: %lld, Cur: %lld, size: %lld)\n", front, (front + cur) % (arr_size + 1), cur, arr_size);
         }
         /**
          * Prints the contents of the entire containing array.
          */
         void __print_array() const {
             std::cout << '[';
-            for (int i{}; i < this->arr_size; ++i)
+            for (std::size_t i{}; i < this->arr_size; ++i)
                 std::cout << this->arr[i] << ", ";
             std::cout << this->arr[this->arr_size] << ']';
         }
@@ -1064,13 +1215,10 @@ class String {
             }
         }
         friend std::ostream& operator<<(std::ostream& out, const String& d);
-        friend std::istream& operator>>(std::istream& in, String& s) {
-            s.__initializeForReading();
-            char ch = in.get();
-            while (ch != '\n') {
-                s.push_back(ch);
-                ch = in.get();
-            }
+        friend std::istream& operator>>(std::istream& in, String& str) {
+            str.__initializeForReading();
+            for (char ch = in.get(); ch != '\n'; ch = in.get())
+                str.push_back(ch);
             return in;
         }
         friend std::ifstream& operator>>(std::ifstream& in, String& s) {
@@ -1114,7 +1262,7 @@ class String {
             }
             return parts;
         }
-        StringList split(int pos, char delim = ' ') const {
+        StringList split(std::size_t pos, char delim = ' ') const {
             if (this->isEmpty() || pos >= this->size())
                 return {};
             StringList parts{};
@@ -1128,16 +1276,28 @@ class String {
             }
             return parts;
         }
+        static StringList split(const char* str, char delim = ' ') {
+            return String(str).split(delim);
+        }
+        static StringList split(const char* str, size_t pos, char delim) {
+            return String(str).split(pos, delim);
+        }
+        static StringList split(const CompactString& str, char delim = ' ') {
+            return String(str).split(delim);
+        }
+        static StringList split(const CompactString& str, size_t pos, char delim) {
+            return String(str).split(pos, delim);
+        }
     
     private:
         value_type* arr{};
-        int front{};
-        int cur{};
-        int arr_size{};
+        std::size_t front{};
+        std::size_t cur{};
+        std::size_t arr_size{};
 
         void streamInsert(std::ostream& out) const {
             if (this->cur) {
-                int i{this->front}, count{};
+                std::size_t i{this->front}, count{};
                 for (; count < this->cur; ++count, i = (i + 1) % this->arr_size)
                     out << this->arr[i];
             }
@@ -1150,8 +1310,8 @@ class String {
         constexpr bool __isVacant() const {
             return (this->cur == this->arr_size / 3);
         }
-        bool __isOutOfBounds(int index) const {
-            return ((index < 0) || (index > this->cur - 1));
+        bool __isOutOfBounds(std::size_t index) const {
+            return ((this->cur == 0) || (index > this->cur - 1));
         }
         bool __checkString(check_fun p) const {
             const_iterator it = this->cbegin();
@@ -1200,7 +1360,7 @@ class String {
          * @param cur
          * @param arr_size
          */
-        void __set(pointer _arr, int _front, int _cur, int _arr_size) noexcept {
+        void __set(pointer _arr, std::size_t _front, std::size_t _cur, std::size_t _arr_size) noexcept {
             this->arr = _arr;
             this->front = _front;
             this->cur = _cur;
@@ -1211,7 +1371,7 @@ class String {
          * calls the set() method to set appropriate values of the member
          * variables.
          */
-        void __initialize(int _size) {
+        void __initialize(std::size_t _size) {
             this->__set(new value_type[_size], 0, 0, _size);
         }
         /**
@@ -1239,9 +1399,9 @@ class String {
          * @param flag Must be one out of the two static constants defined in
          * the class, deque::EXPAND or deque::SHRINK.
          */
-        void __alter(int flag) {
+        void __alter(std::size_t flag) {
             pointer newArray{};
-            int i{}, newSize{};
+            std::size_t i{}, newSize{};
             switch (flag) {
                 case EXPAND:
                     newSize = this->arr_size * 2;
@@ -1258,12 +1418,12 @@ class String {
             this->__set(newArray, {}, this->cur, newSize);
         }
         void __invalidate() {
-            this->__set({}, {}, {}, 1);
+            this->__set({}, {}, {}, {});
         }
         /**
          * Swap elements at indices i and j in the containing array.
          */
-        void __swap(int i, int j) {
+        void __swap(std::size_t i, std::size_t j) {
             value_type tmp{this->arr[i]};
             this->arr[i] = this->arr[j];
             this->arr[j] = tmp;
@@ -1274,7 +1434,7 @@ class String {
          * @param i The index of the list item whose actual position in the
          * containing array is required.
          */
-        int __relativePosition(int i) const {
+        std::size_t __relativePosition(std::size_t i) const {
             return (this->front + i) % this->arr_size;
         }
         static bool __isWhiteSpace(char ch) {

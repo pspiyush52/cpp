@@ -465,7 +465,7 @@ class deque {
         deque& modify(Modifier mod_fun = {}, Predicate pred = {}) {
             for (auto iter = this->begin(); iter != this->end(); ++iter)
                 if (pred(*iter))
-                    *iter = mod_fun(*iter);
+                    mod_fun(*iter);
             return *this;
         }
         deque& setValue(const value_type& val) {
