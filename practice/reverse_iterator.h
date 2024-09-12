@@ -148,7 +148,7 @@ template<typename iter_tp>
 class ConstIterator {
     typedef           ConstIterator            self;
     public:
-        ConstIterator(const iter_tp& iter): it{iter} {}
+        ConstIterator(iter_tp&& iter): it{iter} {}
         const typename iter_tp::value_type& operator*() {
             return (*it);
         }

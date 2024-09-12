@@ -1,12 +1,15 @@
 #include "string.h"
 #include "ordered_map.h"
+#include "utils.h"
+
+typedef OrderedSMap<String, deque<String>> OrderedDict;
 
 int main(int argc, char* argv[])
 {
-    void printDefinition(String& word, const OrderedSMap<String, deque<String>>& dict);
+    void printDefinition(String& word, const OrderedDict& dict);
     if (argc == 2) {
         String query{argv[1]};
-        OrderedSMap<String, deque<String>> dictionary;
+        OrderedDict dictionary;
         
         std::ifstream file("words.txt");
         String defLine{4096};
@@ -54,14 +57,15 @@ int main(int argc, char* argv[])
     }
 }
 
-void printDefinition(String& word, const OrderedSMap<String, deque<String>>& dict) {
+void printDefinition(String& word, const OrderedDict& dict) {
     deque<String>* defs = dict.search(word);
     if (defs == nullptr) {
         std::cout << "Sorry :(\n\t" << "The word \"" << word << "\" does not exist in the dictionary\n";
     }
     else {
-        std::cout << word.capitalize() << ":\n";
-        for (auto& definition : *defs)
-            print("    ", definition);
+        fmt::print_u(word.capitalize(), '-');
+        print();
+        for (auto& definition : enumerate(*defs))
+            std::cout << "     " << definition.count() << ". " << definition.value() << "\n\n";
     }
 }

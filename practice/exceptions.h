@@ -15,6 +15,19 @@ class IndexError : public std::exception {
         const char* msg;
 };
 
+class NullStateException : public std::exception {
+    public:
+        NullStateException() {
+            this->msg = "Null object";
+        }
+        NullStateException(const char* message): msg{message} {}
+        virtual const char* what() const noexcept {
+            return msg;
+        }
+    private:
+        const char* msg;
+};
+
 class SizeError : public std::exception {
     public:
         SizeError(const char* message) : msg{message} {}
@@ -29,6 +42,12 @@ class ListEmpty : public SizeError {
     public:
         ListEmpty() : SizeError("List empty"){}
         ListEmpty(const char* message) : SizeError(message){}
+};
+
+class DequeEmpty : public SizeError {
+    public:
+        DequeEmpty(): SizeError("Deque empty") {}
+        DequeEmpty(const char* message): SizeError(message) {}
 };
 
 class StringEmpty : public SizeError {

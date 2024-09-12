@@ -2,10 +2,11 @@
 #define __DEQUE_H
 
 #include <iostream>
-#include <stdlib.h>
+#include <cstddef>
 #include <initializer_list>
 #include <concepts>
 #include "..\practice\print.h"
+#include "..\practice\exceptions.h"
 
 template<typename T>
 concept ForwardIterable = requires (T obj) {
@@ -44,8 +45,11 @@ class deque {
             return std::forward<value_tp>(x);
         }
     };
-    static int max(int x, int y) {
+    static size_t max(size_t x, size_t y) {
         return (x > y) ? x : y;
+    }
+    static size_t min(size_t x, size_t y) {
+        return (x < y) ? x : y;
     }
     
     public:
@@ -62,31 +66,32 @@ class deque {
         class                                                     const_view_iterator;
     
     public:
-        deque(): arr{new T[DEFAULT_SIZE + 1]}, front{}, cur{}, arr_size{DEFAULT_SIZE + 1} {}
-        deque(int size) {
+        deque(): arr{new value_type[DEFAULT_SIZE + 1]}, front{}, cur{}, arr_size{DEFAULT_SIZE + 1} {}
+        deque(size_t size) {
             this->initialize(max(size, DEFAULT_SIZE) + 1);
         }
-        deque(int size, const value_type& default_value): deque(2 * size) {
-            for (int i{}; i < size; ++i)
+        deque(size_t size, const value_type& default_value): deque(2 * size) {
+            for (size_t i{}; i < size; ++i)
                 this->arr[i] = default_value;
-            if (size >= 0)
+            if (size != 0)
                 this->cur = size;
         }
-        deque(const deque& src, int from, int to) {
-            if ((from < 0) || (from >= src.size()) || (to <= from)) {
+        deque(const deque& src, size_t from, size_t to) {
+            if ((from >= src.size()) || (to <= from)) {
                 this->initialize(DEFAULT_SIZE + 1);
             }
             else {
-                int src_size{src.size()}, dsize{};
+                size_t src_size{src.size()}, dsize{};
                 to = (to > src_size) ? (src_size - 1) : to;
                 dsize = to - from + 1;
                 this->initialize(2 * dsize + 1);
                 this->cur = dsize;
-                for (int i{}; i < dsize; ++i, ++from)
+                for (size_t i{}; i < dsize; ++i, ++from)
                     this->arr[i] = src[from];
             }
         }
-        deque(const_iterator& from, const_iterator& to): deque(2 * from.getSize()) {
+        // Needs revising
+        deque(const_iterator& from, const_iterator& to): deque(from.getSize()) {
             int i{};
             for (; from != to; ++from, ++i)
                 this->arr[i] = *from;
@@ -106,12 +111,12 @@ class deque {
         }
         deque(const deque& src): deque(src.size() * 2) {
             const_iterator iter = src.cbegin();
-            int i{};
+            size_t i{};
             for (; iter != src.cend(); ++iter, ++i)
                 this->arr[i] = *iter;
             this->cur = i;
         }
-        deque(deque&& src) {
+        deque(deque&& src) noexcept {
             this->set(src.arr, src.front, src.cur, src.arr_size);
             src.invalidate();
         }
@@ -121,14 +126,14 @@ class deque {
                     delete[] this->arr;
                 this->initialize(src.size() * 2);
                 const_iterator iter = src.cbegin();
-                int i{};
+                size_t i{};
                 for (; iter != src.cend(); ++iter, ++i)
                     this->arr[i] = *iter;
                 this->cur = i;
             }
             return *this;
         }
-        deque& operator=(deque&& src) {
+        deque& operator=(deque&& src) noexcept {
             if (this != &src) {
                 if (this->arr)
                     delete[] this->arr;
@@ -138,14 +143,17 @@ class deque {
             return *this;
         }
 
-        constexpr bool isEmpty() const {
+        constexpr operator bool() const noexcept {
+            return (!(this->cur));
+        }
+        constexpr bool isEmpty() const noexcept {
             return (!this->cur);
         }
-        constexpr int size() const {
+        constexpr size_t size() const noexcept {
             return this->cur;
         }
-        constexpr int capacity() const {
-            return (this->arr_size - 1);
+        constexpr size_t capacity() const noexcept {
+            return this->arr_size ? (this->arr_size - 1) : 0;
         }
         
         /**
@@ -153,7 +161,7 @@ class deque {
          * @note It will still return a reference to an item of the list even
          * if the list is empty so it might contain some garbage value.
          */
-        reference getFront() {
+        reference getFront() noexcept {
             return this->arr[this->front];
         }
         /**
@@ -162,7 +170,7 @@ class deque {
          * @note It will still return a reference to an item of the list even
          * if the list is empty so it might contain some garbage value.
          */
-        const_reference getFront() const {
+        const_reference getFront() const noexcept {
             return this->arr[this->front];
         }
         /**
@@ -185,7 +193,7 @@ class deque {
             if (this->isFull())
                 this->alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
-            this->arr[this->front] = static_cast<T&&>(item);
+            this->arr[this->front] = static_cast<value_type&&>(item);
             ++(this->cur);
             return *this;
         }
@@ -199,26 +207,7 @@ class deque {
                 this->push_front(*it);
             return *this;
         }
-        /**
-         * Inserts all the items from a container containing compatible types
-         * if items at the front of the list.
-         * @note Compilation fails if the container contains incompatible type
-         * of data.
-         * @note A "compatible" type is one which can be converted to the type
-         * of data that the deque holds.
-         */
-        template<ReverseIterable Container>
-        deque& push_front(const Container& c) {
-            static_assert(
-                std::is_convertible_v<typename Container::value_type, value_type>,
-                "Container holds incompatible type of data\n"
-            );
-            auto it = std::rbegin(c);
-            auto rend = std::rend(c);
-            for (; it != rend; ++it)
-                this->push_front(*it);
-            return *this;
-        }
+
         /**
          * Inserts an item at the back of the list.
          * Similar to the push() operation on a Stack.
@@ -243,7 +232,7 @@ class deque {
 #endif
             if (this->isFull())
                 this->alter(EXPAND);
-            this->arr[(this->front + this->cur) % this->arr_size] = static_cast<T&&>(item);
+            this->arr[(this->front + this->cur) % this->arr_size] = static_cast<value_type&&>(item);
             ++(this->cur);
             return *this;
         }
@@ -261,32 +250,13 @@ class deque {
          * Inserts all the items from an initializer list containing the same
          * type of data at the back of the list.
          */
-        deque& push_back(std::initializer_list<value_type> args) {
+        deque& push_back(const std::initializer_list<value_type>& args) {
             auto it = args.begin();
             for (; it != args.end(); ++it)
                 this->push_back(*it);
             return *this;
         }
-        /**
-         * Inserts all the items from a container containing compatible types
-         * if items at the back of the list.
-         * @note Compilation fails if the container contains incompatible type
-         * of data.
-         * @note A "compatible" type is one which can be converted to the type
-         * of data that the deque holds.
-         */
-        template<ForwardIterable Container>
-        deque& push_back(const Container& c) {
-            static_assert(
-                std::is_convertible_v<typename Container::value_type, typename deque<T>::value_type>,
-                "Container holds incompatible type of data\n"
-            );
-            auto it = std::begin(c);
-            auto end = std::end(c);
-            for (; it != end; ++it)
-                this->push_back(*it);
-            return *this;
-        }
+
         /**
          * Insert an item at the front of the list.
          * Similar to the enqueue() operation of a Queue.
@@ -301,7 +271,7 @@ class deque {
          * @note This method delegates to the push_front() method.
          */
         deque& prepend(value_type&& item) {
-            return this->push_front(static_cast<T&&>(item));
+            return this->push_front(item);
         }
         /**
          * Inserts all the items from a deque containing the same type of
@@ -311,19 +281,7 @@ class deque {
         deque& prepend(const deque& d) {
             return this->push_front(d);
         }
-        /**
-         * Inserts all the items from a container containing compatible types
-         * if items at the front of the list.
-         * @note Compilation fails if the container contains incompatible type
-         * of data.
-         * @note A "compatible" type is one which can be converted to the type
-         * of data that the deque holds.
-         * @note This method delegates to the push_front() method.
-         */
-        template<ReverseIterable Container>
-        deque& prepend(const Container& c) {
-            return this->push_front<Container>(c);
-        }
+
         /**
          * Insert an item at the back of the list.
          * Similar to the push() operation of a Stack.
@@ -344,7 +302,7 @@ class deque {
 #ifdef DEQUE_DEBUG
             print("deque::append(value_type&&)");
 #endif
-            return this->push_back(static_cast<T&&>(item));
+            return this->push_back(item);
         }
         /**
          * Inserts all the items from a deque containing the same type of
@@ -354,24 +312,14 @@ class deque {
         deque& append(const deque& d) {
             return this->push_back(d);
         }
-        /**
-         * Inserts all the items from a container containing compatible types
-         * if items at the back of the list.
-         * @note Compilation fails if the container contains incompatible type
-         * of data.
-         * @note A "compatible" type is one which can be converted to the type
-         * of data that the deque holds.
-         * @note This method delegates to the push_back() method.
-         */
-        template<ForwardIterable Container>
-        deque& append(const Container& c) {
-            return this->push_back<Container>(c);
-        }
+        
         /**
          * This method removes an item from the front of the list.
          * Similar to the dequeue() operation of a Queue.
          */
         deque& pop_front() {
+            if (this->isEmpty())
+                throw DequeEmpty();
             if (this->isVacant())
                 this->alter(SHRINK);
             if (this->cur) {
@@ -385,6 +333,8 @@ class deque {
          * Similar to the pop() operation of a Stack.
          */
         deque& pop_back() {
+            if (this->isEmpty())
+                throw DequeEmpty();
             if (this->isVacant())
                 this->alter(SHRINK);
             if (this->cur)
@@ -403,7 +353,7 @@ class deque {
             if (this->isFull())
                 this->alter(EXPAND);
             this->front = (this->front + this->arr_size - 1) % this->arr_size;
-            this->arr[this->front] = static_cast<T&&>(T{static_cast<Args&&>(args)...});
+            this->arr[this->front] = static_cast<value_type&&>(value_type{args...});
             ++(this->cur);
             return *this;
         }
@@ -418,7 +368,7 @@ class deque {
         deque& emplace_back(Args&& ...args) {
             if (this->isFull())
                 this->alter(EXPAND);
-            this->arr[(this->front + this->cur) % this->arr_size] = static_cast<T&&>(T{static_cast<Args&&>(args)...});
+            this->arr[(this->front + this->cur) % this->arr_size] = static_cast<T&&>(value_type{args...});
             ++(this->cur);
             return *this;
         }
@@ -438,7 +388,7 @@ class deque {
                 this->initialize(DEFAULT_SIZE + 1);
             }
             else {
-                int newSize = this->cur + 1;
+                size_t newSize = this->cur + 1;
                 pointer newArray = new value_type[newSize];
                 pointer ptr = newArray;
                 iterator iter = this->begin();
@@ -462,25 +412,25 @@ class deque {
          * item gets modified or not;
          */
         template<typename Modifier, typename Predicate = Tautology>
-        deque& modify(Modifier mod_fun = {}, Predicate pred = {}) {
+        deque& modify(Modifier mod_fun = {}, Predicate pred = {}) noexcept {
             for (auto iter = this->begin(); iter != this->end(); ++iter)
                 if (pred(*iter))
                     mod_fun(*iter);
             return *this;
         }
-        deque& setValue(const value_type& val) {
+        deque& setValue(const value_type& val) noexcept {
             deque& self{*this};
-            for (int i{}; i < self.size(); ++i)
+            for (size_t i{}; i < self.size(); ++i)
                 self[i] = val;
             return *this;
         }
         /**
          * Reverses the list.
          */
-        deque& reverse() {
+        deque& reverse() noexcept {
             reverse_iterator riter = this->rbegin();
             iterator iter = this->begin();
-            for (int i{}; i < (this->cur / 2); ++i) {
+            for (size_t i{}; i < (this->cur / 2); ++i) {
                 this->swap(iter.getPos(), riter.getPos());
                 ++riter;
                 ++iter;
@@ -497,12 +447,12 @@ class deque {
          * if no such item exists in the list.
          */
         template<typename key_tp, typename Projection = Identity>
-        int search(const key_tp& key, Projection p = {}) const {
+        size_t search(const key_tp& key, Projection p = {}) const noexcept {
             const_iterator it = this->cbegin();
             for (; it != this->cend(); ++it)
                 if (p(*it) == key)
                     return it.getPos();
-            return -1;
+            return ULLONG_MAX;
         }
         /**
          * Search for an item by the key in the list starting from the given
@@ -517,14 +467,14 @@ class deque {
          * bounds of the list.
          */
         template<typename key_tp, typename Projection = Identity>
-        int search(const key_tp& key, int fromPosition, Projection p = {}) const {
+        size_t search(const key_tp& key, size_t fromPosition, Projection p = {}) const noexcept {
             if (fromPosition >= this->cur - 1)
-                return -1;
+                return ULLONG_MAX;
             const_iterator it{this, this->relativePosition(fromPosition)};
             for (; it != this->cend(); ++it)
                 if (p(*it) == key)
                     return it.getPos();
-            return -1;
+            return ULLONG_MAX;
         }
         /**
          * Provides a view of the items in the list from index i up to but not
@@ -535,17 +485,24 @@ class deque {
          * that return the appropriate deque::iterator objects to allow
          * traversal.
          */
-        view_iterator sliceView(int i, int j) {
-            if (isOutOfBounds(i) || isOutOfBounds(j) || (i >= j))
+        view_iterator sliceView(size_t i, size_t j) noexcept {
+            if (this->isEmpty() || isOutOfBounds(i) || (i >= j))
                 return {this, 0, 0};
-            return {this, i, j};
+            return {this, i, min(j, this->cur)};
         }
-        view_iterator sliceView(int i) {
-            if (isOutOfBounds(i))
+        /**
+         * Provides a view of the items in the list from index i up to but not
+         * including index j.
+         * @returns A view_iterator object that can be used to iterate through
+         * the items of the list in the specified range.
+         * @note The view_iterator object contains begin() and end() methods
+         * that return the appropriate deque::iterator objects to allow
+         * traversal.
+         */
+        view_iterator sliceView(size_t i) noexcept {
+            if (this->isEmpty())
                 return {this, 0, 0};
-            if (i >= this->cur - 1)
-                return {this, 0, this->cur - 1};
-            return {this, 0, i};
+            return {this, 0, min(i, this->cur)};
         }
         /**
          * Provides a view of the items in the list from index i up to but not
@@ -557,109 +514,171 @@ class deque {
          * that return the appropriate deque::const_iterator objects to allow
          * traversal.
          */
-        const_view_iterator sliceView(int i, int j) const {
-            if (isOutOfBounds(i) || isOutOfBounds(j) || (i >= j))
+        const_view_iterator sliceView(size_t i, size_t j) const noexcept {
+            if (this->isEmpty() || isOutOfBounds(i) || (i >= j))
                 return {this, 0, 0};
-            return {this, i, j};
+            return {this, i, min(j, this->cur)};
         }
-        const_view_iterator sliceView(int i) const {
-            if (isOutOfBounds(i))
+        /**
+         * Provides a view of the items in the list from index i up to but not
+         * including index j.
+         * @returns A const_view_iterator object that can be used to iterate
+         * through the items of the list in the specified range but does not
+         * allow modification.
+         * @note The view_iterator object contains begin() and end() methods
+         * that return the appropriate deque::const_iterator objects to allow
+         * traversal.
+         */
+        const_view_iterator sliceView(size_t i) const noexcept {
+            if (this->isEmpty())
                 return {this, 0, 0};
-            if (i >= this->cur - 1)
-                return {this, 0, this->cur - 1};
-            return {this, 0, i};
+            return {this, 0, min(i, this->cur)};
         }
         /**
          * Returns a new list containing the items from the existing list from
          * index i up to but not including index j.
          * @note Returns an empty list if the index values are not valid.
          */
-        deque slice(int i, int j) const {
-            if ((i < 0) || (j < 0) || (i >= j))
+        deque slice(size_t i, size_t j) const {
+            if (this->isEmpty() || isOutOfBounds(i) || (i >= j))
                 return {};
             deque res;
-            const_iterator it{this, relativePosition(i)}, end{this, relativePosition(j)};
+            const_iterator it{this, relativePosition(i)}, end{this, relativePosition(min(j, this->cur))};
+            for (; it != end; ++it)
+                res.append(*it);
+            return res;
+        }
+        /**
+         * Returns a new list containing the items from the existing list from
+         * index 0 up to but not including index j.
+         * @note Returns an empty list if the index values are not valid.
+         */
+        deque slice(size_t i) const {
+            if (isOutOfBounds(i))
+                return {*this};
+            deque res;
+            const_iterator it = this->cbegin(), end{this, relativePosition(min(i, this->cur))};
             for (; it != end; ++it)
                 res.append(*it);
             return res;
         }
 
-        iterator begin() {
+        iterator begin() noexcept {
             return {this, this->front};
         }
-        iterator end() {
+        iterator end() noexcept {
             return {this, (this->front + this->cur) % this->arr_size};
         }
-        const_iterator begin() const {
+        const_iterator begin() const noexcept {
             return {this, this->front};
         }
-        const_iterator end() const {
+        const_iterator end() const noexcept {
             return {this, (this->front + this->cur) % this->arr_size};
         }
-        const_iterator cbegin() const {
+        const_iterator cbegin() const noexcept {
             return {this, this->front};
         }
-        const_iterator cend() const {
+        const_iterator cend() const noexcept {
             return {this, (this->front + this->cur) % this->arr_size};
         }
-        reverse_iterator rbegin() {
-            return {this, (this->front + this->cur - 1) % this->arr_size};
+        reverse_iterator rbegin() noexcept {
+            if (this->cur)
+                return {this, (this->front + this->cur - 1) % this->arr_size};
+            return this->rend();
         }
-        reverse_iterator rend() {
+        reverse_iterator rend() noexcept {
             int pos = (this->front + this->arr_size - 1) % this->arr_size;
             return {this, pos};
         }
-        const_reverse_iterator rbegin() const {
-            return {this, (this->front + this->cur - 1) % this->arr_size};
+        const_reverse_iterator rbegin() const noexcept {
+            if (this->cur)
+                return {this, (this->front + this->cur - 1) % this->arr_size};
+            return this->rend();
         }
-        const_reverse_iterator rend() const {
+        const_reverse_iterator rend() const noexcept {
             int pos = (this->front + this->arr_size - 1) % this->arr_size;
             return {this, pos};
         }
-        const_reverse_iterator crbegin() const {
-            return {this, (this->front + this->cur - 1) % this->arr_size};
+        const_reverse_iterator crbegin() const noexcept {
+            if (this->cur)
+                return {this, (this->front + this->cur - 1) % this->arr_size};
+            return this->crend();
         }
-        const_reverse_iterator crend() const {
+        const_reverse_iterator crend() const noexcept {
             int pos = (this->front + this->arr_size - 1) % this->arr_size;
             return {this, pos};
         }
 
-        view_iterator operator()(int i, int j) {
-            if (isOutOfBounds(i) || isOutOfBounds(j) || (i >= j))
+        /**
+         * Provides a view of the items in the list from index i up to but not
+         * including index j.
+         * @returns A view_iterator object that can be used to iterate through
+         * the items of the list in the specified range.
+         * @note The view_iterator object contains begin() and end() methods
+         * that return the appropriate deque::iterator objects to allow
+         * traversal.
+         */
+        view_iterator operator()(size_t i, size_t j) noexcept {
+            if (this->isEmpty() || isOutOfBounds(i) || (i >= j))
                 return {this, 0, 0};
-            return {this, i, j};
+            return {this, i, min(j, this->cur)};
         }
-        view_iterator operator()(int i) {
-            if (isOutOfBounds(i))
+        /**
+         * Provides a view of the items in the list from index i up to but not
+         * including index j.
+         * @returns A view_iterator object that can be used to iterate through
+         * the items of the list in the specified range.
+         * @note The view_iterator object contains begin() and end() methods
+         * that return the appropriate deque::iterator objects to allow
+         * traversal.
+         */
+        view_iterator operator()(size_t i) noexcept {
+            if (this->isEmpty())
                 return {this, 0, 0};
-            if (i >= this->cur - 1)
-                return {this, 0, this->cur - 1};
-            return {this, 0, i};
+            return {this, 0, min(i, this->cur)};
         }
-        const_view_iterator operator()(int i, int j) const {
-            if (isOutOfBounds(i) || isOutOfBounds(j) || (i >= j))
+        /**
+         * Provides a view of the items in the list from index i up to but not
+         * including index j.
+         * @returns A const_view_iterator object that can be used to iterate
+         * through the items of the list in the specified range but does not
+         * allow modification.
+         * @note The view_iterator object contains begin() and end() methods
+         * that return the appropriate deque::const_iterator objects to allow
+         * traversal.
+         */
+        const_view_iterator operator()(size_t i, size_t j) const noexcept {
+            if (this->isEmpty() || isOutOfBounds(i) || (i >= j))
                 return {this, 0, 0};
-            return {this, i, j};
+            return {this, i, min(j, this->cur)};
         }
-        const_view_iterator operator()(int i) const {
-            if (isOutOfBounds(i))
+        /**
+         * Provides a view of the items in the list from index i up to but not
+         * including index j.
+         * @returns A const_view_iterator object that can be used to iterate
+         * through the items of the list in the specified range but does not
+         * allow modification.
+         * @note The view_iterator object contains begin() and end() methods
+         * that return the appropriate deque::const_iterator objects to allow
+         * traversal.
+         */
+        const_view_iterator operator()(size_t i) const noexcept {
+            if (this->isEmpty())
                 return {this, 0, 0};
-            if (i >= this->cur - 1)
-                return {this, 0, this->cur - 1};
-            return {this, 0, i};
+            return {this, 0, min(i, this->cur)};
         }
         /**
          * Returns a reference to an object at index i in the list.
          * @note The operator[] does not perform bounds checking.
          */
-        reference operator[](int i) {
+        reference operator[](size_t i) noexcept {
             return this->arr[(this->front + i) % this->arr_size];
         }
         /**
          * Returns a const reference to an object at index i in the list.
          * @note The operator[] does not perform bounds checking.
          */
-        const_reference operator[](int i) const {
+        const_reference operator[](size_t i) const noexcept {
             return this->arr[(this->front + i) % this->arr_size];
         }
         /**
@@ -668,7 +687,7 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& operator+=(const value_type& item) {
-            return this->push_back(std::forward<const T>(item));
+            return this->push_back(item);
         }
         /**
          * Insert an item at the back of the list.
@@ -676,7 +695,7 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& operator+=(value_type&& item) {
-            return this->push_back(static_cast<T&&>(item));
+            return this->push_back(item);
         }
         /**
          * Inserts all the items from a deque containing the same type of
@@ -684,42 +703,29 @@ class deque {
          * @note This method delegates to the push_back() method.
          */
         deque& operator+=(const deque& d) {
-            return this->push_back(std::forward<const deque<T>>(d));
+            return this->push_back(d);
         }
-        /**
-         * Inserts all the items from a container containing compatible types
-         * if items at the back of the list.
-         * @note Compilation fails if the container contains incompatible type
-         * of data.
-         * @note A "compatible" type is one which can be converted to the type
-         * of data that the deque holds.
-         * @note This method delegates to the push_back() method.
-         */
-        template<ForwardIterable Container>
-        deque& operator+=(const Container& c) {
-            return this->push_back<Container>(std::forward<Container>(c));
-        }
-
+        
         // DBG
         /**
          * Displays the values for the front, rear, current size, and total
          * capacity of the deque.
          * @note The rear is calculated and not stored.
          */
-        void __print_status() const {
-            printf("(Front: %d, Rear: %d, Cur: %d, size: %d)\n", front, (front + cur) % (arr_size + 1), cur, arr_size);
+        void __print_status() const noexcept {
+            printf("(Front: %llu, Rear: %llu, Cur: %llu, size: %llu)\n", front, (front + cur) % (arr_size + 1), cur, arr_size);
         }
         /**
          * Prints the contents of the entire containing array.
          */
-        void __print_array() const {
+        void __print_array() const noexcept {
             std::cout << '[';
-            for (int i{}; i < this->arr_size; ++i)
+            for (size_t i{}; i < this->arr_size; ++i)
                 std::cout << this->arr[i] << ", ";
             std::cout << this->arr[this->arr_size] << ']';
         }
 
-        ~deque() {
+        ~deque() noexcept {
             if (this->arr) {
                 delete[] this->arr;
                 this->invalidate();
@@ -738,29 +744,29 @@ class deque {
         reference getTop() {
             return this->arr[this->cur - 1];
         }
-        int Front() const {
+        size_t Front() const {
             return this->front;
         }
-        int Cur() const {
+        size_t Cur() const {
             return this->cur;
         }
-        void setFront(int f) {
+        void setFront(size_t f) {
             this->front = f;
         }
-        void setCur(int c) {
+        void setCur(size_t c) {
             this->cur = c;
         }
 
     private:
         value_type* arr{};
-        int front{};
-        int cur{};
-        int arr_size{};
+        size_t front{};
+        size_t cur{};
+        size_t arr_size{};
 
-        void streamInsert(std::ostream& out) const {
+        void streamInsert(std::ostream& out) const noexcept {
             out << '[';
             if (this->cur) {
-                int i{this->front}, count{};
+                size_t i{this->front}, count{};
                 for (; count < this->cur - 1; ++count, i = (i + 1) % this->arr_size)
                     out << this->arr[i] << ", ";
                 out << this->arr[i];
@@ -769,14 +775,14 @@ class deque {
                 out << "null";
             out << ']';
         }
-        constexpr bool isFull() const {
+        constexpr bool isFull() const noexcept {
             return (this->cur == this->arr_size - 1);
         }
-        constexpr bool isVacant() const {
+        constexpr bool isVacant() const noexcept {
             return (this->cur == this->arr_size / 3);
         }
-        bool isOutOfBounds(int index) const {
-            return ((index < 0) || (index > this->cur - 1));
+        bool isOutOfBounds(size_t index) const noexcept {
+            return (index > this->cur - 1);
         }
         /**
          * Set the value of all member variables one by one in sequence.
@@ -785,7 +791,7 @@ class deque {
          * @param cur
          * @param arr_size
          */
-        void set(pointer _arr, int _front, int _cur, int _arr_size) {
+        void set(pointer _arr, size_t _front, size_t _cur, size_t _arr_size) noexcept {
             this->arr = _arr;
             this->front = _front;
             this->cur = _cur;
@@ -796,7 +802,7 @@ class deque {
          * calls the set() method to set appropriate values of the member
          * variables.
          */
-        void initialize(int _size) {
+        void initialize(size_t _size) {
             this->set(new value_type[_size], 0, 0, _size);
         }
         /**
@@ -805,9 +811,9 @@ class deque {
          * @param flag Must be one out of the two static constants defined in
          * the class, deque::EXPAND or deque::SHRINK.
          */
-        void alter(int flag) {
+        void alter(size_t flag) {
             pointer newArray{};
-            int i{}, newSize{};
+            size_t i{}, newSize{};
             switch (flag) {
                 case EXPAND:
                     newSize = this->arr_size * 2;
@@ -824,12 +830,12 @@ class deque {
             this->set(newArray, {}, this->cur, newSize);
         }
         void invalidate() {
-            this->set({}, {}, {}, 1);
+            this->set({}, {}, {}, {});
         }
         /**
          * Swap elements at indices i and j in the containing array.
          */
-        void swap(int i, int j) {
+        void swap(size_t i, size_t j) noexcept {
             value_type tmp{this->arr[i]};
             this->arr[i] = static_cast<value_type&&>(this->arr[j]);
             this->arr[j] = static_cast<value_type&&>(tmp);
@@ -840,7 +846,7 @@ class deque {
          * @param i The index of the list item whose actual position in the
          * containing array is required.
          */
-        int relativePosition(int i) const {
+        size_t relativePosition(size_t i) const noexcept {
             return (this->front + i) % this->arr_size;
         }
 };
@@ -852,7 +858,7 @@ inline std::ostream& operator<<(std::ostream& out, const deque<U>& d) {
 }
 
 template<typename T>
-void det(const deque<T>& d) {
+void det(const deque<T>& d) noexcept {
     std::cout << d << '\n';
     std::cout << "Size: " << d.size() << '\n';
     std::cout << "Capacity: " << d.capacity() << '\n';
@@ -865,7 +871,7 @@ void det(const deque<T>& d) {
 template<typename T>
 class deque<T>::iterator {
     public:
-        iterator(deque* ptr, int i): p{ptr}, pos{i} {}
+        iterator(deque* ptr, size_t i): p{ptr}, pos{i} {}
         reference operator*() {
             return p->arr[pos];
         }
@@ -883,13 +889,13 @@ class deque<T>::iterator {
         bool operator!=(const iterator& rhs) {
             return (this->pos != rhs.pos);
         }
-        int getPos() {
+        constexpr size_t getPos() {
             return this->pos;
         }
     
     private:
         deque* p;
-        int pos;
+        size_t pos;
 };
 
 /**
@@ -899,7 +905,7 @@ class deque<T>::iterator {
 template<typename T>
 class deque<T>::const_iterator {
     public:
-        const_iterator(const deque* ptr, int i): p{ptr}, pos{i} {}
+        const_iterator(const deque* ptr, size_t i): p{ptr}, pos{i} {}
         const_reference operator*() {
             return p->arr[pos];
         }
@@ -917,16 +923,16 @@ class deque<T>::const_iterator {
         bool operator!=(const const_iterator& rhs) {
             return (this->pos != rhs.pos);
         }
-        int getPos() {
+        constexpr size_t getPos() {
             return this->pos;
         }
-        int getSize() {
+        constexpr size_t getSize() {
             return p->size();
         }
 
     private:
         const deque* p;
-        int pos;
+        size_t pos;
 };
 
 /**
@@ -936,7 +942,7 @@ class deque<T>::const_iterator {
 template<typename T>
 class deque<T>::reverse_iterator {
     public:
-        reverse_iterator(deque* ptr, int i): p{ptr}, pos{i} {}
+        reverse_iterator(deque* ptr, size_t i): p{ptr}, pos{i} {}
         reference operator*() {
             return p->arr[pos];
         }
@@ -954,13 +960,13 @@ class deque<T>::reverse_iterator {
         bool operator!=(const reverse_iterator& rhs) {
             return (this->pos != rhs.pos);
         }
-        int getPos() {
+        constexpr size_t getPos() {
             return this->pos;
         }
     
     private:
         deque* p;
-        int pos;
+        size_t pos;
 };
 
 /**
@@ -970,7 +976,7 @@ class deque<T>::reverse_iterator {
 template<typename T>
 class deque<T>::const_reverse_iterator {
     public:
-        const_reverse_iterator(const deque* ptr, int i): p{ptr}, pos{i} {}
+        const_reverse_iterator(const deque* ptr, size_t i): p{ptr}, pos{i} {}
         const_reference operator*() {
             return p->arr[pos];
         }
@@ -988,13 +994,13 @@ class deque<T>::const_reverse_iterator {
         bool operator!=(const const_reverse_iterator& rhs) {
             return (this->pos != rhs.pos);
         }
-        int getPos() {
+        constexpr size_t getPos() {
             return this->pos;
         }
     
     private:
         const deque* p;
-        int pos;
+        size_t pos;
 };
 
 /**
@@ -1003,7 +1009,7 @@ class deque<T>::const_reverse_iterator {
 template<typename T>
 class deque<T>::view_iterator {
     public:
-        view_iterator(deque<T>* ptr, int i, int j): p{ptr}, front{i}, rear{j} {}
+        view_iterator(deque<T>* ptr, size_t i, size_t j): p{ptr}, front{i}, rear{j} {}
         deque<T>::iterator begin() {
             return {p, p->relativePosition(front)};
         }
@@ -1012,8 +1018,8 @@ class deque<T>::view_iterator {
         }
     private:
         deque<T>* p;
-        int front;
-        int rear;
+        size_t front;
+        size_t rear;
 };
 /**
  * const view iterator for iterating through a view of the deque.
@@ -1021,7 +1027,7 @@ class deque<T>::view_iterator {
 template<typename T>
 class deque<T>::const_view_iterator {
     public:
-        const_view_iterator(const deque<T>* ptr, int i, int j): p{ptr}, front{i}, rear{j} {}
+        const_view_iterator(const deque<T>* ptr, size_t i, size_t j): p{ptr}, front{i}, rear{j} {}
         deque<T>::const_iterator begin() {
             return {p, p->relativePosition(front)};
         }
@@ -1030,8 +1036,8 @@ class deque<T>::const_view_iterator {
         }
     private:
         const deque<T>* p;
-        int front;
-        int rear;
+        size_t front;
+        size_t rear;
 };
 
 #endif  // __DEQUE_H

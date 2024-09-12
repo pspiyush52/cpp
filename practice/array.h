@@ -7,8 +7,9 @@
 template<typename arr_tp, size_t size>
 class Array {
     public:
+        typedef                                                arr_tp                                 value_type;
         typedef                               PointerIterator<arr_tp>                                 iterator;
-        typedef                               ConstIterator<iterator>                                 const_iterator;
+        typedef                                         const arr_tp*                                 const_iterator;
         typedef                BidirectionalReverseIterator<iterator>                                 reverse_iterator;
         typedef                       ConstIterator<reverse_iterator>                                 const_reverse_iterator;
 
@@ -39,6 +40,12 @@ class Array {
             return {this->arr};
         }
         iterator end() {
+            return {this->arr + size};
+        }
+        const_iterator begin() const {
+            return {this->arr};
+        }
+        const_iterator end() const {
             return {this->arr + size};
         }
         reverse_iterator rbegin() {

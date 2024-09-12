@@ -127,7 +127,7 @@ class OrderedMap {
         }
         OrderedMap& insert(key_tp key, value_tp&& value) {
             bool inserted{false};
-            SetNode* x = this->newNode(key, static_cast<value_tp&&>(value));
+            SetNode* x = this->newNode(static_cast<key_tp&&>(key), static_cast<value_tp&&>(value));
             this->root = this->_insert(this->root, x, inserted);
             if (inserted)
                 ++(this->setSize);
@@ -141,15 +141,22 @@ class OrderedMap {
                 ++(this->setSize);
             return *this;
         }
-        bool isEmpty() const {
+        constexpr bool isEmpty() const {
             return (this->root == nullptr);
         }
-        bool contains(const key_tp& key) const {
+        constexpr bool contains(const key_tp& key) const {
             const SetNode* n = this->_search(this->root, key);
             if (n)
                 return (n->m_key == key);
             else
                 return false;
+        }
+        value_type* search(const key_type& key) const {
+            const SetNode* n = this->_search(this->root, key);
+            return (n == nullptr) ? nullptr : n->m_value;
+        }
+        constexpr size_t size() const {
+            return this->setSize;
         }
         const key_type& maxKey() const {
             if (this->isEmpty())
@@ -231,7 +238,7 @@ class OrderedMap {
             }
         }
         int getHeight() {
-            return this->root->height;
+            return this->height(this->root);
         }
         void inorder() {
             this->__inorder(this->root);
@@ -267,10 +274,10 @@ class OrderedMap {
                 flag = true;
                 r = x;
             }
-            else if (comp(x->m_key, r->m_key)) {
+            else if (x->m_key < r->m_key) {
                 r->left = _insert(r->left, x, flag);
             }
-            else if (comp(r->m_key, x->m_key)) {
+            else if (r->m_key < x->m_key) {
                 r->right = _insert(r->right, x, flag);
             }
             else
@@ -343,8 +350,8 @@ class OrderedMap {
         static void _clear(SetNode* root) {
             if (root) {
                 _clear(root->left);
-                delete root;
                 _clear(root->right);
+                delete root;
             }
         }
         static int max(int x, int y) {
@@ -436,7 +443,7 @@ class OrderedSMap {
             this->_clear(this->root);
             this->root = {};
         }
-        OrderedSMap(const std::initializer_list<Pair<string_tp, value_tp>>& args) {
+        OrderedSMap(std::initializer_list<Pair<string_tp, value_tp>>&& args) {
             auto it = args.begin();
             for (; it != args.end(); ++it)
                 this->insert(it->getFirst(), it->getSecond());

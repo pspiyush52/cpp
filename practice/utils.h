@@ -120,6 +120,23 @@ namespace fmt{
         putchar('\n');
     }
 
+    template<typename string_tp>
+    void print_u(const string_tp& str) {
+        auto size = str.size();
+        std::cout << str << '\n';
+        for (decltype(size) i{}; i < size; ++i)
+            putchar('-');
+        putchar('\n');
+    }
+    template<typename string_tp>
+    void print_u(const string_tp& str, char u_char) {
+        auto size = str.size();
+        std::cout << str << '\n';
+        for (decltype(size) i{}; i < size; ++i)
+            putchar(u_char);
+        putchar('\n');
+    }
+
     inline void line(char line_char = '-'){
         for (int i{}; i < 127; ++i)
             putchar(line_char);
